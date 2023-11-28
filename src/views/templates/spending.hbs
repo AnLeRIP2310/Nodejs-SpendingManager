@@ -1,0 +1,148 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-8 border-end border-dark">
+            <div class="row pb-2 pt-2 border-bottom border-dark">
+                <div class="col-5">
+                    <div class="input-group">
+                        <select class="form-select" id="SpendingList">
+                            <option value="1">Danh Sách Chi Tiêu</option>
+                        </select>
+                        <button class="btn btn-secondary" type="button" data-bs-toggle="modal"
+                            data-bs-target="#modalNewSpendingList">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-7">
+                    <div class="input-group">
+                        <input id="txtSearch" type="search" class="form-control" placeholder="Nhập từ khoá tìm kiếm">
+                        <button class="btn btn-secondary" type="button" onclick="searchTable()">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table  -->
+            <div class="row pt-2" style="padding: 0 12px;">
+                <div class="tableFixHead overflow-auto">
+                    <table id="tbdata" class="table table-sm table-hover border">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">
+                                    <button class="btn-sort" data-sort="0">#</button>
+                                </th>
+                                <th scope="col">
+                                    <button class="btn-sort" data-sort="1">Ngày</button>
+                                </th>
+                                <th scope="col">
+                                    <button class="btn-sort" data-sort="2">Loại Khoản
+                                        Chi</button>
+                                </th>
+                                <th scope="col">
+                                    <button class="btn-sort" data-sort="3">Số Tiền</button>
+                                </th>
+                                <th scope="col">
+                                    <button class="btn-sort" data-sort="4">Thông Tin
+                                        Thêm</button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <!-- {{! Button CURD }} -->
+            <div class="row pb-2 pt-2 border-bottom border-dark">
+                <div class="col-4">
+                    <button id="btnCreate" class="btn btn-success w-100">Thêm</button>
+                </div>
+                <div class="col-4">
+                    <button id="btnUpdate" class="btn btn-primary w-100">Sửa</button>
+                </div>
+                <div class="col-4">
+                    <button id="btnDelete" class="btn btn-danger w-100">Xóa</button>
+                </div>
+            </div>
+
+            <!-- {{! Field }} -->
+            <div class="container mb-3 mt-3">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form__group field mb-1">
+                            <input id="spendId" readonly type="text" class="form__field" placeholder="Id">
+                            <label for="spendId" class="form__label">Id</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form__group field">
+                            <input id="spendDate" type="date" class="form__field" placeholder="Ngày Tháng">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__group field mb-1">
+                    <input id="spendName" type="text" class="form__field" placeholder="Loại Khoản Chi"
+                        autocomplete="Họ Và Tên">
+                    <label for="spendName" class="form__label">Loại Khoản Chi</label>
+                </div>
+
+                <div class="form__group field mb-1">
+                    <input id="spendPrice" type="text" class="form__field" placeholder="Số Tiền"
+                        autocomplete="Họ Và Tên">
+                    <label for="spendPrice" class="form__label">Số Tiền</label>
+                </div>
+
+                <div class="form__group field mb-1">
+                    <input id="spendDetails" type="text" class="form__field" placeholder="Thông Tin Chi Tiết"
+                        autocomplete="Họ Và Tên">
+                    <label for="spendDetails" class="form__label">Thông Tin Chi Tiết</label>
+                </div>
+
+                <button id="btnClearData" class="btn w-100 mt-3" style="background-color: #a3d1ff;">
+                    Dọn Dữ Liệu
+                    <i class="fa-sharp fa-solid fa-trash"></i>
+                </button>
+            </div>
+
+            <div class="container border-top border-dark">
+                <div class=" mt-3 mb-3 rounded" style="background-color: #E0EEE0;">
+                    <div class="row">
+                        <div class="col-4 pe-0">
+                            <p id="spendItemCount" class="mb-0 p-2">SL: 0</p>
+                        </div>
+                        <div class="col-auto ps-0">
+                            <p id="spendItemTotal" class="mb-0 p-2">Tổng Mục: 0 ₫</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <p id="spendListTotal" class="mb-0 p-2 pt-0">Tổng Danh Sách:
+                            100.000.000 ₫</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container  border-top border-dark">
+                <div class="row mt-3 mb-3">
+                    <div class="col-6">
+                        <button class="btn btn-outline-success w-100">Xuất File
+                            <i class="fa-sharp fa-solid fa-file-excel"></i>
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-danger w-100">Xuất File
+                            <i class="fa-sharp fa-solid fa-file-pdf"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

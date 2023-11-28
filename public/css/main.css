@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,900;1,500&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+.brtop {
+    position: absolute;
+    height: 25px !important;
+    width: 100% !important;
+    background-color: transparent;
+    top: -25px;
+}
+
+.brbottom {
+    position: absolute;
+    height: 25px !important;
+    width: 100% !important;
+    background-color: transparent;
+    bottom: -25px;
+}
+
+/* Đặt thanh trượt mặt định */
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+    background: none;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 25px;
+    transition: all 0.5s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Xoá 2 nút tăng giảm trong trường input type number */
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.pointer {
+    cursor: pointer !important
+}
+
+.link-item {
+    text-decoration: none;
+    color: black;
+}
+
+.link-item:active {
+    color: var(--bs-primary) !important;
+}
+
+/* ------------------- */
+
+.tableFixHead {
+    height: 455px;
+    margin-bottom: 10px;
+    padding: 0;
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    padding: 8px 16px;
+}
+
+th {
+    background: #eee;
+}
+
+
+.btn-sort {
+    border: none;
+    background-color: transparent;
+    font-weight: 600;
+}
+
+.btn-sort:hover {
+    opacity: 0.7;
+}

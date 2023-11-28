@@ -1,0 +1,151 @@
+.sidebar {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    font-size: 20px;
+
+    position: relative;
+}
+
+.sidebar-item a {
+    padding: 12px 10px;
+    display: block;
+}
+
+.speech {
+    font-size: 16px;
+    display: flex;
+    color: white;
+    background-color: black;
+    position: absolute;
+    border-radius: 10px;
+    width: max-content;
+    z-index: 10;
+    text-align: center;
+    pointer-events: none;
+    padding: 5px;
+    top: 8px;
+    left: 50px;
+    opacity: 0;
+}
+
+.speech::after {
+    content: "";
+    position: absolute;
+    border-top: 12px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 12px solid black;
+    left: -11px;
+    top: 6px;
+}
+
+/* .sidebar-item:hover>.speech {
+    animation: slideIn 0.4s ease forwards;
+}
+
+.sidebar-item:not(:hover)>.speech {
+    animation: slideOut 0.3s ease forwards;
+} */
+
+.sidebar-item-Active a,
+.sidebar-item-Active .speech {
+    color: var(--bs-primary);
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(30%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(30%);
+    }
+}
+
+
+/* //////////////input field /////////////////////////*/
+
+.form__group {
+    position: relative;
+    padding: 10px 0 0;
+    width: 100%;
+}
+
+.form__field {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #9b9b9b;
+    outline: 0;
+    font-size: 16px;
+    padding: 7px 0;
+    font-weight: 600;
+    background: transparent;
+    transition: border-color 0.2s;
+}
+
+.form__field::placeholder {
+    color: transparent;
+}
+
+.form__field:placeholder-shown~.form__label {
+    font-size: 14px;
+    cursor: text;
+    top: 20px;
+}
+
+.form__label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 14px;
+    font-weight: 500;
+    color: #9b9b9b;
+    pointer-events: none;
+}
+
+.form__field:focus {
+    padding-bottom: 6px;
+    font-weight: 600;
+    border-width: 3px;
+    border-image-slice: 1;
+}
+
+.form__field:focus~.form__label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* reset input */
+.form__field:required,
+.form__field:invalid {
+    box-shadow: none;
+}

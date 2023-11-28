@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../public/lib/bootstrap-5.3.2-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/lib/fontawesome-6.4.2/css/all.css">
+    <script src="../../public/lib/jquery-3.7.1/all.js"></script>
+    <link rel="shortcut icon" href="../../public/images/favicon.ico">
+    <link rel="stylesheet" href="../../public/lib/jquery-3.7.1/all.js">
+    <link rel="stylesheet" href="../../public/lib/jquery-autocomplete-1.0.7/jquery.auto-complete.css">
+    <script src="../../public/lib/jquery-autocomplete-1.0.7/jquery.auto-complete.min.js"></script>
+    <link rel="stylesheet" href="../../public/lib/jquery-ui-1.13.2/jquery-ui.min.css">
+    <script src="../../public/lib/jquery-ui-1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="../../public/lib/toast/toast.css">
+    <script src="../../public/lib/handlebars/handlebars4.7.8.min.js"></script>
+    <link rel="stylesheet" href="../../public/css/main.css">
+    <link rel="stylesheet" href="../../public/css/home.css">
+    <title>SpendingManager</title>
+</head>
+
+<body>
+    <main>
+        <div class="d-flex justify-content-center align-items-center bg-black" style="height: 100vh;">
+            <div class="bg-white">
+
+                <div class="row">
+                    <div class="col-auto pe-0">
+                        <div class="sidebar border-end border-dark">
+                            <ul class="sidebar-list">
+                                <li id="page-home" class="sidebar-item">
+                                    <a href="#" class="link-item">
+                                        <i class="fa-solid fa-house"></i>
+                                    </a>
+                                    <div class="speech">
+                                        Trang Chủ
+                                    </div>
+                                </li>
+                                <li id="page-spending" class="sidebar-item">
+                                    <a href="#" class="link-item">
+                                        <i class="fa-solid fa-message-dollar"></i>
+                                    </a>
+                                    <div class="speech">
+                                        Chi Tiêu
+                                    </div>
+                                </li>
+                                <li id="page-spendlist" class="sidebar-item">
+                                    <a href="#" class="link-item">
+                                        <i class="fa-solid fa-list-tree"></i>
+                                    </a>
+                                    <div class="speech">
+                                        Danh Sách
+                                    </div>
+                                </li>
+                                <li id="page-statisc" class="sidebar-item">
+                                    <a href="#" class="link-item">
+                                        <i class="fa-solid fa-chart-pie-simple-circle-dollar"></i>
+                                    </a>
+                                    <div class="speech">
+                                        Thống Kê
+                                    </div>
+                                </li>
+                                <li id="page-profile" class="sidebar-item">
+                                    <a href="#" class="link-item">
+                                        <i class="fa-solid fa-user"></i>
+                                    </a>
+                                    <div class="speech">
+                                        Hồ Sơ
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="sidebar-list border-top border-dark">
+                                <li id="page-setting" class="sidebar-item">
+                                    <a href="#" class="link-item">
+                                        <i class="fa-solid fa-gear"></i>
+                                    </a>
+                                    <div class="speech">
+                                        Cài Đặt
+                                    </div>
+                                </li>
+                                <li id="page-logout" class="sidebar-item">
+                                    <a href="#" class="link-item">
+                                        <i class="fa-solid fa-right-from-bracket"></i>
+                                    </a>
+                                    <div class="speech">
+                                        Đăng Xuất
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-11 ps-0" style="width: 94%;">
+                        <!-- Page Template -->
+                        <div id="page-content" style="width: 900px; height: 526px;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="../../public/lib/bootstrap-5.3.2-dist/js/bootstrap.min.js"></script>
+    <script src="../../public/lib/toast/toast.js"></script>
+    <script src="../../public/js/main.js"></script>
+    <script src="../../public/js/home.js"></script>
+    <script src="../../public/js/sidebar-init.js"></script>
+
+</body>
+
+</html>
