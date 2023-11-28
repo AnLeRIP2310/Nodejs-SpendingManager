@@ -1,3 +1,5 @@
+const urlapi = 'http://localhost:3962';
+
 // Page Home
 $('#page-home').click(function () {
     fetch('templates/home.hbs')
@@ -12,15 +14,29 @@ $('#page-home').click(function () {
 
 // Page Spending
 $('#page-spending').click(function () {
-    fetch('templates/spending.hbs')
-        .then(response => response.text())
-        .then(template => {
-            const compiledTemplate = Handlebars.compile(template);
-            const html = compiledTemplate();
-            $('#page-content').html(html);
-        })
-        .catch(error => console.error('Error:', error));
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/spending/getData',
+        success: function (res) {
+            fetch('templates/spending.hbs')
+                .then(response => response.text())
+                .then(template => {
+                    const compiledTemplate = Handlebars.compile(template);
+                    const html = compiledTemplate({
+                        spendingList: res.spendingList
+                    });
+                    $('#page-content').html(html);
+                })
+                .catch(error => console.error('Error:', error));
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
 })
+
+
+
 
 // Page Spendlist
 $('#page-spendlist').click(function () {

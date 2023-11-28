@@ -4,16 +4,19 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "start": "nodemon src/app.js"
+        "start": "nodemon src/app.js",
+        "wd": "electron ."
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
         "electron": "^27.1.2",
+        "electron-reloader": "^1.2.3",
         "nodemon": "^3.0.1"
     },
     "dependencies": {
         "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
         "express": "^4.18.2",
         "express-session": "^1.17.3",
         "nodemailer": "^6.9.7",

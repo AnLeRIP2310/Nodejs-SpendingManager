@@ -18,4 +18,13 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/spending', require('./routers/spendingRouter'))
 
 
-app.listen(port, () => console.log(`Server chạy trên http://localhost:${port}`));
+function startServer(callback) {
+    app.listen(port, () => {
+        console.log(`Server chạy trên http://localhost:${port}`);
+        if (callback) {
+            callback();
+        }
+    });
+}
+
+module.exports = { startServer };

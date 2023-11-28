@@ -5,7 +5,11 @@
                 <div class="col-5">
                     <div class="input-group">
                         <select class="form-select" id="SpendingList">
-                            <option value="1">Danh Sách Chi Tiêu</option>
+                            {{#if spendingList}}
+                            {{#each spendingList}}
+                            <option value="{{this.Id}}">{{this.NameList}}</option>
+                            {{/each}}
+                            {{/if}}
                         </select>
                         <button class="btn btn-secondary" type="button" data-bs-toggle="modal"
                             data-bs-target="#modalNewSpendingList">
@@ -146,3 +150,27 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal New SpendingList -->
+<div class="modal fade" id="modalNewSpendingList" tabindex="-1" aria-labelledby="modalNewSpendingList"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalNewSpendingList">Thêm Danh Sách Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input id="newSpendingList" type="text" class="form-control" placeholder="Tên Danh Sách Mới">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
+                <button id="btnSaveSpendingList" type="button" class="btn btn-primary"
+                    data-bs-dismiss="modal">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../../public/js/spending.js"></script>

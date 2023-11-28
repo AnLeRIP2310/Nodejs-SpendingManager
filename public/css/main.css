@@ -23,6 +23,10 @@
     bottom: -25px;
 }
 
+body {
+    overflow-x: hidden;
+}
+
 /* Đặt thanh trượt mặt định */
 ::-webkit-scrollbar {
     width: 7px;
