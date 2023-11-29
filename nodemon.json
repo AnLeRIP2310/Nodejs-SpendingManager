@@ -1,3 +1,7 @@
 {
-    "ext": "js, json, hbs"
+    "ext": "js, json",
+    "ignore": [
+        "data",
+        "SpendingDB.sqlite"
+    ]
 }

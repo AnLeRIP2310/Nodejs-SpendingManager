@@ -3,7 +3,9 @@ const path = require('path');
 const expressApp = require('./expressApp');
 
 try {
-    require('electron-reloader')(module);
+    require('electron-reloader')(module, {
+        ignored: "./data/SpendingDB.sqlite",
+    });
 } catch (_) { }
 
 let mainWindow;
@@ -16,9 +18,9 @@ app.whenReady().then(() => {
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 964,
-        height: 564,
-        resizable: false,
+        width: 950,
+        height: 558,
+        resizable: true,
         autoHideMenuBar: true,
         webPreferences: {
             nodeIntegration: true,

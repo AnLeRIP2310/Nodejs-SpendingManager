@@ -30,7 +30,7 @@
 
             <!-- Table  -->
             <div class="row pt-2" style="padding: 0 12px;">
-                <div class="tableFixHead overflow-auto">
+                <div id="tbContainer" class="tableFixHead overflow-auto">
                     <table id="tbdata" class="table table-sm table-hover border">
                         <thead class="table-light">
                             <tr>
@@ -53,10 +53,20 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody id="tbody">
-
-                        </tbody>
-
+                        <tbody id="tbody"></tbody>
+                        <script type="text/x-handlebars-template" id="template-tbody">
+                                %#if spendItemByList%
+                                %#each spendItemByList%
+                                    <tr class="pointer">
+                                        <th scope="row">%this.Id%</th>
+                                        <td>%this.AtUpdate%</td>
+                                        <td>%this.NameItem%</td>
+                                        <td>%this.Price%</td>
+                                        <td>%this.Details%</td>
+                                    </tr>
+                                %/each%
+                                %/if%
+                                </script>
                     </table>
                 </div>
             </div>
@@ -173,4 +183,5 @@
     </div>
 </div>
 
-<script src="../../../public/js/spending.js"></script>
+{{!-- xoá bớt ../ khi sử dụng electron --}}
+<script src="../../public/js/spending.js"></script>

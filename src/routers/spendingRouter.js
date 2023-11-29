@@ -1,8 +1,12 @@
 const express = require('express')
 const router = express.Router()
-const apiCtrl = require('../controllers/spendingController')
+const spendingCtrl = require('../controllers/spendingController')
 
-router.get('/getData', apiCtrl.getData)
-router.post('/insertSpendingList', apiCtrl.insertSpendingList)
+router.get('/getData', spendingCtrl.getData)
+router.post('/insertSpendList', spendingCtrl.insertSpendingList)
+router.post('/getSpendingForSpendList', spendingCtrl.getSpendingForSpendList)
+router.post('/insertSpending', spendingCtrl.insertSpending)
+router.post('/updateSpending', spendingCtrl.updateSpending)
+router.post('/deleteSpending', spendingCtrl.deleteSpending)
 
 module.exports = router

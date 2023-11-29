@@ -149,3 +149,13 @@
 .form__field:invalid {
     box-shadow: none;
 }
+
+
+/* ///////////////////////// */
+#btnClearData {
+    transition: all 0.2s ease;
+}
+
+#btnClearData:hover {
+    opacity: 0.8;
+}
