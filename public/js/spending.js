@@ -482,19 +482,16 @@ $('#btn-excel_export').click(function () {
 $('#btn-pdf_export').click(function () {
     const doc = new jsPDF();
 
+    // Lấy nội dung HTML của bảng
     const table = document.getElementById('tbdata');
 
-    // Tạo tệp PDF từ bảng với font Open Sans
+    // Tạo tệp PDF từ bảng
     doc.autoTable({
         html: table,
-        useCss: true,
-        margin: { top: 10 },
-        didDrawCell: function (data) {
-            // Thiết lập font cho từng cell trong bảng
-            doc.setFont('Open Sans');
-        }
+        useCss: false,
+        styles: { font: 'times' }
     });
 
     // Tải tệp PDF
-    doc.save('table.pdf');
-});
+    doc.save('Spending.pdf');
+})
