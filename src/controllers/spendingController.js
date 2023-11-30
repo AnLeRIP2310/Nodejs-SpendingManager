@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose()
-const db = new sqlite3.Database('./src/data/SpendingDB.sqlite');
-// const db = new sqlite3.Database('D:/LeThanhAn/Nodejs/SpendingDB.sqlite')
+// const db = new sqlite3.Database('./src/data/SpendingDB.sqlite');
+const db = new sqlite3.Database('D:/LeThanhAn/Nodejs/SpendingDB.sqlite')
 
 // truy vấn đồng bộ với sqlite sử dụng promise
 const query = (sql, params) => {
@@ -118,5 +118,40 @@ module.exports = {
         } catch (err) {
             console.log(err);
         }
+    },
+
+    calculateTotalPrice: async (req, res) => {
+        try {
+            var sql = 'SELECT SUM(Price) AS TotalPrice FROM SpendingItem WHERE Status = 1';
+            const result = await query(sql);
+            res.json({
+                success: true,
+                data: result[0].totalprice
+            })
+        } catch (err) {
+            console.log(err);
+        }
+    },
+
+    calculateItemPrice: async (req, res) => {
+        const { SpendName} = req.query;
+
+        try {
+            var sql = 'select count(*) as count from spendingitem where NameItem = ? and status = 1';
+            var params = [SpendName];
+            const countResult = await query(sql, params);
+            
+            sql = 'select sum(Price) as totalprice from spendingitem where NameItem = ? and status = 1';
+            const priceResult = await query(sql, params);
+
+            res.json({
+                success: true,
+                count: countResult[0].count,
+                price: priceResult[0].totalprice
+            })
+        } catch (err) {
+            console.log(err);
+        }
+        console.log(SpendName);
     },
 }
