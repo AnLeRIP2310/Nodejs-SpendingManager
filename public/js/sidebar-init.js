@@ -1,5 +1,6 @@
 const urlapi = 'http://localhost:3962';
 
+
 // Page Home
 $('#page-home').click(function () {
     fetch('templates/home.hbs')
@@ -34,9 +35,6 @@ $('#page-spending').click(function () {
         }
     })
 })
-
-
-
 
 // Page Spendlist
 $('#page-spendlist').click(function () {
@@ -89,4 +87,3 @@ $('#page-setting').click(function () {
 
 // Gọi event click của page-spending làm mặt định
 $('#page-spending').click();
-

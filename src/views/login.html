@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../../public/images/favicon.ico">
+    <link rel="stylesheet" href="../../public/lib/bootstrap-5.3.2-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/lib/fontawesome-6.4.2/css/all.css">
+    <link rel="stylesheet" href="../../public/lib/toast/toast.css">
+    <link rel="stylesheet" href="../../public/css/main.css">
+    <link rel="stylesheet" href="../../public/css/home.css">
+    <link rel="stylesheet" href="../../public/css/login.css">
+    <script src="../../public/lib/jquery-3.7.1/all.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="toast"></div>
+
+    <main class="bg-secondary">
+        <div class="auth-container ">
+            <div class="auth-content">
+                <!-- form login -->
+                <div class="auth-form-login">
+                    <div class="auth-form-title">Đăng Nhập</div>
+                    <div class="mt-3">
+                        <input id="login_username" type="text" class="form-control" placeholder="Tên đăng nhập">
+                    </div>
+                    <div class="mt-3">
+                        <input id="login_password" type="password" class="form-control" placeholder="Mật Khẩu">
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between">
+                        <div class="form-check">
+                            <input id="login_remember" type="checkbox" class="form-check-input">
+                            <label class="form-check-label" for="login_remember">Nhớ mật khẩu</label>
+                        </div>
+                        <a href="#" class="">Quên Mật Khẩu</a>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-center">
+                        <button id="btn-login" class="btn btn-primary w-50">Đăng Nhập</button>
+                    </div>
+                    <div class="mt-3">
+                        <p class="m-0 text-center">Chưa có tài khoản? <a id="link_register" href="#"> click vào đây</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- form register -->
+                <div class="auth-form-register">
+                    <div class="auth-form-title">Đăng Ký</div>
+                    <div class="mt-3">
+                        <input id="register_username" type="text" class="form-control" placeholder="Tên đăng nhập">
+                    </div>
+                    <div class="mt-3">
+                        <input id="register_password" type="password" class="form-control" placeholder="Mật khẩu">
+                    </div>
+                    <div class="mt-3">
+                        <input id="register_confirm" type="password" class="form-control" placeholder="Nhập lại mật khẩu">
+                    </div>
+                    <div class="mt-3 d-flex justify-content-center">
+                        <button id="btn-register" class="btn btn-primary w-50">Đăng Ký</button>
+                    </div>
+                    <div class="mt-3">
+                        <p class="m-0 text-center">Đã có tài khoản? <a id="link_login" href="#"> đăng nhập ngay</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+
+
+
+    <script>
+        // window.addEventListener('DOMContentLoaded', () => {
+        //     const { ipcRenderer } = window.electron;
+
+        //     // Lắng nghe sự kiện click của button
+        //     document.getElementById('clickButton').addEventListener('click', () => {
+        //         // Gửi thông điệp tới Main Process khi click vào button
+        //         ipcRenderer.send('login-success');
+        //     });
+        // });
+    </script>
+
+
+    <script src="../../public/lib/bootstrap-5.3.2-dist/js/bootstrap.min.js"></script>
+    <script src="../../public/lib/toast/toast.js"></script>
+    <script src="../../public/js/main.js"></script>
+    <script src="../../public/js/auth.js"></script>
+</body>
+
+</html>

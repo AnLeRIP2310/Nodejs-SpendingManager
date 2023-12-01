@@ -46,3 +46,26 @@ function convertPlaceHbs(template) {
     template = template.replace(/%log ([a-zA-Z0-9.]+)%/g, "{{log $1}}");
     return template;
 }
+
+
+function createCookie(name, value, lifeTime) {
+    var date = new Date();
+    date.setTime(date.getTime() + (lifeTime * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + date.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+function checkCookie(name) {
+    var cookieName = name + "=";
+    var moreCookies = document.cookie.split(';');
+    for (var i = 0; i < moreCookies.length; i++) {
+        var cookie = moreCookies[i];
+        while (cookie.charAt(0) == ' ') {
+            cookie = cookie.substring(1);
+        }
+        if (cookie.indexOf(cookieName) == 0) {
+            return true;
+        }
+    }
+    return false;
+}

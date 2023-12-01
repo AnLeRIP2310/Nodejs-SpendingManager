@@ -1,27 +1,4 @@
-const sqlite3 = require('sqlite3').verbose()
-// const db = new sqlite3.Database('./src/data/SpendingDB.sqlite');
-const db = new sqlite3.Database('D:/LeThanhAn/Nodejs/SpendingDB.sqlite')
-
-// truy vấn đồng bộ với sqlite sử dụng promise
-const query = (sql, params) => {
-    sql = sql.toLowerCase();
-    if (sql.startsWith('select')) {
-        return new Promise((resolve, reject) => {
-            db.all(sql, params, (err, rows) => {
-                if (err) reject(err);
-                resolve(rows);
-            });
-        });
-    } else {
-        return new Promise((resolve, reject) => {
-            db.run(sql, params, (err) => {
-                if (err) reject(err);
-                resolve(true);
-            });
-        });
-    }
-}
-
+const { db, query } = require('../configs/db');
 
 module.exports = {
     getData: async (req, res) => {
@@ -134,13 +111,13 @@ module.exports = {
     },
 
     calculateItemPrice: async (req, res) => {
-        const { SpendName} = req.query;
+        const { SpendName } = req.query;
 
         try {
             var sql = 'select count(*) as count from spendingitem where NameItem = ? and status = 1';
             var params = [SpendName];
             const countResult = await query(sql, params);
-            
+
             sql = 'select sum(Price) as totalprice from spendingitem where NameItem = ? and status = 1';
             const priceResult = await query(sql, params);
 
@@ -152,6 +129,5 @@ module.exports = {
         } catch (err) {
             console.log(err);
         }
-        console.log(SpendName);
     },
 }

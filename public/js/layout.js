@@ -1,3 +1,10 @@
+var ipcRenderer;
+
+if (window.electron && window.electron.ipcRenderer) {
+    ipcRenderer = window.electron.ipcRenderer;
+}
+
+
 // js thanh sidebar
 // Lấy tất cả các phần tử có class 'sidebar-item'
 const sidebarItems = document.querySelectorAll('.sidebar-item');
@@ -35,5 +42,36 @@ sidebarItems.forEach(item => {
     });
 });
 
+function checkIsLogin() {
+    // Kiểm tra xem người dùng đã đăng nhập chưa
+    if (localStorage.getItem('loginInfor') != null) {
+        const loginInfor = JSON.parse(localStorage.getItem('loginInfor'));
+
+        if (loginInfor.isLogin == true) {
+            var currentDate = new Date(formatDateForInput(formatDate(new Date()))).getTime();
+            var storedDate = new Date(formatDateForInput((loginInfor.timeslife))).getTime();
+
+            if (currentDate > storedDate) {
+                localStorage.removeItem('loginInfor');
+
+                // Gửi thông điệp đến main process
+                ipcRenderer.send('login-expired');
+            }
+        }
+    } else {
+        // Gửi thông điệp đến main process
+        ipcRenderer.send('login-expired');
+    }
+} checkIsLogin();
+
+// Btn đăng xuất
+$('#page-logout').click(() => {
+    console.log('Đã click');
+    
+    localStorage.removeItem('loginInfor');
+
+    // Gửi thông điệp đến main process
+    ipcRenderer.send('login-expired');
+})
 
 
