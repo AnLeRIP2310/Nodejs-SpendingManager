@@ -56,7 +56,7 @@ $('#btn-login').click(() => {
                 let currentDate = new Date();
 
                 const loginInfor = {
-                    isLogin: true,
+                    token: res.token,
                 }
 
                 if (remember == true) {
@@ -67,11 +67,13 @@ $('#btn-login').click(() => {
                     loginInfor.timeslife = formatDate(currentDate);
                 }
 
-                localStorage.setItem('loginInfor', JSON.stringify(loginInfor));
+                localStorage.setItem('AuthToken', JSON.stringify(loginInfor));
 
                 // Gửi thông điệp đến main process
                 ipcRenderer.send('login-success');
             } else {
+                $('#login_username').addClass('is-invalid');
+                $('#login_password').addClass('is-invalid');
                 showErrorToast('Sai tài khoản hoặc mật khẩu');
             }
         },
@@ -79,7 +81,7 @@ $('#btn-login').click(() => {
             console.log(err);
         }
     })
-})
+});
 
 // Btn đăng ký
 $('#btn-register').click(() => {
@@ -137,6 +139,13 @@ $('#register_username, #register_password, #register_confirm').on('keyup', funct
     }
 });
 
+// Clear class 'is-invalid' khi gõ phím
+$('#login_username, #login_password, #register_username, #register_password, #register_confirm').on('keyup', function () {
+    if($(this).hasClass('is-invalid')) {
+        $(this).removeClass('is-invalid');
+    }
+})
+
 // Gọi event Đăng Nhập nếu Enter 
 $('#login_username, #login_password').on('keyup', function (event) {
     if (event.keyCode == 13) {
@@ -144,9 +153,4 @@ $('#login_username, #login_password').on('keyup', function (event) {
         $('#btn-login').click();
     }
 });
-
-function test() {
-    const storedUser = JSON.parse(localStorage.getItem('loginInfor'));
-    console.log(storedUser);
-}
 

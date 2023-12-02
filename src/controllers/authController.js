@@ -1,4 +1,6 @@
 const { db, query } = require('../configs/db');
+const { v4: uuidv4 } = require('uuid'); // generator token
+const crypto = require('crypto');
 
 module.exports = {
     register: async (req, res) => {
@@ -28,10 +30,47 @@ module.exports = {
         try {
             var sql = 'select * from users where username = ? and password = ?';
             var params = [username, password];
-            const result = await query(sql, params);
+            const checkUsers = await query(sql, params);
 
-            if (result.length > 0) {
+            if (checkUsers.length > 0) {
+                sql = 'select * from authtoken where usersId = ?';
+                params = [checkUsers[0].id];
+                const checkToken = await query(sql, params);
+
+                var token;
+
+                if (checkToken.length == 0) {
+                    // nếu không có token, tạo token
+                    token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
+                    sql = 'insert into authtoken (usersId, Token) values (?, ?)';
+                    params = [checkUsers[0].id, token];
+                    await query(sql, params);
+                } else {
+                    // Nếu có token
+                    token = checkToken[0].Token; // Gán token vào biến
+                }
+
+                res.json({ success: true, token: token });
+            } else {
+                res.json({ success: false });
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    },
+
+    checkToken: async (req, res) => {
+        const { token } = req.query;
+
+        try {
+            var sql = 'select * from authtoken where Token = ?';
+            var params = [token];
+            const checkToken = await query(sql, params);
+
+            if (checkToken.length > 0) {
                 res.json({ success: true });
+            } else {
+                res.json({ success: false });
             }
         } catch (err) {
             console.error(err);

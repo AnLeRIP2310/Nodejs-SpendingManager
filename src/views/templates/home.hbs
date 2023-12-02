@@ -1,0 +1,30 @@
+<div class="container-fluid">
+    <div id="chart" style="width: 600px; height: 400px;"></div>
+</div>
+
+<script>
+    // Lấy phần tử HTML để vẽ biểu đồ
+    var chartDom = document.getElementById('chart');
+
+    // Khởi tạo biểu đồ
+    var myChart = echarts.init(chartDom);
+
+    // Dữ liệu và cấu hình biểu đồ
+    var option = {
+        // Cấu hình biểu đồ ở đây
+        xAxis: {
+            type: 'category',
+            data: ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [{
+            data: [20, 30, 40, 50, 60, 70, 80],
+            type: 'bar'
+        }]
+    };
+
+    // Sử dụng cấu hình để vẽ biểu đồ
+    myChart.setOption(option);
+</script>

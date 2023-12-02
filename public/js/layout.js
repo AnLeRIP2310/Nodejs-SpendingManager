@@ -44,31 +44,52 @@ sidebarItems.forEach(item => {
 
 function checkIsLogin() {
     // Kiểm tra xem người dùng đã đăng nhập chưa
-    if (localStorage.getItem('loginInfor') != null) {
-        const loginInfor = JSON.parse(localStorage.getItem('loginInfor'));
+    if (localStorage.getItem('AuthToken') != null) {
+        const AuthToken = JSON.parse(localStorage.getItem('AuthToken'));
 
-        if (loginInfor.isLogin == true) {
-            var currentDate = new Date(formatDateForInput(formatDate(new Date()))).getTime();
-            var storedDate = new Date(formatDateForInput((loginInfor.timeslife))).getTime();
+        // Kiểm tra token có chính xác không
+        if (AuthToken.token) {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:3962/auth/checkToken',
+                data: {
+                    token: AuthToken.token
+                },
+                success: function (res) {
+                    if (res.success) {
+                        // Kiểm tra xem token còn hiệu lực không
+                        var currentDate = new Date(formatDateForInput(formatDate(new Date()))).getTime();
+                        var storedDate = new Date(formatDateForInput((AuthToken.timeslife))).getTime();
 
-            if (currentDate > storedDate) {
-                localStorage.removeItem('loginInfor');
-
-                // Gửi thông điệp đến main process
-                ipcRenderer.send('login-expired');
-            }
+                        if (currentDate > storedDate) {
+                            localStorage.removeItem('AuthToken');
+                            // Gửi thông điệp đến main process
+                            ipcRenderer.send('login-expired');
+                        }
+                    } else {
+                        localStorage.removeItem('AuthToken');
+                        // Gửi thông điệp đến main process
+                        ipcRenderer.send('login-expired');
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        } else {
+            localStorage.removeItem('AuthToken');
+            // Gửi thông điệp đến main process
+            ipcRenderer.send('login-expired');
         }
-    } else {
-        // Gửi thông điệp đến main process
-        ipcRenderer.send('login-expired');
     }
+
 } checkIsLogin();
 
 // Btn đăng xuất
 $('#page-logout').click(() => {
     console.log('Đã click');
-    
-    localStorage.removeItem('loginInfor');
+
+    localStorage.removeItem('AuthToken');
 
     // Gửi thông điệp đến main process
     ipcRenderer.send('login-expired');

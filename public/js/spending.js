@@ -307,6 +307,88 @@ function spendingSuggest() {
 
 //#region Button Add, Update, Delete, Clear
 
+const OldData = [
+    {
+        "date": "2022-11-22T00:00:00",
+        "name": "Xăng",
+        "price": 50000,
+        "moreInfo": "Không có thông tin"
+    },
+    {
+        "date": "2022-11-22T00:00:00",
+        "name": "Thay Ruột Xe",
+        "price": 80000,
+        "moreInfo": "Không có thông tin"
+    },
+    {
+        "date": "2022-11-22T00:00:00",
+        "name": "Ăn Trưa",
+        "price": 20000,
+        "moreInfo": "Không có thông tin"
+    },
+    {
+        "date": "2022-11-22T00:00:00",
+        "name": "Ăn Tối",
+        "price": 20000,
+        "moreInfo": "Không có thông tin"
+    },
+    {
+        "date": "2022-11-22T00:00:00",
+        "name": "Nước",
+        "price": 10000,
+        "moreInfo": "Không có thông tin"
+    },
+]
+
+function test() {
+    OldData.forEach(function (item) {
+        const data = {
+            ListId: $('#SpendingList').val(),
+            Name: item.name,
+            Price: item.price,
+            Details: item.moreInfo,
+            AtCreate: item.date,
+            AtUpdate: item.date,
+            Status: 1
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: urlapi + '/spending/insertSpending',
+            data: data,
+            dataType: 'json',
+            contentype: 'application/json',
+            success: function (res) {
+                if (res.success == true) {
+                    // Dữ liệu trả về từ server
+                    const data = res.data[0];
+                    data.AtUpdate = formatDate(data.AtUpdate);
+    
+                    // Tạo HTML cho hàng mới
+                    var newRow = `<tr class ="pointer">
+                                    <th scope="row">${data.Id}</th>
+                                    <td>${data.AtUpdate}</td>
+                                    <td>${data.NameItem}</td>
+                                    <td>${formatCurrency(data.Price)}</td>
+                                    <td>${data.Details}</td>
+                                </tr>`;
+                    // Thêm hàng mới vào bảng
+                    $('#tbdata tbody').append(newRow);
+    
+                    scrollTableToBottom(); // cuộn xuống cuối
+                    handleRowClickEvent(); // gắn sự kiện click cho row
+                    calculateTotalPrice() // Tính tổng tiền trên danh sách
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    });
+}
+
+
+
 // nút thêm dữ liệu vào bảng
 $('#btnCreate').on('click', function () {
     const data = {
@@ -351,7 +433,7 @@ $('#btnCreate').on('click', function () {
             console.log(err);
         }
     });
-})
+});
 
 // nút cập nhật dữ liệu trong bảng
 $('#btnUpdate').on('click', function () {
@@ -458,20 +540,6 @@ $('#spendName, #spendPrice, #spendDetails').on('keyup', function (event) {
 
 //#endregion
 
-
-function onPageLoad() {
-    // Đặt thời gian mặt định cho thẻ input
-    $('#spendDate').val(formatDateForInput(formatDate(new Date())));
-
-    // Hiển thị danh sách chi tiêu
-    displaySpendingItems();
-
-    // cuộn bảng xuống dưới
-    scrollTableToBottom();
-} onPageLoad();
-
-
-
 // Nút Xuất file Excel
 $('#btn-excel_export').click(function () {
     const table = document.getElementById('tbdata');
@@ -479,6 +547,7 @@ $('#btn-excel_export').click(function () {
     XLSX.writeFile(wb, 'SpendingData.xlsx');
 })
 
+// Nút xuất file PDF
 $('#btn-pdf_export').click(function () {
     const doc = new jsPDF();
 
@@ -495,3 +564,15 @@ $('#btn-pdf_export').click(function () {
     // Tải tệp PDF
     doc.save('Spending.pdf');
 })
+
+
+function onPageLoad() {
+    // Đặt thời gian mặt định cho thẻ input
+    $('#spendDate').val(formatDateForInput(formatDate(new Date())));
+
+    // Hiển thị danh sách chi tiêu
+    displaySpendingItems();
+
+    // cuộn bảng xuống dưới
+    scrollTableToBottom();
+} onPageLoad();
