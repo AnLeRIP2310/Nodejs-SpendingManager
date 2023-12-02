@@ -14,6 +14,7 @@ $('#btnSaveSpendingList').on('click', function () {
 // Hàm thêm một danh sách mới
 function addSpendingList() {
     const data = {
+        token: JSON.parse(localStorage.getItem('AuthToken')).token,
         namelist: $('#newSpendingList').val(),
         atcreate: formatDate(new Date()),
         status: 1
@@ -400,6 +401,11 @@ $('#btnCreate').on('click', function () {
         AtUpdate: $('#spendDate').val(),
         Status: 1,
     };
+
+    if(data.ListId == null){
+        showWarningToast('Chưa có danh sách nào được chọn');
+        return;
+    }
 
     $.ajax({
         type: 'POST',

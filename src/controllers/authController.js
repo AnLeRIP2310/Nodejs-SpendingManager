@@ -34,7 +34,7 @@ module.exports = {
 
             if (checkUsers.length > 0) {
                 sql = 'select * from authtoken where usersId = ?';
-                params = [checkUsers[0].id];
+                params = [checkUsers[0].Id];
                 const checkToken = await query(sql, params);
 
                 var token;
@@ -43,7 +43,7 @@ module.exports = {
                     // nếu không có token, tạo token
                     token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
                     sql = 'insert into authtoken (usersId, Token) values (?, ?)';
-                    params = [checkUsers[0].id, token];
+                    params = [checkUsers[0].Id, token];
                     await query(sql, params);
                 } else {
                     // Nếu có token

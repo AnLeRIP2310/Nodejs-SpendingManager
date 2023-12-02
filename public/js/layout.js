@@ -81,8 +81,10 @@ function checkIsLogin() {
             // Gửi thông điệp đến main process
             ipcRenderer.send('login-expired');
         }
+    } else {
+        // Gửi thông điệp đến main process
+        ipcRenderer.send('login-expired');
     }
-
 } checkIsLogin();
 
 // Btn đăng xuất
@@ -90,7 +92,6 @@ $('#page-logout').click(() => {
     console.log('Đã click');
 
     localStorage.removeItem('AuthToken');
-
     // Gửi thông điệp đến main process
     ipcRenderer.send('login-expired');
 })

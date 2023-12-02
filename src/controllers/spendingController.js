@@ -11,13 +11,23 @@ module.exports = {
     },
 
     insertSpendingList: async (req, res) => {
-        const { namelist, atcreate, status } = req.body;
+        const { token, namelist, atcreate, status } = req.body;
 
         try {
-            var sql = 'insert into spendinglist (namelist, atcreate, status) values (?, ?, ?)';
-            var params = [namelist, atcreate, status];
+            var sql = 'select * from AuthToken where token = ?';
+            var params = [token];
+            const checkToken = await query(sql, params);
+            const UserId = checkToken[0].UsersId;
+
+            sql = 'insert into spendinglist (usersId, namelist, atcreate, status) values (?, ?, ?, ?)';
+            params = [UserId, namelist, atcreate, status];
             const result = await query(sql, params);
-            res.json({ success: result });
+
+            if (result) {
+                res.json({ success: true });
+            } else {
+                res.json({ success: false });
+            }
         } catch (err) {
             console.error(err);
         }
