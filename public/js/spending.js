@@ -66,6 +66,17 @@ $('#SpendingList').on('change', function () {
     displaySpendingItems();
 });
 
+// // Gọi sự kiện khi có tìm kiếm
+// $('#txtSearch').on('input', function () {
+//     // Đặt lại mặt định
+//     tblOffset = 0;
+//     lastScrollHeight = 0;
+//     // Clear dữ liệu cũ
+//     $('#tbody').empty();
+
+//     displaySpendingItems();
+// });
+
 // Tải thêm spending khi cuộn table
 $('#tbContainer').scroll(function () {
     if ($('#tbContainer').scrollTop() === 0) {
@@ -79,14 +90,17 @@ $('#tbContainer').scroll(function () {
 
 // Hàm hiển thị spending cho spendlist
 function displaySpendingItems() {
-    const IdList = $('#SpendingList').val();
+    const data = {
+        IdList: $('#SpendingList').val(),
+        tblOffset: tblOffset,
+        tbLimit: tbLimit,
+        SearchKey: $('#txtSearch').val()
+    }
 
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: urlapi + '/spending/getSpendingForSpendList',
-        data: { IdList, tblOffset, tbLimit },
-        dataType: 'json',
-        contentype: 'application/json',
+        data: data,
         success: function (response) {
             // Đảo ngược thứ tự của mảng response.data
             var SpendingData = response.data.reverse();
@@ -152,7 +166,9 @@ function displayRowInfo(row) {
 
 // Hàm xử lý sự kiện khi click vào một hàng trong bảng
 function handleRowClick(row) {
-    var expenseType = row.cells[2].innerText.toLowerCase();
+    var expenseType = row.cells[2].innerText;
+
+    console.log(expenseType);
 
     calculateItemPrice(expenseType);
 }
@@ -196,53 +212,6 @@ function calculateItemPrice(SpendName) {
         }
     })
 }
-
-
-//#region Search Table
-
-// Hàm tìm kiếm trên table
-function searchTable() {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("txtSearch");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("tbdata");
-    tr = table.getElementsByTagName("tr");
-
-    for (i = 0; i < tr.length; i++) {
-        var visible = false; // Đặt biến để kiểm soát việc hiển thị
-
-        // Duyệt qua tất cả các ô trong mỗi dòng
-        for (var j = 0; j < tr[i].cells.length; j++) {
-            td = tr[i].cells[j];
-            if (td) {
-                // Nếu dòng đang xét không phải là dòng tiêu đề, thực hiện tìm kiếm thông thường
-                if (i > 0) {
-                    txtValue = td.textContent || td.innerText;
-                    // Nếu tìm thấy từ khóa trong bất kỳ cột nào, đặt biến visible thành true và thoát vòng lặp
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        visible = true;
-                        break;
-                    }
-                } else {
-                    // Nếu dòng đang xét là dòng tiêu đề, hiển thị nó luôn
-                    visible = true;
-                }
-            }
-        }
-
-        // Thiết lập hiển thị dựa trên giá trị của biến visible
-        tr[i].style.display = visible ? "" : "none";
-    }
-}
-// Gọi hàm tìm kiếm
-$('#txtSearch').on('keyup', function () {
-    searchTable();
-});
-$('#txtSearch').on('blur', function () {
-    searchTable();
-});
-
-//#endregion
 
 
 //#region Auto Complete
@@ -308,87 +277,6 @@ function spendingSuggest() {
 
 //#region Button Add, Update, Delete, Clear
 
-const OldData = [
-    {
-        "date": "2022-11-22T00:00:00",
-        "name": "Xăng",
-        "price": 50000,
-        "moreInfo": "Không có thông tin"
-    },
-    {
-        "date": "2022-11-22T00:00:00",
-        "name": "Thay Ruột Xe",
-        "price": 80000,
-        "moreInfo": "Không có thông tin"
-    },
-    {
-        "date": "2022-11-22T00:00:00",
-        "name": "Ăn Trưa",
-        "price": 20000,
-        "moreInfo": "Không có thông tin"
-    },
-    {
-        "date": "2022-11-22T00:00:00",
-        "name": "Ăn Tối",
-        "price": 20000,
-        "moreInfo": "Không có thông tin"
-    },
-    {
-        "date": "2022-11-22T00:00:00",
-        "name": "Nước",
-        "price": 10000,
-        "moreInfo": "Không có thông tin"
-    },
-]
-
-function test() {
-    OldData.forEach(function (item) {
-        const data = {
-            ListId: $('#SpendingList').val(),
-            Name: item.name,
-            Price: item.price,
-            Details: item.moreInfo,
-            AtCreate: item.date,
-            AtUpdate: item.date,
-            Status: 1
-        }
-
-        $.ajax({
-            type: 'POST',
-            url: urlapi + '/spending/insertSpending',
-            data: data,
-            dataType: 'json',
-            contentype: 'application/json',
-            success: function (res) {
-                if (res.success == true) {
-                    // Dữ liệu trả về từ server
-                    const data = res.data[0];
-                    data.AtUpdate = formatDate(data.AtUpdate);
-    
-                    // Tạo HTML cho hàng mới
-                    var newRow = `<tr class ="pointer">
-                                    <th scope="row">${data.Id}</th>
-                                    <td>${data.AtUpdate}</td>
-                                    <td>${data.NameItem}</td>
-                                    <td>${formatCurrency(data.Price)}</td>
-                                    <td>${data.Details}</td>
-                                </tr>`;
-                    // Thêm hàng mới vào bảng
-                    $('#tbdata tbody').append(newRow);
-    
-                    scrollTableToBottom(); // cuộn xuống cuối
-                    handleRowClickEvent(); // gắn sự kiện click cho row
-                    calculateTotalPrice() // Tính tổng tiền trên danh sách
-                }
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        });
-    });
-}
-
-
 
 // nút thêm dữ liệu vào bảng
 $('#btnCreate').on('click', function () {
@@ -402,7 +290,7 @@ $('#btnCreate').on('click', function () {
         Status: 1,
     };
 
-    if(data.ListId == null){
+    if (data.ListId == null) {
         showWarningToast('Chưa có danh sách nào được chọn');
         return;
     }

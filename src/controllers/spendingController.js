@@ -34,17 +34,24 @@ module.exports = {
     },
 
     getSpendingForSpendList: async (req, res) => {
-        const { IdList, tblOffset, tbLimit } = req.body;
+        const { IdList, tblOffset, tbLimit, SearchKey } = req.query;
 
         try {
             var sql = 'SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 ORDER BY Id DESC LIMIT ? OFFSET ?';
             var params = [IdList, tbLimit, tblOffset];
-            const result = await query(sql, params);
-            res.json({
-                success: true,
-                data: result
-            });
+            const dataResult = await query(sql, params);
 
+            if (SearchKey != '') {
+                sql = `SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 AND 
+                    (NameItem LIKE ? OR Details LIKE ? OR AtCreate Like ? OR AtUpdate Like ?) 
+                    ORDER BY Id DESC LIMIT ? OFFSET ?`;
+                params = [IdList, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, tbLimit, tblOffset];
+                const dataResultSearch = await query(sql, params);
+
+                res.json({ success: true, data: dataResultSearch });
+            } else {
+                res.json({ success: true, data: dataResult });
+            }
         } catch (err) {
             console.error(err);
         }

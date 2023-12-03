@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose()
-const db = new sqlite3.Database('./src/data/SpendingDB.sqlite');
-// const db = new sqlite3.Database('D:/LeThanhAn/Nodejs/SpendingDB.sqlite')
+// const db = new sqlite3.Database('./src/data/SpendingDB.sqlite');
+const db = new sqlite3.Database('D:/LeThanhAn/Nodejs/SpendingDB.sqlite')
 
 // truy vấn đồng bộ với sqlite sử dụng promise hỗ trợ (CURD)
 const query = (sql, params) => {
