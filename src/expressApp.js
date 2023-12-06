@@ -17,6 +17,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Router
 app.use('/spending', require('./routers/spendingRouter'))
 app.use('/auth', require('./routers/authRouter'))
+app.use('/home', require('./routers/homeRouter'))
 
 
 function startServer(callback) {

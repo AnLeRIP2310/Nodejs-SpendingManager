@@ -1,3 +1,4 @@
+
 //#region Add SpendList
 
 // gọi hàm addSpendingList khi tương tác
@@ -52,41 +53,8 @@ function scrollTableToBottom() {
 //#region Spending Data For Table
 
 var tblOffset = 0; // Vị trí bắt đầu của dữ liệu cần tải
-const tbLimit = 15; // Số lượng tin nhắn cần lấy mỗi lần
+var tbLimit = 15; // Số lượng tin nhắn cần lấy mỗi lần
 var lastScrollHeight = 0; // Lưu lại chiều cao trước khi thêm dữ liệu mới
-
-// gọi sự kiện hàm hiển thị
-$('#SpendingList').on('change', function () {
-    // Đặt lại mặt định
-    tblOffset = 0;
-    lastScrollHeight = 0;
-    // Clear dữ liệu cũ
-    $('#tbody').empty();
-
-    displaySpendingItems();
-});
-
-// // Gọi sự kiện khi có tìm kiếm
-// $('#txtSearch').on('input', function () {
-//     // Đặt lại mặt định
-//     tblOffset = 0;
-//     lastScrollHeight = 0;
-//     // Clear dữ liệu cũ
-//     $('#tbody').empty();
-
-//     displaySpendingItems();
-// });
-
-// Tải thêm spending khi cuộn table
-$('#tbContainer').scroll(function () {
-    if ($('#tbContainer').scrollTop() === 0) {
-        // Lưu lại chiều cao trước khi thêm dữ liệu mới
-        lastScrollHeight = $('#tbContainer')[0].scrollHeight;
-
-        // Gửi yêu cầu để lấy dữ liệu cũ hơn từ máy chủ
-        displaySpendingItems();
-    }
-});
 
 // Hàm hiển thị spending cho spendlist
 function displaySpendingItems() {
@@ -129,12 +97,47 @@ function displaySpendingItems() {
 
             handleRowClickEvent(); // Thêm sự kiện click cho các row
             calculateTotalPrice(); //Gọi hàm tính tổng
+            spendingSuggest() // Tạo danh sách gợi ý từ
         },
         error: function (err) {
             console.log(err);
         }
     });
 }
+
+// Hàm reset giá trị và gọi hàm hiển thị
+function resetAndDisplayItems() {
+    tblOffset = 0; lastScrollHeight = 0;
+    $('#tbody').empty();
+    displaySpendingItems();
+}
+// gọi sự kiện hàm hiển thị
+$('#SpendingList').on('change', function () {
+    resetAndDisplayItems()
+});
+// Gọi sự kiện khi có tìm kiếm
+$('#txtSearch').on('input', function () {
+    resetAndDisplayItems()
+});
+$('#txtSearch').on('blur', function () {
+    resetAndDisplayItems()
+});
+$('#txtSearch').on('keyup', function (event) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        resetAndDisplayItems()
+    }
+});
+// Tải thêm spending khi cuộn table
+$('#tbContainer').scroll(function () {
+    if ($('#tbContainer').scrollTop() === 0) {
+        // Lưu lại chiều cao trước khi thêm dữ liệu mới
+        lastScrollHeight = $('#tbContainer')[0].scrollHeight;
+
+        // Gửi yêu cầu để lấy dữ liệu cũ hơn từ máy chủ
+        displaySpendingItems();
+    }
+});
 
 //#endregion
 
@@ -217,60 +220,56 @@ function calculateItemPrice(SpendName) {
 //#region Auto Complete
 
 // Hàm tạo danh sách auto complete
-function getExpenseNames() {
-    // Lấy danh sách các hàng trong tbody
-    const tableBody = document.getElementById('tbody');
-    const rows = tableBody.getElementsByTagName('tr');
-
-    // Mảng chứa tên các khoản chi
-    const expenseNames = [];
-
-    // Lặp qua từng hàng để lấy tên khoản chi từ cột thứ 2 (index 1)
-    for (let i = 0; i < rows.length; i++) {
-        const cols = rows[i].getElementsByTagName('td');
-        if (cols.length > 1) {
-            // Thêm tên khoản chi vào mảng
-            expenseNames.push(cols[1].innerText);
+function getListNameSpending(callback) {
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/spending/getListNameSpending',
+        success: function (res) {
+            // Gộp các tên trùng lặp thành một mảng duy nhất
+            const uniqueExpenseNames = Array.from(new Set(res.data));
+            // Gọi hàm callback và truyền dữ liệu về cho nó
+            callback(uniqueExpenseNames);
+        },
+        error: function (err) {
+            console.log(err);
         }
-    }
-    // Gộp các tên trùng lặp thành một mảng duy nhất
-    const uniqueExpenseNames = Array.from(new Set(expenseNames));
-
-    return uniqueExpenseNames;
+    })
 }
 
 // hàm gợi ý từ trong field
 function spendingSuggest() {
-    var data = getExpenseNames();
+    // Gọi getListNameSpending và sử dụng dữ liệu trả về trong callback
+    getListNameSpending(function (data) {
+        $("#spendName").autoComplete({
+            minChars: 1,
+            source: function (term, suggest) {
+                term = term.toLowerCase();
+                var suggestions = [];
+                for (var i = 0; i < data.length; i++) {
+                    if (~data[i].toLowerCase().indexOf(term)) {
+                        suggestions.push(data[i]);
+                    }
+                }
+                suggest(suggestions);
+            }
+        });
 
-    $("#spendName").autoComplete({
-        minChars: 1,
-        source: function (term, suggest) {
-            term = term.toLowerCase();
-            var suggestions = [];
-            for (var i = 0; i < data.length; i++) {
-                if (~data[i].toLowerCase().indexOf(term)) {
-                    suggestions.push(data[i]);
+        // Lắng nghe sự kiện khi người dùng nhấn Tab
+        $("#spendName").on("keydown", function (e) {
+            if (e.key === "Tab") {
+                //e.preventDefault();
+                var suggestionsList = $(".autocomplete-suggestions");
+                if (suggestionsList.length > 0) {
+                    var matchingSuggestion = suggestionsList.find(".autocomplete-suggestion").first();
+                    if (matchingSuggestion.length > 0) {
+                        matchingSuggestion.click();
+                    }
                 }
             }
-            suggest(suggestions);
-        }
-    });
-
-    // Lắng nghe sự kiện khi người dùng nhấn Tab
-    $("#spendName").on("keydown", function (e) {
-        if (e.key === "Tab") {
-            //e.preventDefault();
-            var suggestionsList = $(".autocomplete-suggestions");
-            if (suggestionsList.length > 0) {
-                var matchingSuggestion = suggestionsList.find(".autocomplete-suggestion").first();
-                if (matchingSuggestion.length > 0) {
-                    matchingSuggestion.click();
-                }
-            }
-        }
+        });
     });
 }
+
 
 //#endregion
 
@@ -283,7 +282,7 @@ $('#btnCreate').on('click', function () {
     const data = {
         ListId: $('#SpendingList').val(),
         Name: $('#spendName').val(),
-        Price: $('#spendPrice').val(),
+        Price: $('#spendPrice').val() + '000',
         Details: ($('#spendDetails').val() === null || $('#spendDetails').val() === "") ? "Không có thông tin" : $('#spendDetails').val(),
         AtCreate: $('#spendDate').val(),
         AtUpdate: $('#spendDate').val(),
@@ -321,6 +320,7 @@ $('#btnCreate').on('click', function () {
                 scrollTableToBottom(); // cuộn xuống cuối
                 handleRowClickEvent(); // gắn sự kiện click cho row
                 calculateTotalPrice() // Tính tổng tiền trên danh sách
+                $('#btnClearData').click() // Xoá dữ liệu trên field
             }
         },
         error: function (err) {
@@ -367,6 +367,7 @@ $('#btnUpdate').on('click', function () {
                 foundRow.find('td').eq(3).text(data.Details);
 
                 calculateTotalPrice() // Tính tổng tiền trên danh sách
+                $('#btnClearData').click() // Xoá dữ liệu trên field
             }
         },
         error: function (err) {
@@ -405,6 +406,7 @@ $('#btnDelete').on('click', function () {
                 foundRow.remove();
 
                 calculateTotalPrice() // Tính tổng tiền trên danh sách
+                $('#btnClearData').click() // Xoá dữ liệu trên field
             }
         },
         error: function (err) {

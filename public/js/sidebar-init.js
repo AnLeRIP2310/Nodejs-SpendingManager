@@ -85,5 +85,6 @@ $('#page-setting').click(function () {
 })
 
 
-// Gọi event click của page-spending làm mặt định
-$('#page-spending').click();
+// Gọi Page mặt định
+// $('#page-spending').click();
+$('#page-home').click();

@@ -57,6 +57,18 @@ module.exports = {
         }
     },
 
+    getListNameSpending: async (req, res) => {
+        try {
+            var sql = 'SELECT NameItem FROM SpendingItem Where Status = 1';
+            const result = await query(sql);
+            // Xử lý kết quả để lấy danh sách các tên
+            const names = result.map(item => item.NameItem);
+            res.json({ success: true, data: names });
+        } catch (err) {
+            console.log(err)
+        }
+    },
+
     insertSpending: async (req, res) => {
         const { ListId, Name, Price, Details, AtCreate, AtUpdate, Status } = req.body;
 

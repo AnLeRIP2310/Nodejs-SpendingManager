@@ -21,7 +21,7 @@
                 <div class="col-7">
                     <div class="input-group">
                         <input id="txtSearch" type="search" class="form-control" placeholder="Nhập từ khoá tìm kiếm">
-                        <button class="btn btn-secondary" type="button" onclick="searchTable()">
+                        <button class="btn btn-secondary" type="button" onclick="displaySpendingItems()">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </div>
@@ -30,7 +30,7 @@
 
             <!-- Table  -->
             <div class="row pt-2" style="padding: 0 12px;">
-                <div id="tbContainer" class="tableFixHead overflow-auto">
+                <div id="tbContainer" class="tableScroll overflow-auto" style="height: 455px;">
                     <table id="tbdata" class="table table-sm table-hover border">
                         <thead class="table-light">
                             <tr>

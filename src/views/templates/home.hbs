@@ -1,30 +1,60 @@
 <div class="container-fluid">
-    <div id="chart" style="width: 600px; height: 400px;"></div>
+    <div class="row border-bottom border-black" style="padding: 12px 0;">
+        <div class="col">
+            <div class="d-flex flex-column border border-black rounded-2">
+                <strong class="text-center fs-5">Hôm Nay</strong>
+                <small id="total_today" class="text-center text-success fs-6 fw-bold">0 đ</small>
+            </div>
+        </div>
+        <div class="col">
+            <div class="d-flex flex-column border border-black rounded-2">
+                <strong class="text-center fs-5">Hôm Qua</strong>
+                <small id="total_yesterday" class="text-center text-success fs-6 fw-bold">0 đ</small>
+            </div>
+        </div>
+        <div class="col">
+            <div class="d-flex flex-column border border-black rounded-2">
+                <strong class="text-center fs-5">Tuần Này</strong>
+                <small id="total_thisweek" class="text-center text-success fs-6 fw-bold">0 đ</small>
+            </div>
+        </div>
+        <div class="col">
+            <div class="d-flex flex-column border border-black rounded-2">
+                <strong class="text-center fs-5">Tuần Trước</strong>
+                <small id="total_lastweek" class="text-center text-success fs-6 fw-bold">0 đ</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-8 border-end border-black p-0">
+            <div id="chart" style="width: 100%; height: 100%; "></div>
+        </div>
+
+        <div class="col-4" style="padding-top: 12px">
+            <div class="tableScroll" style="height: 423px;">
+                <table class="table table-sm table-hover border">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Tên Khoản Chi</th>
+                            <th scope="col">Số Tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-totalPerSpendItem"></tbody>
+                    <script type="text/x-handlebars-template" id="template-totalPerSpendItem">
+                        %#if totalPerSpendItem%
+                        %#each totalPerSpendItem%
+                        <tr class="pointer">
+                            <td style="white-space: nowrap;">%this.NameItem%</td>
+                            <td>%this.totalprice%</td>
+                        </tr>
+                        %/each%
+                        %/if%
+                    </script>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script>
-    // Lấy phần tử HTML để vẽ biểu đồ
-    var chartDom = document.getElementById('chart');
-
-    // Khởi tạo biểu đồ
-    var myChart = echarts.init(chartDom);
-
-    // Dữ liệu và cấu hình biểu đồ
-    var option = {
-        // Cấu hình biểu đồ ở đây
-        xAxis: {
-            type: 'category',
-            data: ['A', 'B', 'C', 'D', 'E', 'F', 'G']
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [{
-            data: [20, 30, 40, 50, 60, 70, 80],
-            type: 'bar'
-        }]
-    };
-
-    // Sử dụng cấu hình để vẽ biểu đồ
-    myChart.setOption(option);
-</script>
+<script src="../../public/js/home.js"></script>

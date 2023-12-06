@@ -70,23 +70,11 @@
 
 /* ------------------- */
 
-.tableFixHead {
-    height: 455px;
-    margin-bottom: 10px;
-    padding: 0;
-}
-
-.tableFixHead thead th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
-
 .table {
     margin-bottom: 0;
 }
 
-table {
+/* table {
     border-collapse: collapse;
     width: 100%;
 }
@@ -98,15 +86,16 @@ td {
 
 th {
     background: #eee;
+} */
+
+.tableScroll {
+    margin-bottom: 10px;
+    padding: 0;
+    overflow: auto;
 }
 
-
-.btn-sort {
-    border: none;
-    background-color: transparent;
-    font-weight: 600;
-}
-
-.btn-sort:hover {
-    opacity: 0.7;
+.tableScroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }

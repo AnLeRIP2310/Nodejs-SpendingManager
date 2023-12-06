@@ -159,3 +159,17 @@
 #btnClearData:hover {
     opacity: 0.8;
 }
+
+
+
+/* -------Home Page------------ */
+
+.btn-sort {
+    border: none;
+    background-color: transparent;
+    font-weight: 600;
+}
+
+.btn-sort:hover {
+    opacity: 0.7;
+}
