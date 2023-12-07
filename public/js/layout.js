@@ -8,7 +8,26 @@ if (window.electron && window.electron.ipcRenderer) {
 // js thanh sidebar
 // Lấy tất cả các phần tử có class 'sidebar-item'
 const sidebarItems = document.querySelectorAll('.sidebar-item');
+const sidebarItemE = document.querySelectorAll('.sidebar-item-e');
 
+sidebarItemE.forEach(item => {
+    item.onmouseenter = function () {
+        const speech = this.querySelector('.speech');
+        speech.style.animation = 'slideIn 0.3s ease forwards';
+        speech.style.opacity = '1';
+        speech.addEventListener('animationend', function () {
+            speech.style.animation = ''; // Reset animation khi hoàn thành
+        }, { once: true }); // Sử dụng { once: true } để chỉ chạy một lần
+    };
+
+    item.onmouseleave = function () {
+        const speech = this.querySelector('.speech');
+        speech.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => {
+            speech.style.opacity = '0'; // Thiết lập opacity sau khi animation hoàn thành
+        }, 300);
+    };
+});
 // Lặp qua từng phần tử và thêm các sự kiện hover và rời khỏi
 sidebarItems.forEach(item => {
     item.onmouseenter = function () {
@@ -96,4 +115,59 @@ $('#page-logout').click(() => {
     ipcRenderer.send('login-expired');
 })
 
+
+// $(document).tooltip()
+
+
+
+
+
+// Load Setting App
+function loadSettingApp() {
+    // Kiểm tra xem đã tồn tại cấu hình cài đặt chưa
+    if (localStorage.getItem('SettingApp') == null) {
+        const userSetting = {
+            darkMode: false,
+            defalutPage: 'home',
+            defaultAction: 'add',
+            language: 'vi',
+            tooltip: true
+        }
+
+        localStorage.setItem('SettingApp', JSON.stringify(userSetting));
+    }
+
+    // Áp dụng cài đặt
+    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
+
+    if (SettingApp.darkMode) {
+        $('#darkModeToggle').prop('checked', true);
+
+        // Áp dụng các thuột tính dark mode
+        $('html').attr('data-bs-theme', 'dark');
+        $('#appcontainer').addClass('bg-secondary-subtle')
+        $('#appcontainer').removeClass('bg-black');
+        $('.table').addClass('table-dark');
+        $('#appcontent').addClass('bg-black');
+        $('#appcontent').removeClass('bg-white');
+        $('.sidebar').addClass('bg-secondary');
+    } else {
+        $('html').attr('data-bs-theme', 'light');
+        $('#appcontainer').removeClass('bg-secondary-subtle')
+        $('#appcontainer').addClass('bg-black');
+        $('.table').removeClass('table-dark');
+        $('#appcontent').addClass('bg-white');
+        $('#appcontent').removeClass('bg-black');
+        $('.sidebar').removeClass('bg-secondary');
+    }
+
+} loadSettingApp();
+
+// sự kiện bật tắt darkmode
+$('#darkModeToggle').on('change', function () {
+    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
+    SettingApp.darkMode = this.checked;
+    localStorage.setItem('SettingApp', JSON.stringify(SettingApp));
+    loadSettingApp();
+});
 

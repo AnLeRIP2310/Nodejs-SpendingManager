@@ -1,6 +1,5 @@
 const urlapi = 'http://localhost:3962';
 
-
 // Page Home
 $('#page-home').click(function () {
     fetch('templates/home.hbs')
@@ -73,18 +72,21 @@ $('#page-profile').click(function () {
 })
 
 // Page Setting
-$('#page-setting').click(function () {
-    fetch('templates/setting.hbs')
-        .then(response => response.text())
-        .then(template => {
-            const compiledTemplate = Handlebars.compile(template);
-            const html = compiledTemplate();
-            $('#page-content').html(html);
-        })
-        .catch(error => console.error('Error:', error));
-})
+// $('#page-setting').click(function () {
+//     fetch('templates/setting.hbs')
+//         .then(response => response.text())
+//         .then(template => {
+//             const compiledTemplate = Handlebars.compile(template);
+//             const html = compiledTemplate();
+//             $('#page-content').html(html);
+//         })
+//         .catch(error => console.error('Error:', error));
+// })
 
 
 // Gọi Page mặt định
-// $('#page-spending').click();
-$('#page-home').click();
+$('#page-spending').click();
+// $('#page-home').click();
+
+var offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasSetting'));
+offcanvas.show()

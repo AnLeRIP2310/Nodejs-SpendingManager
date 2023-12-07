@@ -21,13 +21,15 @@
 
 <body>
     <main>
-        <div class="d-flex justify-content-center align-items-center bg-black" style="height: 100vh;">
-            <div class="bg-white">
+        <div id="appcontainer" class="d-flex justify-content-center align-items-center bg-black" style="height: 100vh;">
+            <div id="appcontent" class="">
                 <div id="toast"></div>
 
+                <!-- MainContent -->
                 <div class="row">
-                    <div class="col-auto pe-0" style="margin-left: 2px;">
-                        <div class="sidebar border-end border-dark">
+                    <!-- sidebar -->
+                    <div class="col-auto pe-0">
+                        <div class="sidebar  border-end border-dark" style="padding-left: 1px;">
                             <ul class="sidebar-list">
                                 <li id="page-home" class="sidebar-item">
                                     <a href="#" class="link-item">
@@ -72,15 +74,16 @@
                             </ul>
 
                             <ul class="sidebar-list border-top border-dark">
-                                <li id="page-setting" class="sidebar-item">
-                                    <a href="#" class="link-item">
+                                <li id="page-setting" class="sidebar-item-e">
+                                    <a href="#offcanvasSetting" class="link-item" data-bs-toggle="offcanvas"
+                                        aria-controls="offcanvasSetting">
                                         <i class="fa-solid fa-gear"></i>
                                     </a>
                                     <div class="speech">
                                         Cài Đặt
                                     </div>
                                 </li>
-                                <li id="page-logout" class="sidebar-item">
+                                <li id="page-logout" class="sidebar-item-e">
                                     <a href="#" class="link-item">
                                         <i class="fa-solid fa-right-from-bracket"></i>
                                     </a>
@@ -92,9 +95,76 @@
                         </div>
                     </div>
 
+                    <!-- Page Template -->
                     <div class="col-11 ps-0">
-                        <!-- Page Template -->
-                        <div id="page-content" style="width: 900px; height: 526px;"></div>
+                        <div id="page-content" style="width: 870px; height: 525px;"></div>
+                    </div>
+                </div>
+
+                <!-- Offcanvas -->
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSetting"
+                    aria-labelledby="offcanvasSetting" style="width: 300px;">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title text-center w-100 fw-bold" id="offcanvasSettingLabel">
+                            Cài Đặt Ứng Dụng
+                        </h5>
+                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                            aria-label="Close"></button>
+                    </div>
+
+                    <div class="offcanvas-body">
+                        <!-- Dark Mode -->
+                        <div id="ctst_darkMode" class=" mb-3 d-flex align-items-center justify-content-between">
+                            <strong class="text-nowrap">Giao diện:</strong>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="darkModeToggle">
+                                <label class="form-check-label" for="darkModeToggle">Chế độ tối</label>
+                            </div>
+                        </div>
+                        <!-- Default Page -->
+                        <div id="st_defaultPage" class="mb-3 d-flex align-items-center">
+                            <strong class="text-nowrap">Trang mặt định:</strong>
+                            <select class="form-select ms-4" id="exampleCombobox">
+                                <option value="home">Trang chủ</option>
+                                <option value="spending">Chi tiêu</option>
+                                <option value="spendlist">Danh sách</option>
+                                <option value="statics">Thống kê</option>
+                                <option value="profile">Hồ sơ</option>
+                            </select>
+                        </div>
+                        <!-- Default Action -->
+                        <div id="st_defaultAction" class="mb-3 d-flex align-items-center"
+                            title="Chọn hành động sẽ thực hiện khi bấm Enter trên form nhập dữ liệu trong trang chi tiêu">
+                            <strong class="text-nowrap">Thao tác mặt định:</strong>
+                            <select class="form-select ms-4" id="st_defaultAction">
+                                <option value="add">Thêm</option>
+                                <option value="edit">Sửa</option>
+                                <option value="del">Xóa</option>
+                            </select>
+                        </div>
+                        <!-- Language -->
+                        <div class=" mb-3 d-flex align-items-center justify-content-between"
+                            title="Chọn ngôn ngữ hiển thị cho ứng dụng">
+                            <strong class="text-nowrap">Ngôn ngữ:</strong>
+                            <select class="form-select ms-4" id="st_language">
+                                <option value="vi">Tiếng Việt</option>
+                                <option value="en">Tiếng Anh</option>
+                            </select>
+                        </div>
+                        <!-- Tooltip -->
+                        <div class=" mb-3 d-flex align-items-center justify-content-between"
+                            title="Bật cái này sẽ hiển thị chú giải trên các tuỳ chọn trong cài đặt">
+                            <strong class="text-nowrap">Chú giải:</strong>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="st_tooltip">
+                                <label class="form-check-label" for="st_tooltip">Bật chú giải</label>
+                            </div>
+                        </div>
+                        <!-- Reset -->
+                        <div class=" mb-3 d-flex align-items-center justify-content-center"
+                            title="Đặt lại cài đặt mặt định">
+                            <button id="btn-reset" class="btn btn-primary">Đặt lại mặt định</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -109,7 +179,7 @@
     <script src="../../public/lib/toast/toast.js"></script>
     <script src="../../public/js/main.js"></script>
     <script src="../../public/js/layout.js"></script>
-    <script src="../../public/js/sidebar-init.js"></script>
+    <script src="../../public/js/hbs-init.js"></script>
 
 </body>
 

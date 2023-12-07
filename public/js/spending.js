@@ -52,16 +52,16 @@ function scrollTableToBottom() {
 
 //#region Spending Data For Table
 
-var tblOffset = 0; // Vị trí bắt đầu của dữ liệu cần tải
-var tbLimit = 15; // Số lượng tin nhắn cần lấy mỗi lần
+var tblOffset_spending = 0; // Vị trí bắt đầu của dữ liệu cần tải
+var tbLimit_spending = 15; // Số lượng tin nhắn cần lấy mỗi lần
 var lastScrollHeight = 0; // Lưu lại chiều cao trước khi thêm dữ liệu mới
 
 // Hàm hiển thị spending cho spendlist
 function displaySpendingItems() {
     const data = {
         IdList: $('#SpendingList').val(),
-        tblOffset: tblOffset,
-        tbLimit: tbLimit,
+        tblOffset: tblOffset_spending,
+        tbLimit: tbLimit_spending,
         SearchKey: $('#txtSearch').val()
     }
 
@@ -90,7 +90,7 @@ function displaySpendingItems() {
             $('#tbody').prepend(data);
 
             // Cập nhật offset sau mỗi lần tải dữ liệu
-            tblOffset += tbLimit;
+            tblOffset_spending += tbLimit_spending;
 
             // Cuộn đến vị trí mà người dùng đang xem sau khi dữ liệu được cập nhật
             $('#tbContainer').scrollTop($('#tbContainer')[0].scrollHeight - lastScrollHeight);

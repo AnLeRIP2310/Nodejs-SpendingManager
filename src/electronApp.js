@@ -38,8 +38,8 @@ function createAuthWindow() {
 
 function createMainWindow() {
     mainWindow = new BrowserWindow({
-        width: 950,
-        height: 558,
+        width: 934,
+        height: 566,
         resizable: true,
         autoHideMenuBar: true,
         webPreferences: {
