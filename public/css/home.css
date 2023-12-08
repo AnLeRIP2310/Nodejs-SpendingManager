@@ -22,13 +22,15 @@
 }
 
 #page-setting,
-#page-logout {
+#page-logout,
+#page-profile {
     font-size: 20px;
     position: relative;
 }
 
 #page-setting a,
-#page-logout a {
+#page-logout a,
+#page-profile a {
     padding: 12px 10px;
     display: block;
 }
@@ -186,11 +188,12 @@
 }
 
 
-body {
+/* body {
     overflow-x: hidden;
-}
+} */
 
 .offcanvas-backdrop {
     /* Tắt hiệu ứng mờ */
     opacity: 0 !important;
+    cursor: pointer;
 }

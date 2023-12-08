@@ -26,10 +26,10 @@
                 <div id="toast"></div>
 
                 <!-- MainContent -->
-                <div class="row">
+                <div class="d-flex">
                     <!-- sidebar -->
-                    <div class="col-auto pe-0">
-                        <div class="sidebar  border-end border-dark" style="padding-left: 1px;">
+                    <div>
+                        <div class="sidebar border-end border-dark" style="padding-left: 1px;">
                             <ul class="sidebar-list">
                                 <li id="page-home" class="sidebar-item">
                                     <a href="#" class="link-item">
@@ -47,14 +47,6 @@
                                         Chi Tiêu
                                     </div>
                                 </li>
-                                <li id="page-spendlist" class="sidebar-item">
-                                    <a href="#" class="link-item">
-                                        <i class="fa-solid fa-list-tree"></i>
-                                    </a>
-                                    <div class="speech">
-                                        Danh Sách
-                                    </div>
-                                </li>
                                 <li id="page-statisc" class="sidebar-item">
                                     <a href="#" class="link-item">
                                         <i class="fa-solid fa-chart-pie-simple-circle-dollar"></i>
@@ -63,8 +55,9 @@
                                         Thống Kê
                                     </div>
                                 </li>
-                                <li id="page-profile" class="sidebar-item">
-                                    <a href="#" class="link-item">
+                                <li id="page-profile" class="sidebar-item-e">
+                                    <a href="#offcanvasProfile" class="link-item" data-bs-toggle="offcanvas"
+                                        aria-controls="offcanvasProfile">
                                         <i class="fa-solid fa-user"></i>
                                     </a>
                                     <div class="speech">
@@ -96,12 +89,10 @@
                     </div>
 
                     <!-- Page Template -->
-                    <div class="col-11 ps-0">
-                        <div id="page-content" style="width: 870px; height: 525px;"></div>
-                    </div>
+                    <div id="page-content" style="width: 870px; height: 528px;"></div>
                 </div>
 
-                <!-- Offcanvas -->
+                <!-- OffcanvasSetting -->
                 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSetting"
                     aria-labelledby="offcanvasSetting" style="width: 300px;">
                     <div class="offcanvas-header">
@@ -114,58 +105,72 @@
 
                     <div class="offcanvas-body">
                         <!-- Dark Mode -->
-                        <div id="ctst_darkMode" class=" mb-3 d-flex align-items-center justify-content-between">
+                        <div id="ctst_darkMode" class=" mb-3 d-flex align-items-center justify-content-between"
+                            data-bs-toggle="popover" data-bs-trigger="hover"
+                            data-bs-content="Bật cái này sẽ chuyển sang chế độ tối">
                             <strong class="text-nowrap">Giao diện:</strong>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="darkModeToggle">
-                                <label class="form-check-label" for="darkModeToggle">Chế độ tối</label>
+                                <input class="form-check-input pointer" type="checkbox" id="darkModeToggle">
+                                <label class="form-check-label pointer" for="darkModeToggle">Giao diện tối</label>
                             </div>
                         </div>
                         <!-- Default Page -->
-                        <div id="st_defaultPage" class="mb-3 d-flex align-items-center">
+                        <div id="ctst_defaultPage" class="mb-3 d-flex align-items-center" data-bs-toggle="popover"
+                            data-bs-trigger="hover"
+                            data-bs-content="Chọn trang mặt định sẽ mở khi ứng dụng được khởi động">
                             <strong class="text-nowrap">Trang mặt định:</strong>
-                            <select class="form-select ms-4" id="exampleCombobox">
+                            <select class="form-select pointer ms-4" id="st_defaultPage">
                                 <option value="home">Trang chủ</option>
                                 <option value="spending">Chi tiêu</option>
                                 <option value="spendlist">Danh sách</option>
-                                <option value="statics">Thống kê</option>
+                                <option value="statisc">Thống kê</option>
                                 <option value="profile">Hồ sơ</option>
                             </select>
                         </div>
                         <!-- Default Action -->
-                        <div id="st_defaultAction" class="mb-3 d-flex align-items-center"
-                            title="Chọn hành động sẽ thực hiện khi bấm Enter trên form nhập dữ liệu trong trang chi tiêu">
+                        <div id="ctst_defaultAction" class="mb-3 d-flex align-items-center" data-bs-toggle="popover"
+                            data-bs-trigger="hover"
+                            data-bs-content="Chọn hành động mặt định sẽ thực hiện khi người dùng bấm Enter trên ô nhập liệu trong trang chi tiêu">
                             <strong class="text-nowrap">Thao tác mặt định:</strong>
-                            <select class="form-select ms-4" id="st_defaultAction">
+                            <select class="form-select ms-4 pointer" id="st_defaultAction">
                                 <option value="add">Thêm</option>
                                 <option value="edit">Sửa</option>
                                 <option value="del">Xóa</option>
                             </select>
                         </div>
                         <!-- Language -->
-                        <div class=" mb-3 d-flex align-items-center justify-content-between"
-                            title="Chọn ngôn ngữ hiển thị cho ứng dụng">
+                        <div id="ctst_language" class=" mb-3 d-flex align-items-center justify-content-between"
+                            data-bs-toggle="popover" data-bs-trigger="hover"
+                            data-bs-content="Chọn ngôn ngữ mặt định sẽ hiển thị trong ứng dụng">
                             <strong class="text-nowrap">Ngôn ngữ:</strong>
-                            <select class="form-select ms-4" id="st_language">
+                            <select class="form-select ms-5 pointer" id="st_language">
                                 <option value="vi">Tiếng Việt</option>
                                 <option value="en">Tiếng Anh</option>
                             </select>
                         </div>
                         <!-- Tooltip -->
-                        <div class=" mb-3 d-flex align-items-center justify-content-between"
-                            title="Bật cái này sẽ hiển thị chú giải trên các tuỳ chọn trong cài đặt">
+                        <div id="ctst_tooltip" class=" mb-3 d-flex align-items-center justify-content-between"
+                            data-bs-toggle="popover" data-bs-trigger="hover"
+                            data-bs-content="Bật cái này sẽ hiển thị chú giải trên các tuỳ chọn trong trang cài đặt">
                             <strong class="text-nowrap">Chú giải:</strong>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="st_tooltip">
-                                <label class="form-check-label" for="st_tooltip">Bật chú giải</label>
+                                <input class="form-check-input pointer" type="checkbox" id="st_tooltip">
+                                <label class="form-check-label pointer" for="st_tooltip">Bật chú giải</label>
                             </div>
                         </div>
                         <!-- Reset -->
-                        <div class=" mb-3 d-flex align-items-center justify-content-center"
-                            title="Đặt lại cài đặt mặt định">
-                            <button id="btn-reset" class="btn btn-primary">Đặt lại mặt định</button>
+                        <div class=" mb-3 d-flex align-items-center justify-content-center">
+                            <button id="btn-reset_setting" class="btn btn-primary" data-bs-toggle="popover"
+                                data-bs-trigger="hover"
+                                data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng">Đặt lại mặt
+                                định</button>
                         </div>
                     </div>
+                </div>
+
+                <!-- OffcanvasProfile -->
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasProfile"
+                    aria-labelledby="offcanvasProfile" style="width: 300px;">
                 </div>
             </div>
         </div>
@@ -174,12 +179,11 @@
     <script src="../../public/lib/sheetJS-0.20.0/xlsx.full.min.js"></script>
     <script src="../../public/lib/jsPDF-1.3.2/dist/jspdf.min.js"></script>
     <script src="../../public/lib/jsPDF-1.3.2/dist/jspdf.plugin.autotable.min.js"></script>
-    <script src="../../public/lib/bootstrap-5.3.2-dist/js/bootstrap.min.js"></script>
+    <script src="../../public/lib/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../public/lib/echarts-5.4.3/dist/echarts.min.js"></script>
     <script src="../../public/lib/toast/toast.js"></script>
     <script src="../../public/js/main.js"></script>
     <script src="../../public/js/layout.js"></script>
-    <script src="../../public/js/hbs-init.js"></script>
 
 </body>
 

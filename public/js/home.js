@@ -1,41 +1,50 @@
 function drawChart(data) {
     var chartDom = document.getElementById('chart');
-    var myChart = echarts.init(chartDom);
 
-    var xAxisData = data.map(item => item.date);
-    var seriesData = data.map(item => item.total);
+    // Kiểm tra xem phần tử 'chart' có tồn tại không
+    if (chartDom !== null) {
+        var myChart = echarts.init(chartDom);
 
-    var option = {
-        xAxis: {
-            type: 'category',
-            data: xAxisData,
-            boundaryGap: false
-        },
-        yAxis: {
-            type: 'value'
-        },
-        dataZoom: [{
-            type: 'slider',
-            orient: 'horizontal',
-            start: 0,
-            end: 4
-        }],
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
+        var xAxisData = data.map(item => item.date);
+        var seriesData = data.map(item => item.total);
+
+        var option = {
+            xAxis: {
+                type: 'category',
+                data: xAxisData,
+                boundaryGap: false
             },
-        },
-        series: [{
-            name: 'Tổng tiền',
-            data: seriesData,
-            type: 'bar',
-            barWidth: '70%',
-        }]
-    };
+            yAxis: {
+                type: 'value'
+            },
+            dataZoom: [{
+                type: 'slider',
+                orient: 'horizontal',
+                start: 0,
+                end: 4
+            }],
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+            },
+            series: [{
+                name: 'Tổng tiền',
+                data: seriesData,
+                type: 'bar',
+                barWidth: '70%',
+            }]
+        };
 
-    myChart.setOption(option);
+        myChart.setOption(option);
+    } else {
+        console.log("Phần tử có ID 'chart' không tồn tại trong DOM.");
+        // Xử lý nếu phần tử 'chart' không tồn tại
+        // Ví dụ: Hiển thị thông báo lỗi cho người dùng hoặc thực hiện hành động thay thế khác.
+    }
 }
+
 
 function getTotalSpending() {
     $.ajax({

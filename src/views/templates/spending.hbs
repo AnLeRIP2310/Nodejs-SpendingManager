@@ -73,17 +73,20 @@
         </div>
 
         <div class="col-4 pe-0 ps-0">
+            <style>
+                #btnCreate,
+                #btnUpdate,
+                #btnDelete {
+                    width: 28%;
+                }
+            </style>
             <!-- {{! Button CURD }} -->
-            <div class="row pb-2 pt-2 border-bottom border-dark" style="padding: 0 12px;">
-                <div class="col-4">
-                    <button id="btnCreate" class="btn btn-success w-100">Thêm</button>
-                </div>
-                <div class="col-4">
-                    <button id="btnUpdate" class="btn btn-primary w-100">Sửa</button>
-                </div>
-                <div class="col-4">
-                    <button id="btnDelete" class="btn btn-danger w-100">Xóa</button>
-                </div>
+            <div class="d-flex justify-content-evenly pb-2 pt-2 border-bottom border-dark">
+                <button id="btnCreate" class="btn btn-success">Thêm</button>
+
+                <button id="btnUpdate" class="btn btn-primary ">Sửa</button>
+
+                <button id="btnDelete" class="btn btn-danger ">Xóa</button>
             </div>
 
             <!-- {{! Field }} -->
