@@ -250,6 +250,7 @@ function loadSettingApp() {
             defalutPage: 'home',
             defaultAction: 'add',
             language: 'vi',
+            reminderDelete: true,
             tooltip: true
         }
         localStorage.setItem('SettingApp', JSON.stringify(userSetting));
@@ -258,6 +259,7 @@ function loadSettingApp() {
     defaultPageSetting();
     defaultActionSetting();
     languageSetting();
+    reminderDelete();
     tooltipSetting();
 } loadSettingApp();
 
@@ -344,6 +346,16 @@ function languageSetting() {
     }
 }
 
+// xử lý cài dặt reminder
+function reminderDelete() {
+    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
+    if (SettingApp.reminderDelete) {
+        $('#st_reminder').prop('checked', true);
+    } else {
+        $('#st_reminder').prop('checked', false);
+    }
+}
+
 // xử ly cài đặt tooltip
 function tooltipSetting() {
     const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
@@ -398,6 +410,14 @@ $('#st_language').on('change', function () {
     localStorage.setItem('SettingApp', JSON.stringify(SettingApp));
     languageSetting();
 });
+
+// Sự kiện bật/tắt reminder
+$('#st_reminder').on('change', function () {
+    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
+    SettingApp.reminderDelete = this.checked;
+    localStorage.setItem('SettingApp', JSON.stringify(SettingApp));
+    reminderDelete();
+})
 
 // Sự kiện bật/tắt tooltip
 $('#st_tooltip').on('change', function () {

@@ -170,9 +170,7 @@ function displayRowInfo(row) {
 // Hàm xử lý sự kiện khi click vào một hàng trong bảng
 function handleRowClick(row) {
     var expenseType = row.cells[2].innerText;
-
-    console.log(expenseType);
-
+    // Tính tổng tiền của item được chọn
     calculateItemPrice(expenseType);
 }
 
@@ -276,7 +274,6 @@ function spendingSuggest() {
 
 //#region Button Add, Update, Delete, Clear
 
-
 // nút thêm dữ liệu vào bảng
 $('#btnCreate').on('click', function () {
     const data = {
@@ -378,6 +375,21 @@ $('#btnUpdate').on('click', function () {
 
 // nút xoá dữ liệu trong bảng
 $('#btnDelete').on('click', function () {
+    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
+    if (SettingApp.reminderDelete) {
+        $('#modalConfirmDelete').modal('show');
+    } else {
+        deleteSpendingItem()
+    }
+});
+
+$('#btnConfirmDelete').click(function () {
+    deleteSpendingItem()
+    $('#modalConfirmDelete').modal('hide');
+})
+
+// hàm xoá dữ liệu
+function deleteSpendingItem() {
     const data = {
         Id: $('#spendId').val(),
     }
@@ -413,7 +425,7 @@ $('#btnDelete').on('click', function () {
             console.log(err);
         }
     })
-});
+}
 
 // nút clear data
 $('#btnClearData').on('click', function () {
@@ -424,7 +436,7 @@ $('#btnClearData').on('click', function () {
     $('#spendDetails').val('');
 });
 
-// Gọi Sk Thêm dữ liệu trên input
+// Gọi Sk Thêm/Sửa/Xoá dữ liệu trên input
 $('#spendName, #spendPrice, #spendDetails').on('keyup', function (event) {
     if (event.keyCode == 13) {
         event.preventDefault();

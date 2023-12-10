@@ -8,13 +8,11 @@
     <link rel="stylesheet" href="../../public/lib/bootstrap-5.3.2-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../public/lib/fontawesome-6.4.2/css/all.css">
     <link rel="stylesheet" href="../../public/lib/jquery-autocomplete-1.0.7/jquery.auto-complete.css">
-    <link rel="stylesheet" href="../../public/lib/jquery-ui-1.13.2/jquery-ui.min.css">
     <link rel="stylesheet" href="../../public/lib/toast/toast.css">
     <link rel="stylesheet" href="../../public/css/main.css">
     <link rel="stylesheet" href="../../public/css/home.css">
     <script src="../../public/lib/jquery-3.7.1/all.js"></script>
     <script src="../../public/lib/jquery-autocomplete-1.0.7/jquery.auto-complete.min.js"></script>
-    <script src="../../public/lib/jquery-ui-1.13.2/jquery-ui.min.js"></script>
     <script src="../../public/lib/handlebars/handlebars4.7.8.min.js"></script>
     <title>Spending Manager</title>
 </head>
@@ -147,6 +145,16 @@
                                 <option value="vi">Tiếng Việt</option>
                                 <option value="en">Tiếng Anh</option>
                             </select>
+                        </div>
+                        <!-- reminderDelete -->
+                        <div id="ctst_reminder" class="mb-3 d-flex align-items-center justify-content-between"
+                            data-bs-toggle="popover" data-bs-trigger="hover"
+                            data-bs-content="Bật cái này sẽ hiển thị thông báo xác nhận trước khi xoá dữ liệu trên bảng">
+                            <strong class="text-nowrap">Xác nhận xoá:</strong>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input pointer" type="checkbox" id="st_reminder">
+                                <label class="form-check-label pointer" for="st_reminder">Bật xác nhận</label>
+                            </div>
                         </div>
                         <!-- Tooltip -->
                         <div id="ctst_tooltip" class=" mb-3 d-flex align-items-center justify-content-between"
