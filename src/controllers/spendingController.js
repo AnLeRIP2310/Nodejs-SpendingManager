@@ -1,26 +1,30 @@
-const { db, query } = require('../configs/db');
+const { db, query, getUserId } = require('../configs/db');
 
 module.exports = {
     getData: async (req, res) => {
-        var sql = 'select * from spendinglist where status = 1';
-        const spendingList = await query(sql);
+        const { token } = req.query;
 
-        res.json({
-            spendingList: spendingList
-        });
+        try {
+            const userId = await getUserId(token);
+            var sql = 'select * from spendinglist where usersId = ? and status = 1';
+            var params = [userId];
+            const spendingList = await query(sql, params);
+
+            res.json({
+                spendingList: spendingList
+            });
+        } catch (err) {
+            console.log(err)
+        }
     },
 
     insertSpendingList: async (req, res) => {
         const { token, namelist, atcreate, status } = req.body;
 
         try {
-            var sql = 'select * from AuthToken where token = ?';
-            var params = [token];
-            const checkToken = await query(sql, params);
-            const UserId = checkToken[0].UsersId;
-
+            const userId = await getUserId(token);
             sql = 'insert into spendinglist (usersId, namelist, atcreate, status) values (?, ?, ?, ?)';
-            params = [UserId, namelist, atcreate, status];
+            params = [userId, namelist, atcreate, status];
             const result = await query(sql, params);
 
             if (result) {

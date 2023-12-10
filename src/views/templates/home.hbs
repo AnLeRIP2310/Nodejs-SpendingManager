@@ -32,7 +32,15 @@
         </div>
 
         <div class="col-4" style="padding-top: 12px">
-            <div class="tableScroll" style="height: 423px;">
+            <select id="home_spendList" class="form-select mb-3">
+                {{#if spendingList}}
+                {{#each spendingList}}
+                <option value="{{this.Id}}">{{this.NameList}}</option>
+                {{/each}}
+                {{/if}}
+            </select>
+
+            <div class="tableScroll" style="height: 372px;">
                 <table class="table table-sm table-hover border">
                     <thead>
                         <tr>

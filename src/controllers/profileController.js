@@ -1,19 +1,15 @@
-const { db, query } = require('../configs/db')
+const { db, query, getUserId } = require('../configs/db')
 
 module.exports = {
     getData: async (req, res) => {
         const { token } = req.query;
 
         try {
-            var sql = 'select * from AuthToken where token = ?';
-            var params = [token];
-            const checkToken = await query(sql, params);
-
-            const UserId = checkToken[0].UsersId;
-
-            sql = 'select * from users where id = ? and status = 1';
-            params = [UserId];
+            const userId = await getUserId(token);
+            var sql = 'select * from users where id = ? and status = 1';
+            var params = [userId];
             const result = await query(sql, params);
+
             if (result.length > 0) {
                 res.json({ success: true, data: result });
             } else {
@@ -28,19 +24,15 @@ module.exports = {
         const { oldPassword, newPassword, token } = req.body
 
         try {
-            var sql = 'select * from AuthToken where token = ?';
-            var params = [token];
-            const checkToken = await query(sql, params);
+            const userId = await getUserId(token);
 
-            const UserId = checkToken[0].UsersId;
-
-            sql = 'select password from users where (id = ? and password = ?) and status = 1'
-            params = [UserId, oldPassword]
+            var sql = 'select password from users where (id = ? and password = ?) and status = 1'
+            var params = [userId, oldPassword]
             const checkPassword = await query(sql, params)
 
             if (checkPassword.length > 0) {
                 sql = 'update users set password = ? where id = ?'
-                params = [newPassword, UserId]
+                params = [newPassword, userId]
                 const result = await query(sql, params)
                 if (result) {
                     res.json({ success: true, message: 'Đổi mật khẩu thành công' })

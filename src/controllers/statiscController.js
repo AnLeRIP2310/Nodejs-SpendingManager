@@ -60,13 +60,40 @@ module.exports = {
             const lastWeekResult = await query(sql, params);
 
             // Lấy tổng tiền mỗi ngày
-            sql = 'SELECT DATE(AtCreate) AS Date, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? GROUP BY DATE(AtCreate) ORDER BY Date DESC';
+            sql = 'SELECT DATE(AtUpdate) AS Date, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? GROUP BY DATE(AtUpdate) ORDER BY Date DESC';
             params = [spendList];
             const totalPerDay = await query(sql, params);
+
+            // Lấy tổng tiền mỗi tháng
+            sql = `SELECT strftime('%Y', AtUpdate) AS Year, SUM(Price) AS Total 
+            FROM SpendingItem 
+            GROUP BY strftime('%Y', AtUpdate) 
+            ORDER BY Year DESC;`;
+            const totalPerMonth = await query(sql);
+
+            console.log(totalPerMonth);
+
+            // Lấy tổng tiền mỗi năm
+            sql = `SELECT strftime('%Y', AtUpdate) AS Year, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? GROUP BY strftime('%Y', AtUpdate) ORDER BY Year DESC`;
+            const totalPerYear = await query(sql, params);
+
+            // console.log(totalPerYear);
 
             // Lấy tổng tiền mỗi khoản chi
             sql = 'SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? GROUP BY NameItem ORDER BY TotalPrice DESC';
             const totalPerSpendItem = await query(sql, params);
+
+            // Lấy tổng các khoản chi
+            sql = 'SELECT COUNT(DISTINCT NameItem) AS Total FROM SpendingItem WHERE SpendListId = ?';
+            const totalSpendItem = await query(sql, params);
+
+            // Lấy tổng ngày chi
+            sql = 'SELECT COUNT(DISTINCT AtUpdate) AS Total FROM SpendingItem WHERE SpendListId = ?';
+            const totalDate = await query(sql, params);
+
+            // Lấy tổng tiền chi
+            sql = 'SELECT SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ?';
+            const totalPrice = await query(sql, params);
 
             res.json({
                 success: true,
@@ -74,11 +101,18 @@ module.exports = {
                 yesterday: yesterdayResult[0].total, // Tổng tiền ngày hôm qua
                 thisWeek: thisWeekResult[0].total, // Tổng tiền tuần hiện tại
                 lastWeek: lastWeekResult[0].total, // Tổng tiền tuần trước
-                totalPerDay: totalPerDay, // Tổng tiền mỗi ngày
-                totalPerSpendItem: totalPerSpendItem, // Tổng tiền mỗi khoán chi
-            })
 
+                totalPerDay: totalPerDay, // Tổng tiền mỗi ngày
+                totalPerMonth: totalPerMonth, // Tổng tiền mỗi tháng
+                totalPerYear: totalPerYear, // Tổng tiền mỗi năm
+                totalPerSpendItem: totalPerSpendItem, // Tổng tiền mỗi khoán chi
+
+                totalSpendItem: totalSpendItem[0].total, // Tổng các khoản chi
+                totalDate: totalDate[0].total, // Tổng ngày chi
+                totalPrice: totalPrice[0].total, // Tổng tiền chi
+            })
         } catch (error) {
+            res.json({ success: false, error: error })
             console.log(error);
         }
     },

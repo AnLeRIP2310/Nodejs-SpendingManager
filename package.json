@@ -16,15 +16,15 @@
         "directories": {
             "output": "dist"
         },
-        "files": [
-            "src/**/*",
-            "public/**/*",
-            "data/**/*"
-        ],
         "win": {
             "target": "nsis",
             "icon": "./public/images/favicon.ico"
-        }
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true
+        },
+        "asar": false
     },
     "dependencies": {
         "cookie-parser": "^1.4.6",

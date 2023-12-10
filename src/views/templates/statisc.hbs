@@ -1,0 +1,98 @@
+<div class="container-fluid overflow-y-scroll h-100">
+
+    <div class="row border-bottom border-dark" style="padding: 12px 0;">
+        <div class="col-4 mb-2">
+            <div class="d-flex align-items-center p-1 border border-dark rounded-2">
+                <strong class="text-center pe-2">Tổng Khoản Chi:</strong>
+                <small id="total_spenditem" class="text-center text-success fs-6 fw-bold">67 khoản chi</small>
+            </div>
+        </div>
+        <div class="col-4 mb-2">
+            <div class="d-flex align-items-center p-1 border border-dark rounded-2">
+                <strong class="text-center pe-2">Tổng Số Ngày Chi:</strong>
+                <small id="total_date" class="text-center text-success fs-6 fw-bold">319 ngày</small>
+            </div>
+        </div>
+        <div class="col-4 mb-2">
+            <div class="d-flex align-items-center p-1 border border-dark rounded-2">
+                <strong class="text-center pe-2">Tổng Danh Sách:</strong>
+                <small id="total_spendlist" class="text-center text-success fs-6 fw-bold">30.000.000 đ</small>
+            </div>
+        </div>
+
+        <div class="col-3">
+            <div class="d-flex align-items-center p-1 border border-dark rounded-2">
+                <strong class="text-center pe-2">Hôm Nay:</strong>
+                <small id="total_today" class="text-center text-success fs-6 fw-bold">0 đ</small>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="d-flex align-items-center p-1 border border-dark rounded-2">
+                <strong class="text-center pe-2">Hôm Qua:</strong>
+                <small id="total_yesterday" class="text-center text-success fs-6 fw-bold">0 đ</small>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="d-flex align-items-center p-1 border border-dark rounded-2">
+                <strong class="text-center pe-2">Tuần Này:</strong>
+                <small id="total_thisweek" class="text-center text-success fs-6 fw-bold">0 đ</small>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="d-flex align-items-center p-1 border border-dark rounded-2">
+                <strong class="text-center pe-2">Tuần Trước:</strong>
+                <small id="total_lastweek" class="text-center text-success fs-6 fw-bold">0 đ</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-8 border-end border-dark p-0 position-relative">
+            <div class="position-absolute" style="width: 100px;margin: 12px;right: 31px; z-index: 1">
+                <select id="statisc_type" class="form-select">
+                    <option value="date">Ngày</option>
+                    <option value="month">Tháng</option>
+                    <option value="year">Năm</option>
+                </select>
+            </div>
+            <div id="chart-totalspending" style="width: 100%; height: 100%;"></div>
+        </div>
+
+        <div class="col-4" style="padding-top: 12px">
+            <select id="statisc_spendList" class="form-select mb-3">
+                {{#if spendingList}}
+                {{#each spendingList}}
+                <option value="{{this.Id}}">{{this.NameList}}</option>
+                {{/each}}
+                {{/if}}
+            </select>
+            <div class="tableScroll" style="height: 351px;">
+                <table class="table table-sm table-hover border">
+                    <thead>
+                        <tr>
+                            <th scope="col">Tên Khoản Chi</th>
+                            <th scope="col">Số Tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-totalPerSpendItem"></tbody>
+                    <script type="text/x-handlebars-template" id="template-totalPerSpendItem">
+                        %#if totalPerSpendItem%
+                        %#each totalPerSpendItem%
+                        <tr class="pointer">
+                            <td style="white-space: nowrap;">%this.NameItem%</td>
+                            <td>%this.totalprice%</td>
+                        </tr>
+                        %/each%
+                        %/if%
+                    </script>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row border-bottom border-dark">
+    </div>
+
+</div>
+
+<script src="../../public/js/statisc.js"></script>

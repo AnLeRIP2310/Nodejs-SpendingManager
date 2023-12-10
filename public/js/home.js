@@ -40,8 +40,6 @@ function drawChart(data) {
         myChart.setOption(option);
     } else {
         console.log("Phần tử có ID 'chart' không tồn tại trong DOM.");
-        // Xử lý nếu phần tử 'chart' không tồn tại
-        // Ví dụ: Hiển thị thông báo lỗi cho người dùng hoặc thực hiện hành động thay thế khác.
     }
 }
 
@@ -50,6 +48,9 @@ function getTotalSpending() {
     $.ajax({
         type: 'GET',
         url: urlapi + '/home/getData',
+        data: {
+            spendList: $('#home_spendList').val(),
+        },
         success: function (res) {
             if (res.success) {
                 $('#total_today').text(formatCurrency(res.today)) // Tổng hôm nay
