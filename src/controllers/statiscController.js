@@ -64,21 +64,6 @@ module.exports = {
             params = [spendList];
             const totalPerDay = await query(sql, params);
 
-            // Lấy tổng tiền mỗi tháng
-            sql = `SELECT strftime('%Y', AtUpdate) AS Year, SUM(Price) AS Total 
-            FROM SpendingItem 
-            GROUP BY strftime('%Y', AtUpdate) 
-            ORDER BY Year DESC;`;
-            const totalPerMonth = await query(sql);
-
-            console.log(totalPerMonth);
-
-            // Lấy tổng tiền mỗi năm
-            sql = `SELECT strftime('%Y', AtUpdate) AS Year, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? GROUP BY strftime('%Y', AtUpdate) ORDER BY Year DESC`;
-            const totalPerYear = await query(sql, params);
-
-            // console.log(totalPerYear);
-
             // Lấy tổng tiền mỗi khoản chi
             sql = 'SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? GROUP BY NameItem ORDER BY TotalPrice DESC';
             const totalPerSpendItem = await query(sql, params);
@@ -103,8 +88,6 @@ module.exports = {
                 lastWeek: lastWeekResult[0].total, // Tổng tiền tuần trước
 
                 totalPerDay: totalPerDay, // Tổng tiền mỗi ngày
-                totalPerMonth: totalPerMonth, // Tổng tiền mỗi tháng
-                totalPerYear: totalPerYear, // Tổng tiền mỗi năm
                 totalPerSpendItem: totalPerSpendItem, // Tổng tiền mỗi khoán chi
 
                 totalSpendItem: totalSpendItem[0].total, // Tổng các khoản chi

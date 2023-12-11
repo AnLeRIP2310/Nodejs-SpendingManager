@@ -254,14 +254,19 @@ function spendingSuggest() {
 
         // Lắng nghe sự kiện khi người dùng nhấn Tab
         $("#spendName").on("keydown", function (e) {
+            var autocompleteStatus = $(".autocomplete-suggestions").css("display");
             if (e.key === "Tab") {
-                //e.preventDefault();
-                var suggestionsList = $(".autocomplete-suggestions");
-                if (suggestionsList.length > 0) {
-                    var matchingSuggestion = suggestionsList.find(".autocomplete-suggestion").first();
-                    if (matchingSuggestion.length > 0) {
-                        matchingSuggestion.click();
+
+                if (autocompleteStatus === "block") {
+                    var suggestionsList = $(".autocomplete-suggestions");
+                    if (suggestionsList.length > 0) {
+                        var matchingSuggestion = suggestionsList.find(".autocomplete-suggestion").first();
+                        if (matchingSuggestion.length > 0) {
+                            matchingSuggestion.click();
+                        }
                     }
+                } else {
+                    return true;
                 }
             }
         });
