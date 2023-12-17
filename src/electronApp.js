@@ -24,7 +24,7 @@ function createAuthWindow() {
     loginWindow = new BrowserWindow({
         width: 800,
         height: 500,
-        resizable: false,
+        resizable: true,
         autoHideMenuBar: true,
         webPreferences: {
             nodeIntegration: true,
@@ -57,6 +57,7 @@ function createMainWindow() {
     });
 }
 
+// Bắt sự kiện đăng nhập thành công
 ipcMain.on('login-success', () => {
     // Đóng cửa sổ login.html
     loginWindow.close();

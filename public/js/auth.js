@@ -141,7 +141,7 @@ $('#register_username, #register_password, #register_confirm').on('keyup', funct
 
 // Clear class 'is-invalid' khi gõ phím
 $('#login_username, #login_password, #register_username, #register_password, #register_confirm').on('keyup', function () {
-    if($(this).hasClass('is-invalid')) {
+    if ($(this).hasClass('is-invalid')) {
         $(this).removeClass('is-invalid');
     }
 })
@@ -154,3 +154,62 @@ $('#login_username, #login_password').on('keyup', function (event) {
     }
 });
 
+// Xử lý thông điệp từ cửa sổ popup
+window.addEventListener('message', function (event) {
+    const { data } = event;
+    if (data && data.message === 'reload') {
+        const loginInfor = {
+            token: data.token,
+        }
+
+        let currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() + 30);
+        loginInfor.timeslife = formatDate(currentDate);
+
+        localStorage.setItem('AuthToken', JSON.stringify(loginInfor));
+
+        // Gửi thông điệp đến main process
+        ipcRenderer.send('login-success');
+    }
+});
+
+// Btn đăng nhập bằng google
+$('#loginGoogle').click(function () {
+    // Tạo urlpage
+    $.get('http://localhost:3962/auth/urlPage', { urlpage: window.location.href });
+
+    const width = 530;
+    const height = 600;
+
+    const popup = window.open(
+        'http://localhost:3962/auth/loginGoogle',
+        'google-login-popup',
+        `width=${width},height=${height}`
+    );
+
+    if (window.focus && popup) {
+        popup.focus();
+    }
+
+    return false;
+});
+
+// // Btn đăng nhập bằng facebook
+// $('#loginFacebook').click(function () {
+//     const width = 750;
+//     const height = 600;
+//     const left = window.innerWidth / 2 - width / 2;
+//     const top = window.innerHeight / 2 - height / 2;
+
+//     const popup = window.open(
+//         '/dang-nhap/facebook',  // Đường dẫn đến trang đăng nhập bằng Google
+//         'google-login-popup',
+//         `width=${width},height=${height},left=${left},top=${top}`
+//     );
+
+//     if (window.focus) {
+//         popup.focus();
+//     }
+
+//     return false;
+// });

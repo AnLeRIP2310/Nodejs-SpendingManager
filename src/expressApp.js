@@ -1,15 +1,28 @@
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
+const session = require('express-session');
+const passportConfigs = require('./configs/passport')
 const app = express()
 const path = require('path')
-const port = 3962
+require('dotenv').config();
+const host = process.env.HOST
+const port = process.env.PORT
 
 // Middleware
+app.use(session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors());
+
+// Đăng ký và sử dụng Passport trong ứng dụng
+app.use(passportConfigs.session());
+app.use(passportConfigs.initialize());
 
 // Folder Public 
 app.use(express.static(path.join(__dirname, '../public')));
@@ -24,7 +37,7 @@ app.use('/statisc', require('./routers/statiscRouter'))
 
 function startServer(callback) {
     app.listen(port, () => {
-        console.log(`Server chạy trên http://localhost:${port}`);
+        console.log(`Server chạy trên http://${host}:${port}`);
         if (callback) {
             callback();
         }
