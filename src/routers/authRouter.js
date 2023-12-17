@@ -12,5 +12,8 @@ router.get('/urlPage', authCtrl.urlPage);
 router.get('/loginGoogle', passport.authenticate('google'));
 router.get('/loginGoogle/callback', passport.authenticate('google', { failureRedirect: '/' }), authCtrl.loginGoogle);
 
+router.get('/loginFacebook', passport.authenticate('facebook'));
+router.get('/loginFacebook/callback', passport.authenticate('facebook', { failureRedirect: '/' }), authCtrl.loginFacebook);
+
 
 module.exports = router

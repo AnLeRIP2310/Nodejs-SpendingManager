@@ -173,8 +173,8 @@ window.addEventListener('message', function (event) {
     }
 });
 
-// Btn đăng nhập bằng google
-$('#loginGoogle').click(function () {
+// Hàm đăng nhập bằng google
+function loginGoogle() {
     // Tạo urlpage
     $.get('http://localhost:3962/auth/urlPage', { urlpage: window.location.href });
 
@@ -192,24 +192,25 @@ $('#loginGoogle').click(function () {
     }
 
     return false;
-});
+};
 
-// // Btn đăng nhập bằng facebook
-// $('#loginFacebook').click(function () {
-//     const width = 750;
-//     const height = 600;
-//     const left = window.innerWidth / 2 - width / 2;
-//     const top = window.innerHeight / 2 - height / 2;
+// Btn đăng nhập bằng facebook
+function loginFacebook() {
+    // Tạo urlpage
+    $.get('http://localhost:3962/auth/urlPage', { urlpage: window.location.href });
 
-//     const popup = window.open(
-//         '/dang-nhap/facebook',  // Đường dẫn đến trang đăng nhập bằng Google
-//         'google-login-popup',
-//         `width=${width},height=${height},left=${left},top=${top}`
-//     );
+    const width = 750;
+    const height = 600;
 
-//     if (window.focus) {
-//         popup.focus();
-//     }
+    const popup = window.open(
+        'http://localhost:3962/auth/loginFacebook',
+        'facebook-login-popup',
+        `width=${width},height=${height}`
+    );
 
-//     return false;
-// });
+    if (window.focus) {
+        popup.focus();
+    }
+
+    return false;
+};

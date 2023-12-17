@@ -86,10 +86,10 @@ module.exports = {
     loginGoogle: async (req, res) => {
         // Lấy thông tin từ Google gửi về
         const user = req.user;
-        var googleId = user.id;
-        var displayName = user.displayName;
-        var email = user.emails[0].value;
-        var avatar = user.photos[0].value;
+        const googleId = user.id;
+        const displayName = user.displayName;
+        const email = user.emails[0].value;
+        const avatar = user.photos[0].value;
         var token;
 
         try {
@@ -174,7 +174,70 @@ module.exports = {
         }
     },
 
+    loginFacebook: async (req, res) => {
+        const user = req.user;
+        const facebookId = user.id;
+        const displayName = user.displayName;
+        const avatar = user.photos[0].value;
+        var token;
 
+        try {
+            // Kiểm tra FacebookId
+            var sql = 'select * from users where FacebookId = ?';
+            const checkFacebookId = await query(sql, [facebookId]);
+
+            if (checkFacebookId.length > 0) {
+                // Nếu facebookId tồn tại, tiến hành đăng nhập
+                const userId = checkFacebookId[0].Id; // Lấy id người dùng
+
+                // Kiểm tra authToken và đăng nhập
+                sql = 'select * from authtoken where usersId = ?';
+                const checkToken = await query(sql, [userId]);
+
+                if (checkToken.length == 0) {
+                    // nếu không có token, tạo token
+                    token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
+                    sql = 'insert into authtoken (usersId, Token) values (?, ?)';
+                    await query(sql, [userId, token]);
+                } else {
+                    // Nếu có token
+                    token = checkToken[0].Token; // Gán token vào biến
+                }
+            } else {
+                // nếu facebookId không tồn tại, tạo mới tài khoản và thêm vào database
+                sql = 'INSERT INTO Users (FacebookId, Avatar, DisplayName) VALUES (?, ?, ?)';
+                const insertUserResult = await query(sql, [facebookId, avatar, displayName]);
+
+                // Lấy ra userId
+                sql = 'select * from users where FacebookId = ?';
+                const checkUsers = await query(sql, [facebookId]);
+                const userId = checkUsers[0].Id;
+
+                // Kiểm tra authToken và đăng nhập
+                sql = 'select * from authtoken where usersId = ?';
+                const checkToken = await query(sql, [userId]);
+
+                if (checkToken.length == 0) {
+                    // nếu không có token, tạo token
+                    token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
+                    sql = 'insert into authtoken (usersId, Token) values (?, ?)';
+                    await query(sql, [userId, token]);
+                } else {
+                    // Nếu có token
+                    token = checkToken[0].Token; // Gán token vào biến
+                }
+            }
+
+            // đóng cửa sổ đăng nhập, reload lại trang web chính
+            res.send(`
+                <script>
+                    window.opener.postMessage({ message: 'reload', token: '${token}' }, '${urlpage}');
+                    window.close();
+                </script>`);
+        } catch (err) {
+            console.log(err)
+        }
+    },
 }
 
 
