@@ -48,7 +48,8 @@
 
     <div class="row">
         <div class="col-8 border-end border-dark p-0 position-relative">
-            <div class="position-absolute" style="width: 100px;margin: 12px;right: 31px; z-index: 1">
+            <div class="d-flex align-items-center position-absolute" style="margin: 12px;right: 90px; z-index: 1">
+                <strong class="text-nowrap me-2 fs-5">Biểu đồ tổng tiền mỗi</strong>
                 <select id="statisc_type" class="form-select">
                     <option value="date">Ngày</option>
                     <option value="month">Tháng</option>
@@ -90,9 +91,91 @@
         </div>
     </div>
 
-    <div class="row border-bottom border-dark">
+    <div class="row border-top border-dark position-relative">
+        <strong class="text-nowrap text-center mt-2 fs-5">Biểu đồ tỉ lệ khoản chi</strong>
+
+        <div class="mb-0 position-absolute w-auto h-auto" style="top: 40px; z-index: 1">
+            <button id="togglePanel" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+
+            <div class="panel-content panel-collapsed bg-body-tertiary border-dark ">
+                <strong class="text-center d-block">Tuỳ chọn hiển thị</strong>
+
+                <div class="mt-2 d-flex align-items-center justify-content-between">
+                    <label for="change_display-pieStatisc" class="text-nowrap">Xem theo:</label>
+                    <select id="change_display-pieStatisc" class="form-select pointer" style="width: 100px;">
+                        <option value="all">Tất cả</option>
+                        <option value="date">Ngày</option>
+                        <option value="month">Tháng</option>
+                        <option value="year">Năm</option>
+                    </select>
+                </div>
+
+                <!-- option date -->
+                <div id="panel-ctn_date" class="mt-2" style="display: none;">
+                    <input id="panel-input_date" type="date" class="form-control">
+                </div>
+
+                <!-- option month -->
+                <div id="panel-ctn_month" class="mt-2" style="display: none;">
+                    <input id="panel-input_month" type="month" class="form-control">
+                </div>
+
+                <!-- option year -->
+                <div id="panel-ctn_year" class="mt-2" style="display: none;">
+                    <select id="panel-input_year" class="form-select"></select>
+                    <script type="text/x-handlebars-template" id="template-panel-input_year">
+                        %#if yearList%
+                        %#each yearList%
+                        <option value="%this.year%">Năm %this.year%</option>
+                        %/each%
+                        %/if%
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <div id="chart-totalperspenditem" class="mt-3" style="height: 470px; width: 100%;"></div>
     </div>
 
 </div>
+
+<script>
+    // Đóng mở panel khi click
+    $('#togglePanel').click(function () {
+        $('.panel-content').toggleClass('panel-expanded panel-collapsed');
+        // Thay đổi biểu tượng nút
+        $('#togglePanel i').toggleClass('fa-chevron-up fa-chevron-down');
+        // Bạn có thể thêm các hành động khác tại đây nếu cần thiết
+        $(this).toggleClass('btnClearBorder');
+    });
+
+    // Sự kiện tuỳ chọn xem
+    $('#change_display-pieStatisc').on('change', function () {
+        if ($(this).val() == 'date') {
+            $('#panel-ctn_date').addClass('d-block');
+        } else {
+            $('#panel-ctn_date').removeClass('d-block');
+        }
+
+        if ($(this).val() == 'month') {
+            $('#panel-ctn_month').addClass('d-block');
+        } else {
+            $('#panel-ctn_month').removeClass('d-block');
+        }
+
+        if ($(this).val() == 'year') {
+            $('#panel-ctn_year').addClass('d-block');
+        } else {
+            $('#panel-ctn_year').removeClass('d-block');
+        }
+    });
+
+
+
+    const element = document.querySelector(".container-fluid.overflow-y-scroll");
+    element.scrollTop = element.scrollHeight;
+</script>
 
 <script src="../../public/js/statisc.js"></script>

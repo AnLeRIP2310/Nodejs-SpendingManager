@@ -197,3 +197,58 @@
     opacity: 0 !important;
     cursor: pointer;
 }
+
+
+/* Statisc Page */
+
+.panel-content {
+    width: 0;
+    position: absolute;
+    top: 0;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid;
+    height: auto;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    z-index: -1;
+    transition: all 0.5s ease;
+    transform-origin: top center;
+    transform: scaleY(0);
+}
+
+.panel-content.panel-collapsed {
+    animation: Shrink 0.5s ease forwards;
+}
+
+.panel-content.panel-expanded {
+    width: 220px;
+    animation: expand 0.5s ease forwards;
+}
+
+.btnClearBorder {
+    border-color: transparent;
+}
+
+@keyframes expand {
+    0% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes Shrink {
+    0% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+}

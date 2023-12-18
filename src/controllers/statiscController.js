@@ -80,6 +80,11 @@ module.exports = {
             sql = 'SELECT SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ?';
             const totalPrice = await query(sql, params);
 
+            // Lấy các năm
+            sql = `SELECT strftime(?, AtUpdate) AS Year FROM SpendingItem WHERE SpendListId = 1 
+                AND Status = 1 GROUP BY strftime(?, AtUpdate) ORDER BY strftime(?, AtUpdate) DESC;`
+            const yearList = await query(sql, ['%Y', '%Y', '%Y']);
+
             res.json({
                 success: true,
                 today: todayResult[0].total, // Tổng tiền ngày hôm nay
@@ -93,10 +98,49 @@ module.exports = {
                 totalSpendItem: totalSpendItem[0].total, // Tổng các khoản chi
                 totalDate: totalDate[0].total, // Tổng ngày chi
                 totalPrice: totalPrice[0].total, // Tổng tiền chi
+
+                yearList: yearList, // Lấy các năm
             })
         } catch (error) {
             res.json({ success: false, error: error })
             console.log(error);
+        }
+    },
+
+    getDataForChart2: async (req, res) => {
+        const { type, value, SpendListId } = req.query;
+
+        try {
+            var sql, param;
+            let resultData;
+
+            if (value == '' || value == undefined) {
+                sql = `SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? AND Status = 1 
+                    GROUP BY NameItem ORDER BY TotalPrice DESC`;
+                const result = await query(sql, [SpendListId])
+                resultData = result;
+            } else {
+                sql = `SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? AND Status = 1 
+                    AND strftime(?, AtUpdate) = ? GROUP BY NameItem ORDER BY TotalPrice DESC`;
+
+                if (type === 'date') {
+                    param = [SpendListId, '%Y-%m-%d', value];
+                } else if (type === 'month') {
+                    param = [SpendListId, '%Y-%m', value];
+                } else {
+                    param = [SpendListId, '%Y', value];
+                }
+
+                const result = await query(sql, param)
+                resultData = result;
+            }
+
+            res.json({
+                success: true,
+                data: resultData
+            })
+        } catch (err) {
+            console.log(err);
         }
     },
 }

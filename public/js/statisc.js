@@ -108,6 +108,8 @@ function drawChart_totalspending() {
 }
 
 
+
+
 function getTotalSpending() {
     $.ajax({
         type: 'GET',
@@ -130,6 +132,8 @@ function getTotalSpending() {
                     total: item.total
                 }));
 
+                // drawChart_totalperspenditem(res.totalPerSpendItem); // Gọi hàm vẽ biểu đồ
+
                 // Tổng tiền mỗi khoản chi
                 res.totalPerSpendItem.forEach((item) => {
                     item.totalprice = formatCurrency(item.totalprice);
@@ -148,6 +152,15 @@ function getTotalSpending() {
 
                 // Tổng tiền trên danh sách
                 $('#total_spendlist').text(formatCurrency(res.totalPrice));
+
+                console.log(res.yearList);
+
+                // Lấy các năm
+                source = $('#template-panel-input_year').html();
+                convertSource = convertPlaceHbs(source);
+                template = Handlebars.compile(convertSource);
+                data = template({ yearList: res.yearList });
+                $('#panel-input_year').html(data);
             }
         },
         error: function (err) {
@@ -158,4 +171,85 @@ function getTotalSpending() {
 
 $('#statisc_type').on('change', function () {
     drawChart_totalspending();
+})
+
+
+function drawChart_totalperspenditem(data) {
+    const spendItemsData = data.map(item => ({
+        name: item.NameItem,
+        value: item.totalprice,
+    }));
+
+    // console.log(spendItemsData);
+
+    var chart = echarts.init(document.getElementById('chart-totalperspenditem'));
+
+    var option = {
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)',
+        },
+        legend: {
+            type: 'scroll',
+            orient: 'vertical',
+            left: 'right',
+            right: 10,
+            top: 20,
+            bottom: 20,
+        },
+        series: [
+            {
+                name: 'Tổng tiền',
+                type: 'pie',
+                radius: '90%',
+                data: spendItemsData,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)',
+                    },
+                },
+                label: {
+                    show: true,
+                },
+            },
+        ],
+    };
+
+    // Sử dụng cấu hình để vẽ biểu đồ
+    chart.setOption(option);
+}
+
+function getDataForTotalPerSpenditem() {
+    var value;
+    var change_display = $('#change_display-pieStatisc').val();
+
+    if (change_display == 'date') {
+        value = $('#panel-input_date').val();
+    } else if (change_display == 'month') {
+        value = $('#panel-input_month').val();
+    } else if (change_display == 'year') {
+        value = $('#panel-input_year').val();
+    }
+
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/statisc/getDataForChart2',
+        data: {
+            type: change_display,
+            value: value,
+            SpendListId: $('#statisc_spendList').val(),
+        },
+        success: function (res) {
+            drawChart_totalperspenditem(res.data);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+} getDataForTotalPerSpenditem();
+
+$('#panel-input_date, #panel-input_month, #panel-input_year').on('change', function () {
+    getDataForTotalPerSpenditem();
 })
