@@ -5,13 +5,12 @@ const session = require('express-session');
 const passportConfigs = require('./configs/passport')
 const app = express()
 const path = require('path')
-require('dotenv').config();
-const host = process.env.HOST
-const port = process.env.PORT
+const host = 'localhost'
+const port = 3962
 
 // Middleware
 app.use(session({
-    secret: process.env.SECRET,
+    secret: 'spendingmanager',
     resave: false,
     saveUninitialized: false
 }));
