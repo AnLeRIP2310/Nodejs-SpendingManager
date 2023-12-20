@@ -63,7 +63,7 @@
             <select id="statisc_spendList" class="form-select mb-3">
                 {{#if spendingList}}
                 {{#each spendingList}}
-                <option value="{{this.Id}}">{{this.NameList}}</option>
+                <option value="{{this.id}}">{{this.namelist}}</option>
                 {{/each}}
                 {{/if}}
             </select>
@@ -141,41 +141,5 @@
 
 </div>
 
-<script>
-    // Đóng mở panel khi click
-    $('#togglePanel').click(function () {
-        $('.panel-content').toggleClass('panel-expanded panel-collapsed');
-        // Thay đổi biểu tượng nút
-        $('#togglePanel i').toggleClass('fa-chevron-up fa-chevron-down');
-        // Bạn có thể thêm các hành động khác tại đây nếu cần thiết
-        $(this).toggleClass('btnClearBorder');
-    });
-
-    // Sự kiện tuỳ chọn xem
-    $('#change_display-pieStatisc').on('change', function () {
-        if ($(this).val() == 'date') {
-            $('#panel-ctn_date').addClass('d-block');
-        } else {
-            $('#panel-ctn_date').removeClass('d-block');
-        }
-
-        if ($(this).val() == 'month') {
-            $('#panel-ctn_month').addClass('d-block');
-        } else {
-            $('#panel-ctn_month').removeClass('d-block');
-        }
-
-        if ($(this).val() == 'year') {
-            $('#panel-ctn_year').addClass('d-block');
-        } else {
-            $('#panel-ctn_year').removeClass('d-block');
-        }
-    });
-
-
-
-    const element = document.querySelector(".container-fluid.overflow-y-scroll");
-    element.scrollTop = element.scrollHeight;
-</script>
 
 <script src="../../public/js/statisc.js"></script>

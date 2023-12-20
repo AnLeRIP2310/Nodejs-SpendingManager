@@ -7,7 +7,7 @@
                         <select class="form-select" id="SpendingList">
                             {{#if spendingList}}
                             {{#each spendingList}}
-                            <option value="{{this.Id}}">{{this.NameList}}</option>
+                            <option value="{{this.id}}">{{this.namelist}}</option>
                             {{/each}}
                             {{/if}}
                         </select>
@@ -58,11 +58,11 @@
                                 %#if spendItemByList%
                                 %#each spendItemByList%
                                     <tr class="pointer">
-                                        <th scope="row">%this.Id%</th>
-                                        <td>%this.AtUpdate%</td>
-                                        <td>%this.NameItem%</td>
-                                        <td>%this.Price%</td>
-                                        <td style="white-space: nowrap;" >%this.Details%</td>
+                                        <th scope="row">%this.id%</th>
+                                        <td>%this.atupdate%</td>
+                                        <td>%this.nameitem%</td>
+                                        <td>%this.price%</td>
+                                        <td style="white-space: nowrap;" >%this.details%</td>
                                     </tr>
                                 %/each%
                                 %/if%
@@ -167,7 +167,7 @@
 
 <!-- Modal New SpendingList -->
 <div class="modal fade" id="modalNewSpendingList" tabindex="-1" aria-labelledby="modalNewSpendingList"
-    aria-hidden="true">
+    aria-hidden="true" data-bs-backdrop="false">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
@@ -188,7 +188,7 @@
 
 <!-- Modal Confirm Delete -->
 <div class="modal modal-sm fade" id="modalConfirmDelete" tabindex="-1" aria-labelledby="modalConfirmDelete"
-    aria-hidden="true">
+    aria-hidden="true" data-bs-backdrop="false">
     <div class="modal-dialog">
         <div class="modal-content" style="">
             <div class="modal-body">

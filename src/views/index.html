@@ -93,86 +93,6 @@
                 <!-- OffcanvasSetting -->
                 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSetting"
                     aria-labelledby="offcanvasSetting" style="width: 300px;">
-                    <div class="offcanvas-header">
-                        <h5 class="offcanvas-title text-center w-100 fw-bold" id="offcanvasSettingLabel">
-                            Cài Đặt Ứng Dụng
-                        </h5>
-                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-                            aria-label="Close"></button>
-                    </div>
-
-                    <div class="offcanvas-body">
-                        <!-- Dark Mode -->
-                        <div id="ctst_darkMode" class=" mb-3 d-flex align-items-center justify-content-between"
-                            data-bs-toggle="popover" data-bs-trigger="hover"
-                            data-bs-content="Bật cái này sẽ chuyển sang chế độ tối">
-                            <strong class="text-nowrap">Giao diện:</strong>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input pointer" type="checkbox" id="darkModeToggle">
-                                <label class="form-check-label pointer" for="darkModeToggle">Giao diện tối</label>
-                            </div>
-                        </div>
-                        <!-- Default Page -->
-                        <div id="ctst_defaultPage" class="mb-3 d-flex align-items-center" data-bs-toggle="popover"
-                            data-bs-trigger="hover"
-                            data-bs-content="Chọn trang mặt định sẽ mở khi ứng dụng được khởi động">
-                            <strong class="text-nowrap">Trang mặt định:</strong>
-                            <select class="form-select pointer ms-4" id="st_defaultPage">
-                                <option value="home">Trang chủ</option>
-                                <option value="spending">Chi tiêu</option>
-                                <option value="statisc">Thống kê</option>
-                                <option value="profile">Hồ sơ</option>
-                            </select>
-                        </div>
-                        <!-- Default Action -->
-                        <div id="ctst_defaultAction" class="mb-3 d-flex align-items-center" data-bs-toggle="popover"
-                            data-bs-trigger="hover"
-                            data-bs-content="Chọn hành động mặt định sẽ thực hiện khi người dùng bấm Enter trên ô nhập liệu trong trang chi tiêu">
-                            <strong class="text-nowrap">Thao tác mặt định:</strong>
-                            <select class="form-select ms-4 pointer" id="st_defaultAction">
-                                <option value="add">Thêm</option>
-                                <option value="edit">Sửa</option>
-                                <option value="del">Xóa</option>
-                            </select>
-                        </div>
-                        <!-- Language -->
-                        <div id="ctst_language" class=" mb-3 d-flex align-items-center justify-content-between"
-                            data-bs-toggle="popover" data-bs-trigger="hover"
-                            data-bs-content="Chọn ngôn ngữ mặt định sẽ hiển thị trong ứng dụng">
-                            <strong class="text-nowrap">Ngôn ngữ:</strong>
-                            <select class="form-select ms-5 pointer" id="st_language">
-                                <option value="vi">Tiếng Việt</option>
-                                <option value="en">Tiếng Anh</option>
-                            </select>
-                        </div>
-                        <!-- reminderDelete -->
-                        <div id="ctst_reminder" class="mb-3 d-flex align-items-center justify-content-between"
-                            data-bs-toggle="popover" data-bs-trigger="hover"
-                            data-bs-content="Bật cái này sẽ hiển thị thông báo xác nhận trước khi xoá dữ liệu trên bảng">
-                            <strong class="text-nowrap">Xác nhận xoá:</strong>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input pointer" type="checkbox" id="st_reminder">
-                                <label class="form-check-label pointer" for="st_reminder">Bật xác nhận</label>
-                            </div>
-                        </div>
-                        <!-- Tooltip -->
-                        <div id="ctst_tooltip" class=" mb-3 d-flex align-items-center justify-content-between"
-                            data-bs-toggle="popover" data-bs-trigger="hover"
-                            data-bs-content="Bật cái này sẽ hiển thị chú giải trên các tuỳ chọn trong trang cài đặt">
-                            <strong class="text-nowrap">Chú giải:</strong>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input pointer" type="checkbox" id="st_tooltip">
-                                <label class="form-check-label pointer" for="st_tooltip">Bật chú giải</label>
-                            </div>
-                        </div>
-                        <!-- Reset -->
-                        <div class=" mb-3 d-flex align-items-center justify-content-center">
-                            <button id="btn-reset_setting" class="btn btn-primary" data-bs-toggle="popover"
-                                data-bs-trigger="hover"
-                                data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng">Đặt lại mặt
-                                định</button>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- OffcanvasProfile -->
@@ -180,6 +100,29 @@
                     aria-labelledby="offcanvasProfile" style="width: 300px;">
                 </div>
             </div>
+
+            <!-- Modal Confirm Import Data -->
+            <div class="modal modal-sm fade" id="modalConfirmImport" tabindex="-1" aria-labelledby="modalConfirmImport"
+                aria-hidden="true" data-bs-backdrop="false">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <strong class="text-danger">
+                                - Bạn có chắc muốn nhập dữ liệu này không, dữ liệu hiện tại trên ứng dụng sẽ
+                                bị mất nếu bạn nhập dữ liệu này, bạn chắc chứ?
+                                <br>- Ứng dụng sẽ tự khởi động lại sau vài giây để áp dụng các thay đổi khi hoàn
+                                tất</strong>
+                            <div class="mt-3 d-flex justify-content-between">
+                                <button type="button" class="btn btn-success" style="width: 110px;"
+                                    data-bs-dismiss="modal">Thoát</button>
+                                <button id="btnConfirmImport" type="button" class="btn btn-primary"
+                                    style="width: 110px;">Nhập Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 

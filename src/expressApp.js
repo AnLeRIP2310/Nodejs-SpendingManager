@@ -2,6 +2,7 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
 const session = require('express-session');
+const { initDB, connectDB } = require('./configs/db');
 const passportConfigs = require('./configs/passport')
 const app = express()
 const path = require('path')
@@ -34,13 +35,31 @@ app.use('/profile', require('./routers/profileRouter'))
 app.use('/statisc', require('./routers/statiscRouter'))
 
 
-function startServer(callback) {
-    app.listen(port, () => {
-        console.log(`Server chạy trên http://${host}:${port}`);
-        if (callback) {
-            callback();
-        }
-    });
+let serverInstance; // Tạo biến để lưu trữ instance của server
+async function startServer(callback) {
+    try {
+        await initDB(); // Khởi tạo database nếu chưa có db
+        connectDB(); // Kiểm tra trạng thái
+        serverInstance = app.listen(port, () => {
+            console.log(`Server chạy trên http://${host}:${port}`);
+            if (callback) {
+                callback();
+            }
+        });
+    } catch (error) {
+        console.error('Lỗi khi khởi tạo cơ sở dữ liệu:', error);
+    }
 }
 
-module.exports = { startServer };
+function stopServer(callback) {
+    if (serverInstance) {
+        serverInstance.close(() => {
+            console.log('Server da dong');
+            if (callback) {
+                callback();
+            }
+        });
+    }
+}
+
+module.exports = { startServer, stopServer };

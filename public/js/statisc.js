@@ -1,3 +1,34 @@
+// Đóng mở panel khi click
+$('#togglePanel').click(function () {
+    $('.panel-content').toggleClass('panel-expanded panel-collapsed');
+    // Thay đổi biểu tượng nút
+    $('#togglePanel i').toggleClass('fa-chevron-up fa-chevron-down');
+    // Bạn có thể thêm các hành động khác tại đây nếu cần thiết
+    $(this).toggleClass('btnClearBorder');
+});
+
+// Sự kiện tuỳ chọn xem
+$('#change_display-pieStatisc').on('change', function () {
+    if ($(this).val() == 'date') {
+        $('#panel-ctn_date').addClass('d-block');
+    } else {
+        $('#panel-ctn_date').removeClass('d-block');
+    }
+
+    if ($(this).val() == 'month') {
+        $('#panel-ctn_month').addClass('d-block');
+    } else {
+        $('#panel-ctn_month').removeClass('d-block');
+    }
+
+    if ($(this).val() == 'year') {
+        $('#panel-ctn_year').addClass('d-block');
+    } else {
+        $('#panel-ctn_year').removeClass('d-block');
+    }
+});
+
+
 var totalPerDay;
 var totalPerMonth;
 var totalPerYear;
@@ -57,7 +88,7 @@ function drawChart_totalspending() {
 
         var xAxisData;
         var seriesData;
-        var totalColumnsToShow = 13; // Số cột bạn muốn hiển thị
+        var totalColumnsToShow = 13; // Số cột hiển thị
 
         if ($('#statisc_type').val() == 'date') {
             xAxisData = totalPerDay.map(item => item.date);
@@ -153,8 +184,6 @@ function getTotalSpending() {
                 // Tổng tiền trên danh sách
                 $('#total_spendlist').text(formatCurrency(res.totalPrice));
 
-                console.log(res.yearList);
-
                 // Lấy các năm
                 source = $('#template-panel-input_year').html();
                 convertSource = convertPlaceHbs(source);
@@ -176,7 +205,7 @@ $('#statisc_type').on('change', function () {
 
 function drawChart_totalperspenditem(data) {
     const spendItemsData = data.map(item => ({
-        name: item.NameItem,
+        name: item.nameitem,
         value: item.totalprice,
     }));
 

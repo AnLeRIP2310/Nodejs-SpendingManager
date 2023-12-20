@@ -2,12 +2,12 @@ const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 // const dbPath = path.join(__dirname, '../data/SpendingDB.sqlite');
-const dbPath = 'D:/LeThanhAn/Nodejs/SpendingDB.sqlite'
+// const dbPath = 'D:/LeThanhAn/Nodejs/SpendingDB.sqlite'
+const dbPath = 'C:/Users/ALRIP/AppData/Roaming/nodejs-spendingmanager/databases/SpendingDB.db';
 
-const dbExists = fs.existsSync(dbPath);
-const db = new sqlite3.Database(dbPath);
+var db;
 
-// Truy vấn đồng bộ với SQLite sử dụng promise hỗ trợ (CURD)
+// Truy vấn bất đồng bộ với SQLite sử dụng promise
 const query = (sql, params) => {
     sql = sql.toLowerCase();
     if (sql.startsWith('select')) {
@@ -31,10 +31,9 @@ const query = (sql, params) => {
 async function getUserId(token) {
     try {
         var sql = 'select * from AuthToken where token = ?';
-        var params = [token];
-        const checkToken = await query(sql, params);
+        const checkToken = await query(sql, [token]);
         if (checkToken.length > 0) {
-            return checkToken[0].UsersId;
+            return checkToken[0].usersid;
         } else {
             return null;
         }
@@ -43,58 +42,88 @@ async function getUserId(token) {
     }
 }
 
-// Hàm tạo bảng async
-const createTables = async () => {
-    await query(`
-        CREATE TABLE IF NOT EXISTS Users (
-            Id          INTEGER  PRIMARY KEY,
-            GoogleId    TEXT     COLLATE NOCASE,
-            FacebookId  TEXT     COLLATE NOCASE,
-            UserName    TEXT     COLLATE NOCASE,
-            PassWord    TEXT     COLLATE NOCASE,
-            Avatar      TEXT     COLLATE NOCASE,
-            DisplayName TEXT     COLLATE NOCASE,
-            AtCreate    DATETIME,
-            Email       TEXT     COLLATE NOCASE,
-            Status      INTEGER  DEFAULT 1
-        )
-    `);
+// Hàm khởi tạo database và bảng
+async function initDB() {
+    db = new sqlite3.Database(dbPath);
 
-    await query(`
-        CREATE TABLE IF NOT EXISTS AuthToken (
-            Id      INTEGER PRIMARY KEY,
-            UsersId INTEGER REFERENCES Users (Id),
-            Token   TEXT    COLLATE NOCASE
-        )
-    `);
+    const dbExists = fs.existsSync(dbPath);
 
-    await query(`
-        CREATE TABLE IF NOT EXISTS SpendingList (
-            Id       INTEGER  PRIMARY KEY,
-            UsersId  INTEGER  REFERENCES Users (Id),
-            NameList TEXT     COLLATE NOCASE,
-            AtCreate DATETIME,
-            Status   INTEGER  DEFAULT 1
-        )
-    `);
+    if (!dbExists) {
+        await query(`
+            CREATE TABLE IF NOT EXISTS Users (
+                Id          INTEGER  PRIMARY KEY,
+                GoogleId    TEXT,
+                FacebookId  TEXT,
+                UserName    TEXT     COLLATE NOCASE,
+                PassWord    TEXT,
+                Avatar      TEXT,
+                DisplayName TEXT     COLLATE NOCASE,
+                AtCreate    DATETIME,
+                Email       TEXT     COLLATE NOCASE,
+                Status      INTEGER  DEFAULT 1
+            )
+        `);
 
-    await query(`
-        CREATE TABLE IF NOT EXISTS SpendingItem (
-            Id          INTEGER  PRIMARY KEY,
-            SpendListId INTEGER  REFERENCES SpendingList (Id),
-            NameItem    TEXT     COLLATE RTRIM,
-            Price       REAL,
-            Details     TEXT,
-            AtCreate    DATETIME,
-            AtUpdate    DATETIME DEFAULT CURRENT_TIMESTAMP,
-            Status      INTEGER  DEFAULT 1
-        )
-    `);
-};
+        await query(`
+            CREATE TABLE IF NOT EXISTS AuthToken (
+                Id      INTEGER PRIMARY KEY,
+                UsersId INTEGER REFERENCES Users (Id),
+                Token   TEXT
+            )
+        `);
 
-// Kiểm tra nếu cơ sở dữ liệu không tồn tại, gọi hàm tạo bảng
-if (!dbExists) {
-    createTables();
+        await query(`
+            CREATE TABLE IF NOT EXISTS SpendingList (
+                Id       INTEGER  PRIMARY KEY,
+                UsersId  INTEGER  REFERENCES Users (Id),
+                NameList TEXT     COLLATE NOCASE,
+                AtCreate DATETIME,
+                Status   INTEGER  DEFAULT 1
+            )
+        `);
+
+        await query(`
+            CREATE TABLE IF NOT EXISTS SpendingItem (
+                Id          INTEGER  PRIMARY KEY,
+                SpendListId INTEGER  REFERENCES SpendingList (Id),
+                NameItem    TEXT     COLLATE NOCASE,
+                Price       REAL     COLLATE NOCASE,
+                Details     TEXT     COLLATE NOCASE,
+                AtCreate    DATETIME COLLATE NOCASE,
+                AtUpdate    DATETIME DEFAULT CURRENT_TIMESTAMP,
+                Status      INTEGER  DEFAULT 1
+            )
+        `);
+    }
 }
 
-module.exports = { db, query, getUserId };
+// Hàm kiểm tra kết nối đến database
+function connectDB() {
+    db = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+            console.error('Lỗi kết nối đến database:', err.message);
+        } else {
+            console.log('Kết nối đến database thành công.');
+        }
+    });
+}
+
+// Hàm đóng kết nối đến database
+function closeDB(callback) {
+    if (db) {
+        db.close((err) => {
+            if (err) {
+                console.error('Có lỗi khi đóng kết nối database:', err.message);
+            } else {
+                console.log('Đã đóng kết nối đến database');
+            }
+
+            if (callback) {
+                callback();
+            }
+        });
+    }
+}
+
+
+module.exports = { db, dbPath, query, getUserId, initDB, connectDB, closeDB };

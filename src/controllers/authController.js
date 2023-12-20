@@ -28,27 +28,27 @@ module.exports = {
 
     login: async (req, res) => {
         const { username, password } = req.query;
+        var token;
 
         try {
             var sql = 'select * from users where username = ? and password = ?';
-            var params = [username, password];
-            const checkUsers = await query(sql, params);
+            const checkUsers = await query(sql, [username, password]);
 
             if (checkUsers.length > 0) {
                 // Kiểm tra authToken và đăng nhập
-                const userId = checkUsers[0].Id;
-                var token;
+                const userId = checkUsers[0].id;
+
                 sql = 'select * from authtoken where usersId = ?';
                 const checkToken = await query(sql, [userId]);
 
-                if (checkToken.length == 0) {
+                if (checkToken.length > 0) {
+                    // Nếu có token
+                    token = checkToken[0].token; // Gán token vào biến
+                } else {
                     // nếu không có token, tạo token
                     token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
                     sql = 'insert into authtoken (usersId, Token) values (?, ?)';
                     await query(sql, [userId, token]);
-                } else {
-                    // Nếu có token
-                    token = checkToken[0].Token; // Gán token vào biến
                 }
 
                 res.json({ success: true, token: token });
@@ -102,7 +102,7 @@ module.exports = {
                 sql = 'select * from users where GoogleId = ? and Email = ?';
                 const checkGoogleId = await query(sql, [googleId, email]);
 
-                const userId = checkGoogleId[0].Id;
+                const userId = checkGoogleId[0].id;
 
                 if (checkGoogleId.length > 0) {
                     // Nếu có GoogleId, tiến hành đăng nhập
@@ -117,7 +117,7 @@ module.exports = {
                         await query(sql, [userId, token]);
                     } else {
                         // Nếu có token
-                        token = checkToken[0].Token; // Gán token vào biến
+                        token = checkToken[0].token; // Gán token vào biến
                     }
                 } else {
                     // nếu không có googleId, thêm googleId vào tài khoản
@@ -135,7 +135,7 @@ module.exports = {
                         await query(sql, [userId, token]);
                     } else {
                         // Nếu có token
-                        token = checkToken[0].Token; // Gán token vào biến
+                        token = checkToken[0].token; // Gán token vào biến
                     }
                 }
             } else {
@@ -146,7 +146,7 @@ module.exports = {
                 // Lấy ra userId
                 sql = 'select * from users where Email = ? and GoogleId = ?';
                 const checkUsers = await query(sql, [email, googleId]);
-                const userId = checkUsers[0].Id;
+                const userId = checkUsers[0].id;
 
                 // Kiểm tra authToken và đăng nhập
                 sql = 'select * from authtoken where usersId = ?';
@@ -159,7 +159,7 @@ module.exports = {
                     await query(sql, [userId, token]);
                 } else {
                     // Nếu có token
-                    token = checkToken[0].Token; // Gán token vào biến
+                    token = checkToken[0].token; // Gán token vào biến
                 }
             }
 
@@ -188,7 +188,7 @@ module.exports = {
 
             if (checkFacebookId.length > 0) {
                 // Nếu facebookId tồn tại, tiến hành đăng nhập
-                const userId = checkFacebookId[0].Id; // Lấy id người dùng
+                const userId = checkFacebookId[0].id; // Lấy id người dùng
 
                 // Kiểm tra authToken và đăng nhập
                 sql = 'select * from authtoken where usersId = ?';
@@ -201,7 +201,7 @@ module.exports = {
                     await query(sql, [userId, token]);
                 } else {
                     // Nếu có token
-                    token = checkToken[0].Token; // Gán token vào biến
+                    token = checkToken[0].token; // Gán token vào biến
                 }
             } else {
                 // nếu facebookId không tồn tại, tạo mới tài khoản và thêm vào database
@@ -211,7 +211,7 @@ module.exports = {
                 // Lấy ra userId
                 sql = 'select * from users where FacebookId = ?';
                 const checkUsers = await query(sql, [facebookId]);
-                const userId = checkUsers[0].Id;
+                const userId = checkUsers[0].id;
 
                 // Kiểm tra authToken và đăng nhập
                 sql = 'select * from authtoken where usersId = ?';
@@ -224,7 +224,7 @@ module.exports = {
                     await query(sql, [userId, token]);
                 } else {
                     // Nếu có token
-                    token = checkToken[0].Token; // Gán token vào biến
+                    token = checkToken[0].token; // Gán token vào biến
                 }
             }
 

@@ -2,6 +2,7 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
 const session = require('express-session');
+const { initDB, connectDB } = require('./configs/db');
 const passportConfigs = require('./configs/passport')
 const app = express()
 const path = require('path')
@@ -33,5 +34,9 @@ app.use('/home', require('./routers/homeRouter'))
 app.use('/profile', require('./routers/profileRouter'))
 app.use('/statisc', require('./routers/statiscRouter'))
 
-// Open Server
-app.listen(port, () => console.log(`Server chạy trên http://${host}:${port}`));
+
+app.listen(port, async () => {
+    await initDB(); // Khởi tạo database
+    // connectDB(); // Kiểm tra kết nối db
+    console.log(`Server chạy trên http://${host}:${port}`);
+})

@@ -30,7 +30,8 @@ function addSpendingList() {
         success: function (data) {
             if (data.success == true) {
                 // Thêm danh sách mới vào thẻ select
-                var lastOptionValue = $('#SpendingList option:last').val();
+                var lastOption = $('#SpendingList option:last');
+                var lastOptionValue = lastOption.length > 0 ? parseInt(lastOption.val()) + 1 : 1;
                 $('#SpendingList').append('<option value="' + lastOptionValue + '">' + $('#newSpendingList').val() + '</option>');
                 $('#newSpendingList').val('');
             }
@@ -76,10 +77,10 @@ function displaySpendingItems() {
             // Chỉnh sửa dữ liệu nhận được
             SpendingData.forEach((item) => {
                 // Chuyển định dạng ngày
-                item.AtCreate = formatDate(item.AtCreate);
-                item.AtUpdate = formatDate(item.AtUpdate);
+                item.atcreate = formatDate(item.atcreate);
+                item.atupdate = formatDate(item.atupdate);
                 // Định dạng giá tiền
-                item.Price = formatCurrency(item.Price);
+                item.price = formatCurrency(item.price);
             });
 
             var source = $('#template-tbody').html();
@@ -305,16 +306,16 @@ $('#btnCreate').on('click', function () {
         success: function (res) {
             if (res.success == true) {
                 // Dữ liệu trả về từ server
-                const data = res.data[0];
-                data.AtUpdate = formatDate(data.AtUpdate);
+                const dataRes = res.data[0];
+                dataRes.atupdate = formatDate(dataRes.atupdate);
 
                 // Tạo HTML cho hàng mới
                 var newRow = `<tr class ="pointer">
-                                <th scope="row">${data.Id}</th>
-                                <td>${data.AtUpdate}</td>
-                                <td>${data.NameItem}</td>
-                                <td>${formatCurrency(data.Price)}</td>
-                                <td>${data.Details}</td>
+                                <th scope="row">${dataRes.id}</th>
+                                <td>${dataRes.atupdate}</td>
+                                <td>${dataRes.nameitem}</td>
+                                <td>${formatCurrency(dataRes.price)}</td>
+                                <td>${dataRes.details}</td>
                             </tr>`;
                 // Thêm hàng mới vào bảng
                 $('#tbdata tbody').append(newRow);
@@ -446,12 +447,14 @@ $('#spendName, #spendPrice, #spendDetails').on('keyup', function (event) {
     if (event.keyCode == 13) {
         event.preventDefault();
 
+        console.log('đã gọi sk enter')
+
         if ($('#spendName').val() === '') { return }
 
         const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
 
         if (SettingApp.defaultAction == 'add') {
-            $('#btnAdd').click();
+            $('#btnCreate').click();
         } else if (SettingApp.defaultAction == 'edit') {
             $('#btnUpdate').click();
         } else if (SettingApp.defaultAction == 'del') {

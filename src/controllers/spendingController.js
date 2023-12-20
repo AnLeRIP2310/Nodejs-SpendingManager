@@ -23,6 +23,7 @@ module.exports = {
 
         try {
             const userId = await getUserId(token);
+
             sql = 'insert into spendinglist (usersId, namelist, atcreate, status) values (?, ?, ?, ?)';
             params = [userId, namelist, atcreate, status];
             const result = await query(sql, params);
@@ -33,7 +34,7 @@ module.exports = {
                 res.json({ success: false });
             }
         } catch (err) {
-            console.error(err);
+            console.log(err);
         }
     },
 
@@ -66,7 +67,7 @@ module.exports = {
             var sql = 'SELECT NameItem FROM SpendingItem Where Status = 1';
             const result = await query(sql);
             // Xử lý kết quả để lấy danh sách các tên
-            const names = result.map(item => item.NameItem);
+            const names = result.map(item => item.nameitem);
             res.json({ success: true, data: names });
         } catch (err) {
             console.log(err)
