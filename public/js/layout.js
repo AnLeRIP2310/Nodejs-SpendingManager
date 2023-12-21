@@ -214,8 +214,6 @@ $('#page-profile').click(function () {
                 token: JSON.parse(localStorage.getItem('AuthToken')).token
             },
             success: function (res) {
-                console.log(res)
-
                 if (res.success) {
                     if (res.data[0].avatar == null) {
                         res.data[0].avatar = urlapi + '/images/defaultAvatar.jpg';

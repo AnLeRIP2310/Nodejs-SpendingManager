@@ -63,7 +63,9 @@ function displaySpendingItems() {
         IdList: $('#SpendingList').val(),
         tblOffset: tblOffset_spending,
         tbLimit: tbLimit_spending,
-        SearchKey: $('#txtSearch').val()
+        SearchKey: $('#txtSearch').val(),
+        SearchDate: $('#txtSearchDate').val(),
+        TypeSearchDate: $('#typeDateSearch').val()
     }
 
     $.ajax({
@@ -127,6 +129,35 @@ $('#txtSearch').on('keyup', function (event) {
     if (event.keyCode === 13) {
         event.preventDefault();
         resetAndDisplayItems()
+    }
+});
+// Gọi sự kiện khi có tuỳ chọn thời gian
+$('#txtSearchDate').on('change', function () {
+    resetAndDisplayItems()
+    setTimeout(() => {
+        resetAndDisplayItems()
+    }, 100);
+});
+// Mở tuỳ chọn tìm kiếm theo thời gian
+$('#btn-openDateSearch').click(function () {
+    if ($('.searchDate').hasClass('searchDate-expanded')) {
+        $('.searchDate').removeClass('searchDate-expanded');
+        $('.searchDate').addClass('searchDate-collapsed');
+    } else {
+        $('.searchDate').addClass('searchDate-expanded');
+        $('.searchDate').removeClass('searchDate-collapsed');
+    }
+});
+$('.searchDate').click(function (event) {
+    // Ngăn chặn sự kiện click lan truyền lên phần tử cha
+    event.stopPropagation();
+});
+$('#typeDateSearch').on('change', function () {
+    console.log('đã gọi sk')
+    if ($(this).val() == 'date') {
+        $('#txtSearchDate').prop('type', 'date');
+    } else {
+        $('#txtSearchDate').prop('type', 'month');
     }
 });
 // Tải thêm spending khi cuộn table

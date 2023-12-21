@@ -209,8 +209,6 @@ function drawChart_totalperspenditem(data) {
         value: item.totalprice,
     }));
 
-    // console.log(spendItemsData);
-
     var chart = echarts.init(document.getElementById('chart-totalperspenditem'));
 
     var option = {
@@ -225,6 +223,9 @@ function drawChart_totalperspenditem(data) {
             right: 10,
             top: 20,
             bottom: 20,
+            textStyle: {
+                color: 'green' // Chọn màu bạn muốn ở đây
+            }
         },
         series: [
             {

@@ -252,3 +252,34 @@
         transform: scaleY(0);
     }
 }
+
+
+/* ---------SpendingPage---------- */
+
+.searchDate {
+    top: 40px;
+    left: 2px;
+    position: absolute;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    transform-origin: top center;
+    transition: all .5s ease;
+    transform: scaleY(0);
+}
+
+.searchDate::before {
+    content: "";
+    position: absolute;
+    bottom: calc(100% - 1px);
+    left: 8px;
+    border: 10px solid;
+    border-color: transparent transparent rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) transparent;
+}
+
+.searchDate.searchDate-collapsed {
+    animation: Shrink 0.5s ease forwards;
+}
+
+.searchDate.searchDate-expanded {
+    width: 250px;
+    animation: expand 0.5s ease forwards;
+}

@@ -39,18 +39,47 @@ module.exports = {
     },
 
     getSpendingForSpendList: async (req, res) => {
-        const { IdList, tblOffset, tbLimit, SearchKey } = req.query;
+        const { IdList, tblOffset, tbLimit, SearchKey, SearchDate, TypeSearchDate } = req.query;
 
         try {
             var sql = 'SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 ORDER BY Id DESC LIMIT ? OFFSET ?';
             var params = [IdList, tbLimit, tblOffset];
+
+            // Kiểm tra xem có giá trị thời gian không
+            if (SearchDate != '') {
+                sql = `SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 AND 
+                    strftime(?, AtUpdate) = ? ORDER BY Id DESC LIMIT ? OFFSET ?`;
+                if (TypeSearchDate == 'date') {
+                    params = [IdList, '%Y-%m-%d', SearchDate, tbLimit, tblOffset];
+                } else {
+                    params = [IdList, '%Y-%m', SearchDate, tbLimit, tblOffset];
+                }
+            }
+
             const dataResult = await query(sql, params);
 
+            // Nếu có từ khoá tìm kiếm
             if (SearchKey != '') {
-                sql = `SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 AND 
-                    (NameItem LIKE ? OR Details LIKE ? OR AtCreate Like ? OR AtUpdate Like ?) 
-                    ORDER BY Id DESC LIMIT ? OFFSET ?`;
-                params = [IdList, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, tbLimit, tblOffset];
+                // Kiểm tra xem có tìm theo ngày không
+                if (SearchDate != '') {
+                    sql = `SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 AND 
+                        (NameItem LIKE ? OR Details LIKE ? OR Price Like ?) AND strftime(?, AtUpdate) = ?
+                        ORDER BY Id DESC LIMIT ? OFFSET ?`;
+
+                    // Kiểm tra loại thời gian
+                    if (TypeSearchDate == 'date') {
+                        params = [IdList, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, '%Y-%m-%d', SearchDate, tbLimit, tblOffset];
+                    } else {
+                        params = [IdList, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, '%Y-%m', SearchDate, tbLimit, tblOffset];
+                    }
+                } else {
+                    // Nếu không có tìm theo ngày thì tìm theo mặt định
+                    sql = `SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 AND 
+                        (NameItem LIKE ? OR Details LIKE ? OR Price Like ?) 
+                        ORDER BY Id DESC LIMIT ? OFFSET ?`;
+                    params = [IdList, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, tbLimit, tblOffset];
+                }
+
                 const dataResultSearch = await query(sql, params);
 
                 res.json({ success: true, data: dataResultSearch });

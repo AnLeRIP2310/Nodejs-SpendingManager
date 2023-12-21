@@ -20,6 +20,18 @@
 
                 <div class="col-7">
                     <div class="input-group">
+                        <button id="btn-openDateSearch" class="btn btn-secondary">
+                            <i class="fa-solid fa-calendar"></i>
+
+                            <div class="searchDate input-group bg-body-tertiary rounded p-1">
+                                <select id="typeDateSearch" class="form-select" style="flex: 0.7;">
+                                    <option value="date">Ngày</option>
+                                    <option value="month">Tháng</option>
+                                </select>
+                                <input id="txtSearchDate" type="date" class="form-control" style="flex: 2;">
+                            </div>
+                        </button>
+
                         <input id="txtSearch" type="search" class="form-control" placeholder="Nhập từ khoá tìm kiếm">
                         <button class="btn btn-secondary" type="button" onclick="displaySpendingItems()">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -66,7 +78,7 @@
                                     </tr>
                                 %/each%
                                 %/if%
-                                </script>
+                        </script>
                     </table>
                 </div>
             </div>
