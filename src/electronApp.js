@@ -50,7 +50,7 @@ function createAuthWindow() {
 
 function createMainWindow() {
     const mainScreen = screen.getPrimaryDisplay().workAreaSize;
-    const windowWidth = 931, windowHeight = 565;
+    const windowWidth = 930, windowHeight = 565;
     const screenWidth = mainScreen.width;
     const screenHeight = mainScreen.height;
 

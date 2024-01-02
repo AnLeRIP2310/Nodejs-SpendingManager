@@ -11,26 +11,14 @@
     margin: 0;
 }
 
-.sidebar-item {
+.sidebar-item,
+.sidebar-item-e {
     font-size: 20px;
     position: relative;
 }
 
-.sidebar-item a {
-    padding: 12px 10px;
-    display: block;
-}
-
-#page-setting,
-#page-logout,
-#page-profile {
-    font-size: 20px;
-    position: relative;
-}
-
-#page-setting a,
-#page-logout a,
-#page-profile a {
+.sidebar-item a,
+.sidebar-item-e a {
     padding: 12px 10px;
     display: block;
 }
@@ -282,4 +270,16 @@
 .searchDate.searchDate-expanded {
     width: 250px;
     animation: expand 0.5s ease forwards;
+}
+
+#tbl-spendlist-input,
+.group-btn_action-edit {
+    display: none;
+}
+
+.group-btn_action button,
+.group-btn_action-edit button {
+    --bs-btn-padding-y: .25rem;
+    --bs-btn-padding-x: .5rem;
+    --bs-btn-font-size: .75rem;
 }

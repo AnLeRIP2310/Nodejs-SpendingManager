@@ -29,6 +29,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // Router
 app.use('/spending', require('./routers/spendingRouter'))
+app.use('/spendlist', require('./routers/spendlistRouter'))
 app.use('/auth', require('./routers/authRouter'))
 app.use('/home', require('./routers/homeRouter'))
 app.use('/profile', require('./routers/profileRouter'))

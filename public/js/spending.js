@@ -160,7 +160,7 @@ $('#typeDateSearch').on('change', function () {
         $('#txtSearchDate').prop('type', 'month');
     }
 });
-// Tải thêm spending khi cuộn table
+// Tải thêm danh sách khi cuộn table
 $('#tbContainer').scroll(function () {
     if ($('#tbContainer').scrollTop() === 0) {
         // Lưu lại chiều cao trước khi thêm dữ liệu mới
@@ -249,7 +249,7 @@ function calculateItemPrice(SpendName) {
 
 //#region Auto Complete
 
-// Hàm tạo danh sách auto complete
+// Hàm lấy danh sách tên các khoản chi
 function getListNameSpending(callback) {
     $.ajax({
         type: 'GET',
@@ -266,7 +266,7 @@ function getListNameSpending(callback) {
     })
 }
 
-// hàm gợi ý từ trong field
+// hàm gợi ý từ trên thẻ input
 function spendingSuggest() {
     // Gọi getListNameSpending và sử dụng dữ liệu trả về trong callback
     getListNameSpending(function (data) {
@@ -305,14 +305,33 @@ function spendingSuggest() {
     });
 }
 
-
 //#endregion
+
+// Hàm kiểm tra xem có chứa phép toán không
+function isOperation(input) {
+    // Kiểm tra xem có chứa các toán tử (+, -, *, /) hay không
+    return /\+|-|\*|\//.test(input);
+}
+
+// Hàm tính toán đơn giản
+function calculate() {
+    const spendPrice = $('#spendPrice')
+
+    if (isOperation(spendPrice.val())) {
+        try {
+            const result = eval(spendPrice.val()); // Sử dụng hàm eval() để tính toán phép toán nhập vào
+            spendPrice.val(result);
+        } catch (error) { }
+    }
+}
 
 
 //#region Button Add, Update, Delete, Clear
 
 // nút thêm dữ liệu vào bảng
 $('#btnCreate').on('click', function () {
+    calculate();
+
     const data = {
         ListId: $('#SpendingList').val(),
         Name: $('#spendName').val(),
@@ -355,6 +374,7 @@ $('#btnCreate').on('click', function () {
                 handleRowClickEvent(); // gắn sự kiện click cho row
                 calculateTotalPrice() // Tính tổng tiền trên danh sách
                 $('#btnClearData').click() // Xoá dữ liệu trên field
+                $('#spendName').focus() // Nhắm vào thẻ input tên
             }
         },
         error: function (err) {

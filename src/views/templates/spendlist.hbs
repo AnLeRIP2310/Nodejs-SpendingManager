@@ -1,0 +1,65 @@
+<div class="offcanvas-header">
+    <h5 class="offcanvas-title text-center w-100 fw-bold" id="offcanvasSettingLabel">
+        Danh Sách Các Chi Tiêu
+    </h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+</div>
+
+<div class="offcanvas-body">
+    <!-- Table -->
+    <div class="tableScroll" style="height: 372px;">
+        <table id="spendlistTbl" class="table table-hover border">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Tên Danh Sách</th>
+                    <th scope="col">Ngày Tạo</th>
+                    <th scope="col">Tổng Tiền</th>
+                    <th scope="col">Trạng Thái</th>
+                    <th style="border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);">
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="tb-totalPerSpendItem">
+                {{#if spendList}}
+                {{#each spendList}}
+                <tr class="pointer">
+                    <th id="tbl-spendlist-id" scope="row">{{this.id}}</th>
+                    <td style="white-space: nowrap;">
+                        <span id="tbl-spendlist-name">{{this.namelist}}</span>
+                        <input id="tbl-spendlist-input" type="text" class="form-control form-control-sm"
+                            value="{{this.namelist}}">
+                    </td>
+                    <td>{{this.atcreate}}</td>
+                    <td>{{this.totalprice}}</td>
+                    <td>Actived</td>
+                    <td>
+                        <div class="group-btn_action">
+                            <button id="btn-spendlist-edit" class="btn btn-primary">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+
+                            <button id="btn-spendlist-delete" class="btn btn-danger">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="group-btn_action-edit">
+                            <button id="btn-spendlist-save" class="btn btn-success">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                            </button>
+
+                            <button id="btn-spendlist-cancel" class="btn btn-danger">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
+                {{/if}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script src="../../public/js/spendlist.js"></script>

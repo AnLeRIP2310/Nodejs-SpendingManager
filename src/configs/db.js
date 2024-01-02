@@ -1,9 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
-// const dbPath = path.join(__dirname, '../data/SpendingDB.sqlite');
-// const dbPath = 'D:/LeThanhAn/Nodejs/SpendingDB.sqlite'
-const dbPath = 'C:/Users/ALRIP/AppData/Roaming/nodejs-spendingmanager/databases/SpendingDB.db';
+// const dbPath = path.join(__dirname, '../data/SpendingDB.db');
+const dbPath = process.env.APPDATA + '/spendingManager/data/SpendingDB.db';
 
 var db;
 
@@ -44,10 +43,20 @@ async function getUserId(token) {
 
 // Hàm khởi tạo database và bảng
 async function initDB() {
+    // Kiểm tra nếu thư mục không tồn tại, thì tạo mới
+    if (!fs.existsSync(path.dirname(dbPath))) {
+        try {
+            fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+            console.log('Thư mục đã được tạo.');
+        } catch (err) {
+            console.error('Lỗi khi tạo thư mục:', err);
+        }
+    }
+
+    // Gán dữ liệu cho biến db
     db = new sqlite3.Database(dbPath);
 
     const dbExists = fs.existsSync(dbPath);
-
     if (!dbExists) {
         await query(`
             CREATE TABLE IF NOT EXISTS Users (

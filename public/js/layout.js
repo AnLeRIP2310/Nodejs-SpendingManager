@@ -201,6 +201,7 @@ $('#page-statisc').click(function () {
 
 let pageProfile = false;
 let pageSetting = false;
+let pageSpendlist = false;
 
 // Page Profile
 $('#page-profile').click(function () {
@@ -244,6 +245,40 @@ $('#page-profile').click(function () {
     }
 })
 
+// Page Spendlist
+$('#page-spendlist').click(function () {
+    if (pageSpendlist == false) {
+        pageSpendlist = true;
+
+        $.ajax({
+            type: 'GET',
+            url: urlapi + '/spendlist/getData',
+            data: {
+                token: JSON.parse(localStorage.getItem('AuthToken')).token
+            },
+            success: function (res) {
+                res.data.forEach((item) => {
+                    item.status = item.status == 1 ? 'Actived' : 'Disable';
+                    item.totalprice = formatCurrency(item.totalprice);
+                });
+
+                fetch('templates/spendlist.hbs')
+                    .then(response => response.text())
+                    .then(template => {
+                        const compiledTemplate = Handlebars.compile(template);
+                        const html = compiledTemplate({
+                            spendList: res.data
+                        });
+                        $('#offcanvasSpendlist').html(html);
+                    })
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    }
+});
+
 // Page Setting
 $('#page-setting').click(function () {
     if (pageSetting == false) {
@@ -262,4 +297,9 @@ $('#page-setting').click(function () {
 
 // mở cài đặt
 // var offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasSetting'));
+// offcanvas.show()
+
+// Mở spendlist
+// $('#page-spendlist').click();
+// var offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasSpendlist'));
 // offcanvas.show()
