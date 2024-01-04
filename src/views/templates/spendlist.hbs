@@ -6,6 +6,18 @@
 </div>
 
 <div class="offcanvas-body">
+    <!-- Add -->
+    <div class="mb-3 position-relative d-flex">
+        <button id="btn-spendlist-open_form" class="btn btn-secondary me-3 text-nowrap z-1">Thêm Danh Sách</button>
+
+        <div class="input-group form-addSpendlist">
+            <input id="tbl-spendlist-add" type="text" class="form-control" placeholder="Nhập tên danh sách">
+
+            <button id="btn-spendlist-add" class="btn btn-success">
+                <i class="fa-solid fa-floppy-disk"></i>
+            </button>
+        </div>
+    </div>
     <!-- Table -->
     <div class="tableScroll" style="height: 372px;">
         <table id="spendlistTbl" class="table table-hover border">
@@ -15,7 +27,6 @@
                     <th scope="col">Tên Danh Sách</th>
                     <th scope="col">Ngày Tạo</th>
                     <th scope="col">Tổng Tiền</th>
-                    <th scope="col">Trạng Thái</th>
                     <th style="border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);">
                     </th>
                 </tr>
@@ -32,7 +43,6 @@
                     </td>
                     <td>{{this.atcreate}}</td>
                     <td>{{this.totalprice}}</td>
-                    <td>Actived</td>
                     <td>
                         <div class="group-btn_action">
                             <button id="btn-spendlist-edit" class="btn btn-primary">

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    // Lắng nghe sự kiện khi click vào nút edit
+    // Sự kiện click nút edit trên bảng
     $('#spendlistTbl').on('click', '#btn-spendlist-edit', function () {
         var row = $(this).closest('tr');
         // Ẩn span và hiển thị input
@@ -11,7 +11,25 @@ $(document).ready(function () {
         row.find('.group-btn_action-edit').addClass('d-block');
     });
 
-    // Lắng nghe sự kiện khi click vào nút save hoặc close
+    // Sự kiện click nút save trên bảng
+    $('#spendlistTbl').on('click', '#btn-spendlist-save', function () {
+        var row = $(this).closest('tr');
+        var Id = row.find('#tbl-spendlist-id').text();
+        var inputValue = row.find('#tbl-spendlist-input').val();
+        var displayValue = row.find('#tbl-spendlist-name').text();
+
+        var data = {
+            Id: Id,
+            SpendName: inputValue
+        };
+
+        // Kiểm tra nếu không có sự thay đổi giá trị thì không gọi hàm
+        if (inputValue != displayValue) {
+            editSpendlist(data);
+        }
+    });
+
+    // Sự kiện click vào nút save hoặc close trên bảng
     $('#spendlistTbl').on('click', '#btn-spendlist-save, #btn-spendlist-cancel', function () {
         var row = $(this).closest('tr');
         // Ẩn div chứa nút save và close, hiển thị div chứa nút delete và edit
@@ -24,23 +42,18 @@ $(document).ready(function () {
         row.find('#tbl-spendlist-input').removeClass('d-block');
     });
 
-    // Sự kiện click trên nút save
-    $('#spendlistTbl').on('click', '#btn-spendlist-save', function () {
+    // Sự kiện click nút del trên bảng
+    $('#spendlistTbl').on('click', '#btn-spendlist-delete', function () {
+        $(this).closest('tr').remove();
         var row = $(this).closest('tr');
         var Id = row.find('#tbl-spendlist-id').text();
-        var inputValue = row.find('#tbl-spendlist-input').val();
-
-        var data = {
-            Id: Id,
-            SpendName: inputValue
-        };
-        spendlistEdit(data);
+        delSpendlist(Id);
     });
 });
 
 
 // Hàm cập nhật dữ liệu bảng chi tiêu(spendlist)
-function spendlistEdit(data) {
+function editSpendlist(data) {
     $.ajax({
         type: 'POST',
         url: urlapi + '/spendlist/editSpendlist',
@@ -59,3 +72,69 @@ function spendlistEdit(data) {
         }
     });
 }
+
+// Hàm xoá danh sách chi tiêu
+function delSpendlist(id) {
+    $.ajax({
+        type: 'POST',
+        url: urlapi + '/spendlist/delSpendlist',
+        data: JSON.stringify({ Id: id }),
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function (res) {
+            if (res.success) {
+                showSuccessToast('Xóa danh sách thành công');
+            } else {
+                showErrorToast('Xoá danh sách thất bại');
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+}
+
+
+
+let isOpenForm = false;
+$('#btn-spendlist-open_form').click(function () {
+    if (!isOpenForm) {
+        $('.form-addSpendlist').css('animation', 'sideslip_on .5s ease forwards')
+        isOpenForm = true;
+    } else {
+        $('.form-addSpendlist').css('animation', 'sideslip_off .5s ease forwards')
+        isOpenForm = false;
+    }
+})
+
+// Btn thêm danh sách mới
+$('#btn-spendlist-add').click(function () {
+    const data = {
+        token: JSON.parse(localStorage.getItem('AuthToken')).token,
+        namelist: $('#tbl-spendlist-add').val(),
+        atcreate: formatDate(new Date()),
+        status: 1
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: urlapi + '/spending/insertSpendList',
+        data: data,
+        dataType: 'json',
+        contentype: 'application/json',
+        success: function (data) {
+            if (data.success == true) {
+                $('#tbl-spendlist-add').val('');
+                showSuccessToast('Thêm danh sách thành công');
+
+                $('.form-addSpendlist').css('animation', 'sideslip_off .5s ease forwards')
+                isOpenForm = true;
+            } else {
+                showErrorToast('Thêm danh sách thất bai');
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+});

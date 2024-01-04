@@ -283,3 +283,37 @@
     --bs-btn-padding-x: .5rem;
     --bs-btn-font-size: .75rem;
 }
+
+
+/* -----------Spendlist--------- */
+
+.form-addSpendlist {
+    opacity: 0;
+    transition: all .5s ease;
+}
+
+@keyframes sideslip_on {
+    0% {
+        opacity: 0;
+        transform: scaleX(0);
+        transform: translateX(-70%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
+@keyframes sideslip_off {
+    0% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(0);
+        transform: translateX(-70%);
+    }
+}

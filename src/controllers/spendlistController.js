@@ -7,10 +7,10 @@ module.exports = {
         try {
             const userId = await getUserId(token)
 
-            var sql = `SELECT spl.*, SUM(sp.price) as totalprice FROM spendinglist as spl 
-                INNER JOIN spendingitem as sp ON spl.id = sp.spendlistid WHERE spl.id = ? 
-                and spl.status = ? and sp.status = ?`
-            const result = await query(sql, [userId, 1, 1])
+            var sql = `SELECT spl.*, COALESCE(SUM(sp.price), 0) AS totalprice FROM spendinglist AS spl 
+                LEFT JOIN spendingitem AS sp ON spl.id = sp.spendlistid AND sp.status = 1 
+                WHERE spl.usersid = ? AND spl.status = 1 GROUP BY spl.id;`
+            const result = await query(sql, [userId])
 
             res.json({
                 success: true,
@@ -28,9 +28,23 @@ module.exports = {
             var sql = 'update SpendingList set NameList = ? where id = ?'
             var params = [SpendName, Id]
             const result = await query(sql, params)
+
+            console.log(result);
             res.json({ success: result })
         } catch (err) {
             console.log(err)
+        }
+    },
+
+    delSpendlist: async (req, res) => {
+        const { Id } = req.body
+
+        try {
+            var sql = 'update SpendingList set status = 0 where id = ?'
+            const result = await query(sql, [Id])
+            res.json({ success: result })
+        } catch (e) {
+            console.log(e)
         }
     },
 }
