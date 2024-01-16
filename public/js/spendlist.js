@@ -96,7 +96,7 @@ function delSpendlist(id) {
 
 
 
-let isOpenForm = false;
+var isOpenForm = false;
 $('#btn-spendlist-open_form').click(function () {
     if (!isOpenForm) {
         $('.form-addSpendlist').css('animation', 'sideslip_on .5s ease forwards')
@@ -114,6 +114,11 @@ $('#btn-spendlist-add').click(function () {
         namelist: $('#tbl-spendlist-add').val(),
         atcreate: formatDate(new Date()),
         status: 1
+    }
+
+    if (data.namelist == '') {
+        showErrorToast('Vui lòng nhập tên sách');
+        return;
     }
 
     $.ajax({

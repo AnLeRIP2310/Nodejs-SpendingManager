@@ -118,13 +118,10 @@ function resetAndDisplayItems() {
 $('#SpendingList').on('change', function () {
     resetAndDisplayItems()
 });
-// Gọi sự kiện khi có tìm kiếm
-$('#txtSearch').on('input', function () {
-    resetAndDisplayItems()
-});
-$('#txtSearch').on('blur', function () {
-    resetAndDisplayItems()
-});
+// Gọi sự kiện khi có tìm kiếm với debounce
+$('#txtSearch').on('input', _.debounce(resetAndDisplayItems, 300));
+
+
 $('#txtSearch').on('keyup', function (event) {
     if (event.keyCode === 13) {
         event.preventDefault();
@@ -347,6 +344,11 @@ $('#btnCreate').on('click', function () {
         return;
     }
 
+    if (data.Name == '') {
+        showWarningToast('Vui lòng nhập tên khoản chi');
+        return;
+    }
+
     $.ajax({
         type: 'POST',
         url: urlapi + '/spending/insertSpending',
@@ -394,6 +396,11 @@ $('#btnUpdate').on('click', function () {
         AtUpdate: $('#spendDate').val(),
     }
 
+    if (data.Id == null || data.Id == '' || data.Id == undefined) {
+        showWarningToast('Vui lòng chọn dữ liệu muốn sửa');
+        return;
+    }
+
     $.ajax({
         type: 'POST',
         url: urlapi + '/spending/updateSpending',
@@ -432,6 +439,11 @@ $('#btnUpdate').on('click', function () {
 
 // nút xoá dữ liệu trong bảng
 $('#btnDelete').on('click', function () {
+    if ($('#spendId').val() == null || $('#spendId').val() == '') {
+        showWarningToast('Vui lòng chọn dữ liệu muốn xoá');
+        return;
+    }
+
     const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
     if (SettingApp.reminderDelete) {
         $('#modalConfirmDelete').modal('show');
@@ -439,16 +451,21 @@ $('#btnDelete').on('click', function () {
         deleteSpendingItem()
     }
 });
-
+// Nút xác nhận xoá dữ liệu trong bảng
 $('#btnConfirmDelete').click(function () {
     deleteSpendingItem()
     $('#modalConfirmDelete').modal('hide');
 })
 
-// hàm xoá dữ liệu
+// hàm xoá dữ liệu trong bảng
 function deleteSpendingItem() {
     const data = {
         Id: $('#spendId').val(),
+    }
+
+    if (data.Id == null) {
+        showWarningToast('Vui lòng chọn dữ liệu muốn xoá');
+        return;
     }
 
     $.ajax({
