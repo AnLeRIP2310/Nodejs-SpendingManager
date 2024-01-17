@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const expressApp = require('./expressApp');
 const { closeDB, dbPath } = require('./configs/db');
+const appSettings = require('./configs/appSettings');
 
 
 try {
@@ -77,6 +78,12 @@ function createMainWindow() {
     });
 }
 
+// Bắt sự kiện khởi động lại ứng dụng
+ipcMain.on('reload-app', () => {
+    app.relaunch();
+    app.exit();
+})
+
 // Bắt sự kiện đăng nhập thành công
 ipcMain.on('login-success', () => {
     // Đóng cửa sổ login.html
@@ -146,41 +153,36 @@ ipcMain.on('import-db', async () => {
                 console.log('Sao chép tệp thành công!');
                 // Xử lý khi sao chép thành công
 
-                mainWindow.reload();
+                app.relaunch();
+                app.exit();
             }
         });
     }
 })
 
-// Bắt sự kiện đóng server và database
-ipcMain.on('close-server', () => {
-    expressApp.stopServer(() => {
-        console.log('may chu ngung hoat dong, san sang xoa tep');
-        closeDB(() => {
-            const maxAttempts = 5; // Số lần tối đa thực hiện xoá
-            let attempts = 0;
+// Bắt sự kiện thay đổi đường dẫn lưu database
+ipcMain.on('change-dbPath', () => {
+    dialog.showOpenDialog(mainWindow, {
+        properties: ['openDirectory'],
+    }).then(result => {
+        if (!result.canceled) {
+            const selectedDirectory = result.filePaths[0];
+            const newdbPath = path.join(selectedDirectory, 'SpendingDB.db');
 
-            const tryDelete = () => {
-                if (fs.existsSync(dbPath)) {
-                    try {
-                        fs.unlinkSync(dbPath);
-                        console.log('xoa tep database thanh cong!');
-                    } catch (err) {
-                        console.error('co loi khi xoa:', err);
-                        attempts++;
-                        if (attempts < maxAttempts) {
-                            setTimeout(tryDelete, 2000); // Thử xoá lại sau 5 giây
-                        } else {
-                            console.log(`Không thể xóa tệp database sau ${maxAttempts} lần thử.`);
-                        }
-                    }
-                } else {
-                    console.log('tep database khong ton tai.');
-                }
-            };
+            // Sao chép tệp db đến vị trí mới
+            fs.copyFileSync(dbPath, newdbPath);
 
-            tryDelete(); // Gọi hàm xoá lần đầu tiên
-        });
+            const resultPath = appSettings.updateSetting('dbPath', newdbPath, 'Data');
+
+            if (resultPath) {
+                app.relaunch();
+                app.exit();
+            } else {
+                console.error('Lỗi khi thay đổi thư mục:');
+            }
+        }
+    }).catch(err => {
+        console.error(err);
     });
 });
 

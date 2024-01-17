@@ -1,10 +1,16 @@
 const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
-// const dbPath = path.join(__dirname, '../data/SpendingDB.db');
-const dbPath = process.env.APPDATA + '/spendingManager/data/SpendingDB.db';
+const appSettings = require('./appSettings')
+const defaultDbPath = process.env.APPDATA + '/spendingManager/data/SpendingDB.db';
 
 var db;
+// Lấy đường dẫn database từ tệp cấu hình
+var dbPath = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8')).Data.dbPath;
+
+// Kiểm tra giá trị dbPath
+if (dbPath == 'default') { dbPath = defaultDbPath }
+
 
 // Truy vấn bất đồng bộ với SQLite sử dụng promise
 const query = (sql, params) => {
@@ -135,4 +141,4 @@ function closeDB(callback) {
 }
 
 
-module.exports = { db, dbPath, query, getUserId, initDB, connectDB, closeDB };
+module.exports = { db, dbPath, defaultDbPath, query, getUserId, initDB, connectDB, closeDB };

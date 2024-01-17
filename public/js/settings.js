@@ -1,30 +1,54 @@
-// Load Setting App
-function loadSettingApp() {
-    // Kiểm tra xem đã tồn tại cấu hình cài đặt chưa
-    if (localStorage.getItem('SettingApp') == null) {
-        const userSetting = {
-            darkMode: false,
-            defalutPage: 'home',
-            defaultAction: 'add',
-            language: 'vi',
-            reminderDelete: true,
-            tooltip: true
-        }
-        localStorage.setItem('SettingApp', JSON.stringify(userSetting));
-    }
-    darkModeSetting();
-    defaultPageSetting();
-    defaultActionSetting();
-    languageSetting();
-    reminderDelete();
-    tooltipSetting();
-} loadSettingApp();
+var settingsObj;
+// Tải cấu hình ứng dụng và gán vào biến
+function loadSettings() {
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/setting/getData',
+        success: function (res) {
+            if (res != null) {
+                settingsObj = res.desktopSetting;
 
+                $('#st_dbPath').val(res.dbPath);
+
+                darkModeSetting();
+                defaultPageSetting();
+                reminderDelete();
+                tooltipSetting();
+                languageSetting();
+                defaultActionSetting();
+            } else {
+                showErrorToast('Tải cài đặt ứng dụng thất bại')
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+} loadSettings();
+
+
+// Chỉnh sửa/cập nhật cấu hình
+function editSettings(name, value, group, callback) {
+    $.ajax({
+        type: 'POST',
+        url: urlapi + '/setting/editData',
+        data: { name, value, group },
+        success: function (res) {
+            if (res.success) {
+                callback();
+            } else {
+                showErrorToast('Áp dụng cài đặt thất bại')
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+}
 
 // xử lý cài đặt darkMode
 function darkModeSetting() {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    if (SettingApp.darkMode) {
+    if (settingsObj.darkmode == true || settingsObj.darkmode == 'true') {
         $('#darkModeToggle').prop('checked', true);
         // Áp dụng các thuột tính dark mode
         $('html').attr('data-bs-theme', 'dark');
@@ -49,8 +73,7 @@ function darkModeSetting() {
 
 // xử lý cài đặt defaultPage
 function defaultPageSetting() {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    switch (SettingApp.defalutPage) {
+    switch (settingsObj.defaultPage) {
         case 'home':
             $('#page-home').click();
             $('#st_defaultPage').val('home');
@@ -72,8 +95,7 @@ function defaultPageSetting() {
 
 // xử lý cài đặt defaultAction
 function defaultActionSetting() {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    switch (SettingApp.defaultAction) {
+    switch (settingsObj.defaultAction) {
         case 'add':
             $('#st_defaultAction').val('add');
             break;
@@ -88,8 +110,7 @@ function defaultActionSetting() {
 
 // xử lý cài đặt language
 function languageSetting() {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    switch (SettingApp.language) {
+    switch (settingsObj.language) {
         case 'vi':
             $('#st_language').val('vi');
             break;
@@ -101,8 +122,7 @@ function languageSetting() {
 
 // xử lý cài dặt reminder
 function reminderDelete() {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    if (SettingApp.reminderDelete) {
+    if (settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
         $('#st_reminder').prop('checked', true);
     } else {
         $('#st_reminder').prop('checked', false);
@@ -111,10 +131,8 @@ function reminderDelete() {
 
 // xử ly cài đặt tooltip
 function tooltipSetting() {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-
     var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-    if (SettingApp.tooltip) {
+    if (settingsObj.tooltip == true || settingsObj.tooltip == 'true') {
         $('#st_tooltip').prop('checked', true);
 
         var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
@@ -122,7 +140,6 @@ function tooltipSetting() {
         });
     } else {
         $('#st_tooltip').prop('checked', false);
-        // var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
         var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
             var popover = bootstrap.Popover.getInstance(popoverTriggerEl);
             if (popover) {
@@ -134,56 +151,61 @@ function tooltipSetting() {
 
 // sự kiện bật/tắt darkmode
 $('#darkModeToggle').on('change', function () {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    SettingApp.darkMode = this.checked;
-    localStorage.setItem('SettingApp', JSON.stringify(SettingApp));
-    darkModeSetting();
+    settingsObj.darkmode = this.checked;
+    editSettings('darkmode', this.checked, 'App', darkModeSetting)
 });
 
 // Sự kiện chọn trang mặt định
 $('#st_defaultPage').on('change', function () {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    SettingApp.defalutPage = this.value;
-    localStorage.setItem('SettingApp', JSON.stringify(SettingApp));
-    defaultPageSetting();
+    settingsObj.defaultPage = this.value;
+    editSettings('defaultPage', this.value, 'App', defaultPageSetting)
 });
 
 // Sự kiện chọn hành động mặt định
 $('#st_defaultAction').on('change', function () {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    SettingApp.defaultAction = this.value;
-    localStorage.setItem('SettingApp', JSON.stringify(SettingApp));
-    defaultActionSetting();
+    settingsObj.defaultAction = this.value;
+    editSettings('defaultAction', this.value, 'App', defaultActionSetting)
 });
 
 // Sự kiện chọn ngôn ngữ mặt định
 $('#st_language').on('change', function () {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    SettingApp.language = this.value;
-    localStorage.setItem('SettingApp', JSON.stringify(SettingApp));
-    languageSetting();
+    settingsObj.language = this.value;
+    editSettings('language', this.value, 'App', languageSetting)
 });
 
 // Sự kiện bật/tắt reminder
 $('#st_reminder').on('change', function () {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    SettingApp.reminderDelete = this.checked;
-    localStorage.setItem('SettingApp', JSON.stringify(SettingApp));
-    reminderDelete();
+    settingsObj.reminderDelete = this.checked;
+    editSettings('reminderDelete', this.checked, 'App', reminderDelete)
 })
 
 // Sự kiện bật/tắt tooltip
 $('#st_tooltip').on('change', function () {
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    SettingApp.tooltip = this.checked;
-    localStorage.setItem('SettingApp', JSON.stringify(SettingApp));
-    tooltipSetting();
+    settingsObj.tooltip = this.checked;
+    editSettings('tooltip', this.checked, 'App', tooltipSetting)
 });
 
 // Sự kiện đặt lại cài đặt mặt định
 $('#btn-reset_setting').click(function () {
-    localStorage.removeItem('SettingApp');
-    location.reload();
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/setting/resetData',
+        success: function (res) {
+            if (res.success) {
+                showSuccessToast('Đặt lại cài đặt ứng dụng thành công');
+                loadSettings();
+
+                if (res.action == 'reload') { ipcRenderer.send('reload-app') }
+
+                // fix lỗi element bị treo khi reset
+                $('.popover.bs-popover-auto.fade.show').remove();
+            }
+        },
+        error: function (err) {
+            console.log(err);
+            showErrorToast('Không thể đặt lại cài đặt ứng dụng');
+        }
+    })
 });
 
 // Sự kiện xuất file db
@@ -197,4 +219,9 @@ $('#btn-import_db').click(function () {
 })
 $('#btnConfirmImport').click(function () {
     ipcRenderer.send('import-db');
+});
+
+// Sự kiện chọn thư mục lưu trữ dữ liệu
+$('#btn-dbPath').click(function () {
+    ipcRenderer.send('change-dbPath');
 });

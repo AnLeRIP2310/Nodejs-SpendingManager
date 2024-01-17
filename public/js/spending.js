@@ -444,8 +444,7 @@ $('#btnDelete').on('click', function () {
         return;
     }
 
-    const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-    if (SettingApp.reminderDelete) {
+    if (settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
         $('#modalConfirmDelete').modal('show');
     } else {
         deleteSpendingItem()
@@ -453,6 +452,13 @@ $('#btnDelete').on('click', function () {
 });
 // Nút xác nhận xoá dữ liệu trong bảng
 $('#btnConfirmDelete').click(function () {
+    // Kiểm tra xem có tick vào ô tắt thông báo không
+    if ($('#reminderDelete').prop('checked')) {
+        settingsObj.reminderDelete = false;
+        editSettings('reminderDelete', false, 'App', reminderDelete);
+        $('#reminderDelete').prop('checked', false);
+    }
+
     deleteSpendingItem()
     $('#modalConfirmDelete').modal('hide');
 })
@@ -515,17 +521,11 @@ $('#spendName, #spendPrice, #spendDetails').on('keyup', function (event) {
     if (event.keyCode == 13) {
         event.preventDefault();
 
-        console.log('đã gọi sk enter')
-
-        if ($('#spendName').val() === '') { return }
-
-        const SettingApp = JSON.parse(localStorage.getItem('SettingApp'));
-
-        if (SettingApp.defaultAction == 'add') {
+        if (settingsObj.defaultAction == 'add') {
             $('#btnCreate').click();
-        } else if (SettingApp.defaultAction == 'edit') {
+        } else if (settingsObj.defaultAction == 'edit') {
             $('#btnUpdate').click();
-        } else if (SettingApp.defaultAction == 'del') {
+        } else if (settingsObj.defaultAction == 'del') {
             $('#btnDelete').click();
         }
     }

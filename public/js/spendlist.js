@@ -94,8 +94,6 @@ function delSpendlist(id) {
     })
 }
 
-
-
 var isOpenForm = false;
 $('#btn-spendlist-open_form').click(function () {
     if (!isOpenForm) {
