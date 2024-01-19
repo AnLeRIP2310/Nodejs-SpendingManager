@@ -1,10 +1,28 @@
 const urlapi = 'http://localhost:3962';
 
+
 var ipcRenderer;
 
 if (window.electron && window.electron.ipcRenderer) {
     ipcRenderer = window.electron.ipcRenderer;
 }
+
+if (ipcRenderer) {
+    // Nhận sự kiện đóng ứng dụng hay thu xuống khay
+    ipcRenderer.on('before-closeApp', () => {
+        $('#modalConfirmExit').modal('show')
+    })
+}
+
+$('#btnExit').click(() => {
+    ipcRenderer.send('quit-app', $('#remember_choice_exit').prop('checked'));
+});
+$('#btnTray').click(() => {
+    $('#modalConfirmExit').modal('hide')
+
+    ipcRenderer.send('collapse-tray', $('#remember_choice_exit').prop('checked'));
+});
+
 
 
 // js thanh sidebar

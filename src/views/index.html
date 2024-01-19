@@ -109,7 +109,7 @@
 
                 <!-- OffcanvasSetting -->
                 <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSetting"
-                    aria-labelledby="offcanvasSetting" style="width: 300px;">
+                    aria-labelledby="offcanvasSetting" style="width: 320px;">
                 </div>
 
                 <!-- OffcanvasProfile -->
@@ -145,7 +145,36 @@
                 </div>
             </div>
 
-        </div>
+            <!-- Modal Cònirm Exit App -->
+            <div class="modal modal-sm fade" id="modalConfirmExit" tabindex="-1" aria-labelledby="modalConfirmExit"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <span class="ms-3">
+                                Bạn có muốn đóng ứng dụng hoặc thu xuống khay hệ thống?.
+                            </span>
+                            <br>
+                            <span class="ms-3">
+                                Thu xuống khay sẽ giữ ứng dụng chạy ngầm để có thể nhận được thông báo.
+                            </span>
+                            <div class="input-group-sm mt-3">
+                                <input id="remember_choice_exit" type="checkbox" class="form-check-input">
+                                <label for="remember_choice_exit" class="form-check-label">Ghi nhớ lựa chọn của
+                                    tôi</label>
+                            </div>
+
+                            <div class="mt-3 d-flex justify-content-between">
+                                <button id="btnExit" type="button" class="btn btn-sm btn-success" style="width: 110px;"
+                                    data-bs-dismiss="modal">Thoát</button>
+                                <button id="btnTray" type="button" class="btn btn-sm btn-primary"
+                                    style="width: 110px;">Thu
+                                    xuống</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </main>
 
     <script src="../../public/lib/sheetJS-0.20.0/xlsx.full.min.js"></script>

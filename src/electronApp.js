@@ -1,20 +1,35 @@
-const { app, BrowserWindow, ipcMain, dialog, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, screen, Tray, Menu, nativeTheme } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const expressApp = require('./expressApp');
-const { closeDB, dbPath } = require('./configs/db');
+const sqlite3 = require('sqlite3').verbose();
+const { closeDB, dbPath, query } = require('./configs/db');
 const appSettings = require('./configs/appSettings');
+const notifier = require('node-notifier');
+const schedule = require('node-schedule');
+const db = new sqlite3.Database(dbPath);
 
-
-try {
-    require('electron-reloader')(module, {
-        // ignored: "./data/SpendingDB.sqlite",
-    });
-} catch (_) { }
+// try {
+//     require('electron-reloader')(module, {
+//         // ignored: "./data/SpendingDB.sqlite",
+//     });
+// } catch (_) { }
 
 
 let loginWindow;
 let mainWindow;
+let tray;
+var isQuitting = false;
+
+
+
+// hàm lấy ra cấu hình trong cài đặt
+const getCloseDefaultSetting = () => {
+    // Đọc và chuyển đổi đổi tượng
+    const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
+    return iniObject.App.closeDefault; // Lấy ra biến trong cài đặt
+}
+var closeDefault = getCloseDefaultSetting();
 
 // Chạy cửa sổ chính
 app.whenReady().then(() => {
@@ -47,6 +62,11 @@ function createAuthWindow() {
     });
 
     loginWindow.loadFile(path.join(__dirname, '/views/login.html'));
+
+    // Khi cửa sổ đóng, giải phóng bộ nhớ
+    loginWindow.on('closed', () => {
+        loginWindow = null;
+    });
 }
 
 function createMainWindow() {
@@ -60,11 +80,13 @@ function createMainWindow() {
         height: windowHeight,
         resizable: true,
         autoHideMenuBar: true,
+        nodeIntegration: true,
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
             devTools: true,
             preload: path.join(__dirname, '/configs/preload.js')
+
         },
         x: Math.floor(screenWidth * 0.65 - windowWidth / 2),
         y: Math.floor((screenHeight - windowHeight) / 2),
@@ -72,11 +94,134 @@ function createMainWindow() {
 
     mainWindow.loadFile(path.join(__dirname, '/views/index.html'));
 
+    tray = new Tray(path.join(__dirname, '../public/images/favicon.ico'));
+    tray.setToolTip('Spending Manager');
+    tray.on('double-click', () => { mainWindow.isVisible() || mainWindow.show(); });
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Mở',
+            click: () => {
+                mainWindow.show();
+                // mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+            }
+        },
+        {
+            label: 'Thoát',
+            click: () => {
+                isQuitting = true;
+                app.quit();
+            }
+        }
+    ]);
+    tray.setContextMenu(contextMenu);
+
     // Khi cửa sổ chính đóng, giải phóng bộ nhớ
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
+
+    // Bắt sự kiện close của mainWindow
+    mainWindow.on('close', (event) => {
+        if (isQuitting == false) {
+            event.preventDefault();
+            if (closeDefault == 'ask') {
+                mainWindow.webContents.send('before-closeApp');
+            } else if (closeDefault == 'quit') {
+                isQuitting = true;
+                app.quit();
+            } else if (closeDefault == 'tray') {
+                mainWindow.hide();
+            }
+        } else {
+            app.quit();
+        }
+    });
 }
+
+// Hàm gửi thông báo
+function sendNotification() {
+    notifier.notify({
+        title: 'Nhắc nhở chi tiêu',
+        message: 'Hôm nay bạn có khoản chi nào không?, nếu có thì nhớ ghi vào nhé:D',
+        icon: path.join(__dirname, '../public/images/favicon.ico'),
+        wait: true,
+    });
+}
+
+notifier.on('click', function (notifierObject, options, event) {
+    mainWindow.isVisible() || mainWindow.show();
+});
+
+// Hàm kiểm tra dữ liệu trước khi thông báo
+function checkForNewData() {
+    const today = new Date().toISOString().split('T')[0]; // Lấy ngày hiện tại (yyyy-mm-dd)
+
+    // Truy vấn để kiểm tra xem có bản ghi mới trong ngày không
+    const query = `SELECT COUNT(*) as count FROM spendinglist WHERE lastentry >= ?`;
+    db.get(query, [today], (err, row) => {
+        if (err) {
+            console.error('Error checking for new data:', err);
+            return;
+        }
+
+        const newDataCount = row.count;
+
+        if (newDataCount === 0) {
+            // Không có dữ liệu mới, gửi thông báo
+            sendNotification();
+        }
+    });
+}
+
+// Hàm lên lịch hẹn ngẫu nhiên một lần trong khoảng thời gian từ 8h sáng đến 8h tối
+function scheduleRandomNotifications() {
+    // Lịch hẹn thứ nhất
+    const firstRandomHour = Math.floor(Math.random() * 13) + 8; // Ngẫu nhiên từ 8h đến 20h
+    const firstRandomMinute = Math.floor(Math.random() * 60); // Ngẫu nhiên từ 0 đến 59
+
+    const firstScheduleRule = new schedule.RecurrenceRule();
+    firstScheduleRule.hour = firstRandomHour;
+    firstScheduleRule.minute = firstRandomMinute;
+
+    schedule.scheduleJob(firstScheduleRule, () => {
+        // Kiểm tra xem có dữ liệu mới trong ngày không
+        checkForNewData();
+    });
+
+    // Lịch hẹn thứ hai
+    const secondRandomHour = Math.floor(Math.random() * 13) + 8; // Ngẫu nhiên từ 8h đến 20h
+    const secondRandomMinute = Math.floor(Math.random() * 60); // Ngẫu nhiên từ 0 đến 59
+
+    const secondScheduleRule = new schedule.RecurrenceRule();
+    secondScheduleRule.hour = secondRandomHour;
+    secondScheduleRule.minute = secondRandomMinute;
+
+    schedule.scheduleJob(secondScheduleRule, () => {
+        // Kiểm tra xem có dữ liệu mới trong ngày không
+        checkForNewData();
+    });
+}
+
+// Lên lịch hẹn ngẫu nhiên hai lần
+scheduleRandomNotifications();
+
+// Bắt sự kiện thoát ứng dụng
+ipcMain.on('quit-app', (event, data) => {
+    if (data == true) {
+        appSettings.updateSetting('closeDefault', 'quit', 'App');
+    }
+    isQuitting = true;
+    app.quit();
+})
+
+// Bắt sự kiện thu xuống khay hệ thống
+ipcMain.on('collapse-tray', (event, data) => {
+    if (data == true) {
+        appSettings.updateSetting('closeDefault', 'tray', 'App');
+    }
+    closeDefault = getCloseDefaultSetting();
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+});
 
 // Bắt sự kiện khởi động lại ứng dụng
 ipcMain.on('reload-app', () => {
@@ -186,3 +331,8 @@ ipcMain.on('change-dbPath', () => {
     });
 });
 
+// Bắt sự kiện kiểm tra theme trên hệ thống
+ipcMain.on('get-system-theme', (event) => {
+    // Gửi phản hồi về quá trình render
+    event.reply('reply-system-theme', nativeTheme.shouldUseDarkColors);
+});

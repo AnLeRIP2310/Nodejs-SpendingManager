@@ -9,17 +9,18 @@
     <!-- Dark Mode -->
     <div id="ctst_darkMode" class=" mb-3 d-flex align-items-center justify-content-between" data-bs-toggle="popover"
         data-bs-trigger="hover" data-bs-content="Bật cái này sẽ chuyển sang chế độ tối">
-        <strong class="text-nowrap">Giao diện:</strong>
-        <div class="form-check form-switch">
-            <input class="form-check-input pointer" type="checkbox" id="darkModeToggle">
-            <label class="form-check-label pointer" for="darkModeToggle">Giao diện tối</label>
-        </div>
+        <strong class="text-nowrap " style="flex: 2;">Chế độ tối:</strong>
+        <select id="st_darkMode" class="form-select pointer" style="flex: 1;">
+            <option value="light">Sáng</option>
+            <option value="dark">Tối</option>
+            <option value="auto">Tự động</option>
+        </select>
     </div>
     <!-- Default Page -->
     <div id="ctst_defaultPage" class="mb-3 d-flex align-items-center" data-bs-toggle="popover" data-bs-trigger="hover"
         data-bs-content="Chọn trang mặt định sẽ mở khi ứng dụng được khởi động">
-        <strong class="text-nowrap">Trang mặt định:</strong>
-        <select class="form-select pointer ms-4" id="st_defaultPage">
+        <strong class="text-nowrap" style="flex: 2">Trang mặt định:</strong>
+        <select class="form-select pointer" id="st_defaultPage" style="flex: 1;">
             <option value="home">Trang chủ</option>
             <option value="spending">Chi tiêu</option>
             <option value="statisc">Thống kê</option>
@@ -28,8 +29,8 @@
     <!-- Default Action -->
     <div id="ctst_defaultAction" class="mb-3 d-flex align-items-center" data-bs-toggle="popover" data-bs-trigger="hover"
         data-bs-content="Chọn hành động mặt định sẽ thực hiện khi người dùng bấm Enter trên ô nhập liệu trong trang chi tiêu">
-        <strong class="text-nowrap">Thao tác mặt định:</strong>
-        <select class="form-select ms-4 pointer" id="st_defaultAction">
+        <strong class="text-nowrap" style="flex: 2;">Thao tác mặt định:</strong>
+        <select class="form-select pointer" id="st_defaultAction" style="flex: 1;">
             <option value="add">Thêm</option>
             <option value="edit">Sửa</option>
             <option value="del">Xóa</option>
@@ -38,8 +39,8 @@
     <!-- Language -->
     <div id="ctst_language" class=" mb-3 d-flex align-items-center justify-content-between" data-bs-toggle="popover"
         data-bs-trigger="hover" data-bs-content="Chọn ngôn ngữ mặt định sẽ hiển thị trong ứng dụng">
-        <strong class="text-nowrap">Ngôn ngữ:</strong>
-        <select class="form-select ms-5 pointer" id="st_language">
+        <strong class="text-nowrap" style="flex: 2;">Ngôn ngữ:</strong>
+        <select class="form-select pointer" style="flex: 1;" id="st_language">
             <option value="vi">Tiếng Việt</option>
             <option value="en">Tiếng Anh</option>
         </select>
@@ -48,22 +49,39 @@
     <div id="ctst_reminder" class="mb-3 d-flex align-items-center justify-content-between" data-bs-toggle="popover"
         data-bs-trigger="hover"
         data-bs-content="Bật cái này sẽ hiển thị thông báo xác nhận trước khi xoá dữ liệu trên bảng">
-        <strong class="text-nowrap">Xác nhận xoá:</strong>
-        <div class="form-check form-switch">
+        <strong class="text-nowrap" style="flex: 2;">Xác nhận xoá:</strong>
+        <div class="form-check form-switch" style="flex: 1;">
             <input class="form-check-input pointer" type="checkbox" id="st_reminder">
-            <label class="form-check-label pointer" for="st_reminder">Bật xác nhận</label>
+            <label class="form-check-label pointer text-nowrap" for="st_reminder">Bật xác nhận</label>
         </div>
     </div>
     <!-- Tooltip -->
     <div id="ctst_tooltip" class=" mb-3 d-flex align-items-center justify-content-between" data-bs-toggle="popover"
         data-bs-trigger="hover"
         data-bs-content="Bật cái này sẽ hiển thị chú giải trên các tuỳ chọn trong trang cài đặt">
-        <strong class="text-nowrap">Chú giải:</strong>
-        <div class="form-check form-switch">
+        <strong class="text-nowrap" style="flex: 2;">Chú giải:</strong>
+        <div class="form-check form-switch" style="flex: 1.15">
             <input class="form-check-input pointer" type="checkbox" id="st_tooltip">
-            <label class="form-check-label pointer" for="st_tooltip">Bật chú giải</label>
+            <label class="form-check-label pointer text-nowrap" for="st_tooltip">Bật chú giải</label>
         </div>
     </div>
+    <!-- BeforeQuit -->
+    <div id="ctst_closeDefault" class="mb-3 d-flex align-items-center justify-content-between" data-bs-toggle="popover"
+        data-bs-trigger="hover" data-bs-content="Chọn loại hành động sẽ thực hiện khi người dùng thoát ứng dụng">
+        <strong class="text-nowrap" style="flex: 2;">Xác nhận thoát:</strong>
+        <select id="st_closeDefault" style="flex: 1;" class="form-select pointer">
+            <option value="ask">Luôn hỏi</option>
+            <option value="tray">Ẩn</option>
+            <option value="quit">Thoát</option>
+        </select>
+    </div>
+
+    <!-- Allow Notify -->
+
+    <!-- Start With Window -->
+
+    <!-- Open App On Startup -->
+
     <!-- DbPath -->
     <div id="ctst_dbPath" class="mb-3 d-flex align-items-center justify-content-center" data-bs-toggle="popover"
         data-bs-trigger="hover" data-bs-content="Chọn đường dẫn đến thư mục lưu trữ dữ liệu">
@@ -100,5 +118,4 @@
 </div>
 
 
-<script src="../../public/js/setting.js"></script>
 <script src="../../public/js/settings.js"></script>

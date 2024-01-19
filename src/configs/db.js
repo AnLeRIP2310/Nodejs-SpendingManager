@@ -141,4 +141,4 @@ function closeDB(callback) {
 }
 
 
-module.exports = { db, dbPath, defaultDbPath, query, getUserId, initDB, connectDB, closeDB };
+module.exports = { dbPath, defaultDbPath, query, getUserId, initDB, connectDB, closeDB };

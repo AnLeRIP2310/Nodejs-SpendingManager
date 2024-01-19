@@ -12,10 +12,12 @@ function loadSettings() {
 
                 darkModeSetting();
                 defaultPageSetting();
+                defaultActionSetting();
+                languageSetting();
                 reminderDelete();
                 tooltipSetting();
-                languageSetting();
-                defaultActionSetting();
+                closeDefaultSetting();
+
             } else {
                 showErrorToast('Tải cài đặt ứng dụng thất bại')
             }
@@ -46,28 +48,33 @@ function editSettings(name, value, group, callback) {
     })
 }
 
+// Hàm áp dụng darkmode
+function applyTheme(theme) {
+    const isDark = theme === 'dark';
+
+    $('html').attr('data-bs-theme', theme);
+    $('#appcontainer').toggleClass('bg-secondary-subtle', isDark);
+    $('#appcontainer').toggleClass('bg-black', !isDark);
+    $('.table').toggleClass('table-dark', isDark);
+    $('#appcontent').toggleClass('bg-black', isDark);
+    $('#appcontent').toggleClass('bg-white', !isDark);
+    $('.sidebar').toggleClass('bg-secondary', isDark);
+}
+function applyAutoTheme() {
+    ipcRenderer.send('get-system-theme')
+    ipcRenderer.on('reply-system-theme', (event, res) => {
+        applyTheme(res ? 'dark' : 'light');
+    });
+}
+
 // xử lý cài đặt darkMode
 function darkModeSetting() {
-    if (settingsObj.darkmode == true || settingsObj.darkmode == 'true') {
-        $('#darkModeToggle').prop('checked', true);
-        // Áp dụng các thuột tính dark mode
-        $('html').attr('data-bs-theme', 'dark');
-        $('#appcontainer').addClass('bg-secondary-subtle')
-        $('#appcontainer').removeClass('bg-black');
-        $('.table').addClass('table-dark');
-        $('#appcontent').addClass('bg-black');
-        $('#appcontent').removeClass('bg-white');
-        $('.sidebar').addClass('bg-secondary');
+    if (settingsObj.darkmode == 'auto') {
+        $('#st_darkMode').val('auto');
+        applyAutoTheme();
     } else {
-        $('#darkModeToggle').prop('checked', false);
-        // Bỏ áp dụng các thuộc tính
-        $('html').attr('data-bs-theme', 'light');
-        $('#appcontainer').removeClass('bg-secondary-subtle')
-        $('#appcontainer').addClass('bg-black');
-        $('.table').removeClass('table-dark');
-        $('#appcontent').addClass('bg-white');
-        $('#appcontent').removeClass('bg-black');
-        $('.sidebar').removeClass('bg-secondary');
+        $('#st_darkMode').val(settingsObj.darkmode);
+        applyTheme(settingsObj.darkmode);
     }
 }
 
@@ -149,10 +156,25 @@ function tooltipSetting() {
     }
 }
 
+// Xử lý cài đặt defaultClose
+function closeDefaultSetting() {
+    switch (settingsObj.closeDefault) {
+        case 'ask':
+            $('#st_closeDefault').val('ask');
+            break;
+        case 'quit':
+            $('#st_closeDefault').val('quit');
+            break;
+        case 'tray':
+            $('#st_closeDefault').val('tray');
+            break;
+    }
+}
+
 // sự kiện bật/tắt darkmode
-$('#darkModeToggle').on('change', function () {
-    settingsObj.darkmode = this.checked;
-    editSettings('darkmode', this.checked, 'App', darkModeSetting)
+$('#st_darkMode').on('change', function () {
+    settingsObj.darkmode = this.value;
+    editSettings('darkmode', this.value, 'App', darkModeSetting)
 });
 
 // Sự kiện chọn trang mặt định
@@ -183,6 +205,12 @@ $('#st_reminder').on('change', function () {
 $('#st_tooltip').on('change', function () {
     settingsObj.tooltip = this.checked;
     editSettings('tooltip', this.checked, 'App', tooltipSetting)
+});
+
+// Sự kiện chọn hãng động khi thoát
+$('#st_closeDefault').on('change', function () {
+    settingsObj.closeDefault = this.value;
+    editSettings('closeDefault', this.value, 'App', closeDefaultSetting)
 });
 
 // Sự kiện đặt lại cài đặt mặt định

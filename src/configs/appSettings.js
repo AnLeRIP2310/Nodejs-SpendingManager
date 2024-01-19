@@ -5,12 +5,13 @@ const iniFilePath = path.join(__dirname, '../../appSettings.ini');
 const defaultConfig = {
     Data: { dbPath: 'default' },
     App: {
-        darkmode: false,
+        darkmode: 'light',
         defaultPage: 'home',
         defaultAction: 'add',
         language: 'vi',
         reminderDelete: true,
-        tooltip: true
+        tooltip: true,
+        closeDefault: 'ask'
     }
 };
 

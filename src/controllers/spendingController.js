@@ -115,6 +115,10 @@ module.exports = {
                 sql = 'select last_insert_rowid() as id'
                 const getId = await query(sql);
 
+                // Cập nhật thời gian của spendlist
+                sql = 'update spendinglist set lastentry = ? where id = ?';
+                await query(sql, [AtUpdate, ListId]);
+
                 if (getId) {
                     sql = 'select * from spendingitem where id = ?'
                     const selectResult = await query(sql, [getId[0].id]);

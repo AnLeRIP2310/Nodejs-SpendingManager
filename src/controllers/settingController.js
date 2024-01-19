@@ -1,11 +1,11 @@
-const settingsApp = require('../configs/appSettings');
+const appSettings = require('../configs/appSettings');
 const fs = require('fs');
 const { dbPath, defaultDbPath } = require('../configs/db');
 
 module.exports = {
     getData: function (req, res) {
         // Đọc và chuyển đổi đổi tượng
-        const iniObject = settingsApp.parseIni(fs.readFileSync(settingsApp.iniFilePath, 'utf8'));
+        const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
 
         var desktopSetting = {
             darkmode: iniObject.App.darkmode,
@@ -14,6 +14,7 @@ module.exports = {
             language: iniObject.App.language,
             reminderDelete: iniObject.App.reminderDelete,
             tooltip: iniObject.App.tooltip,
+            closeDefault: iniObject.App.closeDefault,
         }
 
         res.json({
@@ -25,7 +26,7 @@ module.exports = {
     editData: function (req, res) {
         const { name, value, group } = req.body;
 
-        const result = settingsApp.updateSetting(name, value, group);
+        const result = appSettings.updateSetting(name, value, group);
 
         if (result) {
             res.json({ success: true });
@@ -35,14 +36,14 @@ module.exports = {
     },
 
     resetData: function (req, res) {
-        if (settingsApp.dbPath != 'default') {
+        if (appSettings.dbPath != 'default') {
             // sao chép database về vị trí mặt định
             fs.copyFileSync(defaultDbPath, dbPath);
 
-            settingsApp.initSetting();
+            appSettings.initSetting();
             res.json({ success: true, action: 'reload' });
         } else {
-            settingsApp.initSetting();
+            appSettings.initSetting();
             res.json({ success: true });
         }
     },
