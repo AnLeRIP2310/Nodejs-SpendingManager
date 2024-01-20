@@ -29,7 +29,8 @@ const getCloseDefaultSetting = () => {
     const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
     return iniObject.App.closeDefault; // Lấy ra biến trong cài đặt
 }
-var closeDefault = getCloseDefaultSetting();
+
+
 
 // Chạy cửa sổ chính
 app.whenReady().then(() => {
@@ -122,6 +123,8 @@ function createMainWindow() {
 
     // Bắt sự kiện close của mainWindow
     mainWindow.on('close', (event) => {
+        var closeDefault = getCloseDefaultSetting();
+
         if (isQuitting == false) {
             event.preventDefault();
             if (closeDefault == 'ask') {
@@ -163,12 +166,13 @@ function checkForNewData() {
             console.error('Error checking for new data:', err);
             return;
         }
-
         const newDataCount = row.count;
 
         if (newDataCount === 0) {
             // Không có dữ liệu mới, gửi thông báo
-            sendNotification();
+            const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
+            const notifySpend = iniObject.App.notifySpend;
+            if (notifySpend == true || notifySpend == 'true') { sendNotification(); }
         }
     });
 }
@@ -200,10 +204,7 @@ function scheduleRandomNotifications() {
         // Kiểm tra xem có dữ liệu mới trong ngày không
         checkForNewData();
     });
-}
-
-// Lên lịch hẹn ngẫu nhiên hai lần
-scheduleRandomNotifications();
+} scheduleRandomNotifications();
 
 // Bắt sự kiện thoát ứng dụng
 ipcMain.on('quit-app', (event, data) => {
@@ -240,9 +241,8 @@ ipcMain.on('login-success', () => {
 
 // Bắt sự kiện đăng nhập hết hạn
 ipcMain.on('login-expired', () => {
-    // Đóng cửa sổ main
+    isQuitting = true;
     mainWindow.close();
-
     // Mở cửa sổ đăng nhập
     createAuthWindow();
 })
@@ -336,3 +336,15 @@ ipcMain.on('get-system-theme', (event) => {
     // Gửi phản hồi về quá trình render
     event.reply('reply-system-theme', nativeTheme.shouldUseDarkColors);
 });
+
+// Bắt sự kiện thêm ứng dụng vào khởi động cùng window
+ipcMain.on('startWithWindow', () => {
+    const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
+    const startWithWindow = iniObject.App.startWithWindow
+
+    if (startWithWindow == true || startWithWindow == 'true') {
+        app.setLoginItemSettings({ openAtLogin: true });
+    } else {
+        app.setLoginItemSettings({ openAtLogin: false });
+    }
+})

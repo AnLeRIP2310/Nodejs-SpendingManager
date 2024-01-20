@@ -7,19 +7,9 @@ module.exports = {
         // Đọc và chuyển đổi đổi tượng
         const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
 
-        var desktopSetting = {
-            darkmode: iniObject.App.darkmode,
-            defaultPage: iniObject.App.defaultPage,
-            defaultAction: iniObject.App.defaultAction,
-            language: iniObject.App.language,
-            reminderDelete: iniObject.App.reminderDelete,
-            tooltip: iniObject.App.tooltip,
-            closeDefault: iniObject.App.closeDefault,
-        }
-
         res.json({
-            desktopSetting: desktopSetting,
             dbPath: dbPath,
+            iniObject,
         });
     },
 

@@ -6,8 +6,7 @@ function loadSettings() {
         url: urlapi + '/setting/getData',
         success: function (res) {
             if (res != null) {
-                settingsObj = res.desktopSetting;
-
+                settingsObj = res.iniObject.App;
                 $('#st_dbPath').val(res.dbPath);
 
                 darkModeSetting();
@@ -17,6 +16,8 @@ function loadSettings() {
                 reminderDelete();
                 tooltipSetting();
                 closeDefaultSetting();
+                allowNotifySetting();
+                startWithWindowSetting();
 
             } else {
                 showErrorToast('Tải cài đặt ứng dụng thất bại')
@@ -69,14 +70,20 @@ function applyAutoTheme() {
 
 // xử lý cài đặt darkMode
 function darkModeSetting() {
-    if (settingsObj.darkmode == 'auto') {
+    if (settingsObj.darkMode == 'auto') {
         $('#st_darkMode').val('auto');
         applyAutoTheme();
     } else {
-        $('#st_darkMode').val(settingsObj.darkmode);
-        applyTheme(settingsObj.darkmode);
+        $('#st_darkMode').val(settingsObj.darkMode);
+        applyTheme(settingsObj.darkMode);
     }
 }
+
+// sự kiện bật/tắt darkmode
+$('#st_darkMode').on('change', function () {
+    settingsObj.darkMode = this.value;
+    editSettings('darkMode', this.value, 'App', darkModeSetting)
+});
 
 // xử lý cài đặt defaultPage
 function defaultPageSetting() {
@@ -100,6 +107,12 @@ function defaultPageSetting() {
     }
 }
 
+// Sự kiện chọn trang mặt định
+$('#st_defaultPage').on('change', function () {
+    settingsObj.defaultPage = this.value;
+    editSettings('defaultPage', this.value, 'App', defaultPageSetting)
+});
+
 // xử lý cài đặt defaultAction
 function defaultActionSetting() {
     switch (settingsObj.defaultAction) {
@@ -115,6 +128,12 @@ function defaultActionSetting() {
     }
 }
 
+// Sự kiện chọn hành động mặt định
+$('#st_defaultAction').on('change', function () {
+    settingsObj.defaultAction = this.value;
+    editSettings('defaultAction', this.value, 'App', defaultActionSetting)
+});
+
 // xử lý cài đặt language
 function languageSetting() {
     switch (settingsObj.language) {
@@ -127,26 +146,41 @@ function languageSetting() {
     }
 }
 
+// Sự kiện chọn ngôn ngữ mặt định
+$('#st_language').on('change', function () {
+    settingsObj.language = this.value;
+    editSettings('language', this.value, 'App', languageSetting)
+});
+
 // xử lý cài dặt reminder
 function reminderDelete() {
     if (settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
         $('#st_reminder').prop('checked', true);
+        $('label[for="st_reminder"]').text('Đang bật')
     } else {
         $('#st_reminder').prop('checked', false);
+        $('label[for="st_reminder"]').text('Đã tắt')
     }
 }
+
+// Sự kiện bật/tắt reminder
+$('#st_reminder').on('change', function () {
+    settingsObj.reminderDelete = this.checked;
+    editSettings('reminderDelete', this.checked, 'App', reminderDelete)
+})
 
 // xử ly cài đặt tooltip
 function tooltipSetting() {
     var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
     if (settingsObj.tooltip == true || settingsObj.tooltip == 'true') {
         $('#st_tooltip').prop('checked', true);
-
+        $('label[for="st_tooltip"]').text('Đang bật')
         var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
             return new bootstrap.Popover(popoverTriggerEl);
         });
     } else {
         $('#st_tooltip').prop('checked', false);
+        $('label[for="st_tooltip"]').text('Đã tắt')
         var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
             var popover = bootstrap.Popover.getInstance(popoverTriggerEl);
             if (popover) {
@@ -155,6 +189,12 @@ function tooltipSetting() {
         });
     }
 }
+
+// Sự kiện bật/tắt tooltip
+$('#st_tooltip').on('change', function () {
+    settingsObj.tooltip = this.checked;
+    editSettings('tooltip', this.checked, 'App', tooltipSetting)
+});
 
 // Xử lý cài đặt defaultClose
 function closeDefaultSetting() {
@@ -171,46 +211,46 @@ function closeDefaultSetting() {
     }
 }
 
-// sự kiện bật/tắt darkmode
-$('#st_darkMode').on('change', function () {
-    settingsObj.darkmode = this.value;
-    editSettings('darkmode', this.value, 'App', darkModeSetting)
-});
-
-// Sự kiện chọn trang mặt định
-$('#st_defaultPage').on('change', function () {
-    settingsObj.defaultPage = this.value;
-    editSettings('defaultPage', this.value, 'App', defaultPageSetting)
-});
-
-// Sự kiện chọn hành động mặt định
-$('#st_defaultAction').on('change', function () {
-    settingsObj.defaultAction = this.value;
-    editSettings('defaultAction', this.value, 'App', defaultActionSetting)
-});
-
-// Sự kiện chọn ngôn ngữ mặt định
-$('#st_language').on('change', function () {
-    settingsObj.language = this.value;
-    editSettings('language', this.value, 'App', languageSetting)
-});
-
-// Sự kiện bật/tắt reminder
-$('#st_reminder').on('change', function () {
-    settingsObj.reminderDelete = this.checked;
-    editSettings('reminderDelete', this.checked, 'App', reminderDelete)
-})
-
-// Sự kiện bật/tắt tooltip
-$('#st_tooltip').on('change', function () {
-    settingsObj.tooltip = this.checked;
-    editSettings('tooltip', this.checked, 'App', tooltipSetting)
-});
-
-// Sự kiện chọn hãng động khi thoát
+// Sự kiện chọn hành động khi thoát
 $('#st_closeDefault').on('change', function () {
     settingsObj.closeDefault = this.value;
     editSettings('closeDefault', this.value, 'App', closeDefaultSetting)
+});
+
+// Xử lý cài đặt notifySpend
+function allowNotifySetting() {
+    if (settingsObj.notifySpend == true || settingsObj.notifySpend == 'true') {
+        $('#st_notifySpend').prop('checked', true);
+        $('label[for="st_notifySpend"]').text('Đang bật')
+    } else {
+        $('#st_notifySpend').prop('checked', false);
+        $('label[for="st_notifySpend"]').text('Đã tắt')
+    }
+}
+
+// Sự kiện nhắt nhở thông báo
+$('#st_notifySpend').on('change', function () {
+    settingsObj.notifySpend = this.checked;
+    editSettings('notifySpend', this.checked, 'App', allowNotifySetting)
+});
+
+// Xử lý cài đặt StartWithWindow
+function startWithWindowSetting() {
+    if (settingsObj.startWithWindow == true || settingsObj.startWithWindow == 'true') {
+        $('#st_startWithWindow').prop('checked', true);
+        $('label[for="st_startWithWindow"]').text('Đang bật')
+    } else {
+        $('#st_startWithWindow').prop('checked', false);
+        $('label[for="st_startWithWindow"]').text('Đã tắt')
+    }
+}
+
+// Sự kiện cài đặt StartWithWindow
+$('#st_startWithWindow').on('change', function () {
+    settingsObj.startWithWindow = this.checked;
+    editSettings('startWithWindow', this.checked, 'App', startWithWindowSetting)
+    // Gửi sự kiện đến main process để xử lý
+    ipcRenderer.send('startWithWindow')
 });
 
 // Sự kiện đặt lại cài đặt mặt định

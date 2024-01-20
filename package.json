@@ -37,12 +37,12 @@
         "passport": "^0.6.0",
         "passport-facebook": "^3.0.0",
         "passport-google-oauth20": "^2.0.0",
-        "sqlite3": "^5.1.7",
+        "sqlite3": "^5.1.6",
         "uuid": "^9.0.1"
     },
     "devDependencies": {
         "electron": "^27.1.2",
-        "electron-builder": "^24.9.1",
+        "electron-builder": "^24.11.0",
         "electron-reloader": "^1.2.3",
         "nodemon": "^3.0.1"
     }

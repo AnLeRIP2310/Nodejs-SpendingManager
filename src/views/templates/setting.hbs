@@ -7,47 +7,49 @@
 
 <div class="offcanvas-body">
     <!-- Dark Mode -->
-    <div id="ctst_darkMode" class=" mb-3 d-flex align-items-center justify-content-between" data-bs-toggle="popover"
-        data-bs-trigger="hover" data-bs-content="Bật cái này sẽ chuyển sang chế độ tối">
+    <div id="ctst_darkMode" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+        data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="Bật cái này sẽ chuyển sang chế độ tối">
         <strong class="text-nowrap " style="flex: 2;">Chế độ tối:</strong>
-        <select id="st_darkMode" class="form-select pointer" style="flex: 1;">
+        <select id="st_darkMode" class="form-select form-select-sm pointer" style="flex: 1;">
             <option value="light">Sáng</option>
             <option value="dark">Tối</option>
             <option value="auto">Tự động</option>
         </select>
     </div>
     <!-- Default Page -->
-    <div id="ctst_defaultPage" class="mb-3 d-flex align-items-center" data-bs-toggle="popover" data-bs-trigger="hover"
-        data-bs-content="Chọn trang mặt định sẽ mở khi ứng dụng được khởi động">
+    <div id="ctst_defaultPage" style="margin-bottom: 12px" class="d-flex align-items-center" data-bs-toggle="popover"
+        data-bs-trigger="hover" data-bs-content="Chọn trang mặt định sẽ mở khi ứng dụng được khởi động">
         <strong class="text-nowrap" style="flex: 2">Trang mặt định:</strong>
-        <select class="form-select pointer" id="st_defaultPage" style="flex: 1;">
+        <select class="form-select form-select-sm pointer" id="st_defaultPage" style="flex: 1;">
             <option value="home">Trang chủ</option>
             <option value="spending">Chi tiêu</option>
             <option value="statisc">Thống kê</option>
         </select>
     </div>
     <!-- Default Action -->
-    <div id="ctst_defaultAction" class="mb-3 d-flex align-items-center" data-bs-toggle="popover" data-bs-trigger="hover"
+    <div id="ctst_defaultAction" style="margin-bottom: 12px" class="d-flex align-items-center" data-bs-toggle="popover"
+        data-bs-trigger="hover"
         data-bs-content="Chọn hành động mặt định sẽ thực hiện khi người dùng bấm Enter trên ô nhập liệu trong trang chi tiêu">
         <strong class="text-nowrap" style="flex: 2;">Thao tác mặt định:</strong>
-        <select class="form-select pointer" id="st_defaultAction" style="flex: 1;">
+        <select class="form-select form-select-sm pointer" id="st_defaultAction" style="flex: 1;">
             <option value="add">Thêm</option>
             <option value="edit">Sửa</option>
             <option value="del">Xóa</option>
         </select>
     </div>
     <!-- Language -->
-    <div id="ctst_language" class=" mb-3 d-flex align-items-center justify-content-between" data-bs-toggle="popover"
-        data-bs-trigger="hover" data-bs-content="Chọn ngôn ngữ mặt định sẽ hiển thị trong ứng dụng">
+    <div id="ctst_language" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+        data-bs-toggle="popover" data-bs-trigger="hover"
+        data-bs-content="Chọn ngôn ngữ mặt định sẽ hiển thị trong ứng dụng">
         <strong class="text-nowrap" style="flex: 2;">Ngôn ngữ:</strong>
-        <select class="form-select pointer" style="flex: 1;" id="st_language">
+        <select class="form-select form-select-sm pointer" style="flex: 1;" id="st_language">
             <option value="vi">Tiếng Việt</option>
             <option value="en">Tiếng Anh</option>
         </select>
     </div>
     <!-- reminderDelete -->
-    <div id="ctst_reminder" class="mb-3 d-flex align-items-center justify-content-between" data-bs-toggle="popover"
-        data-bs-trigger="hover"
+    <div id="ctst_reminder" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+        data-bs-toggle="popover" data-bs-trigger="hover"
         data-bs-content="Bật cái này sẽ hiển thị thông báo xác nhận trước khi xoá dữ liệu trên bảng">
         <strong class="text-nowrap" style="flex: 2;">Xác nhận xoá:</strong>
         <div class="form-check form-switch" style="flex: 1;">
@@ -56,35 +58,49 @@
         </div>
     </div>
     <!-- Tooltip -->
-    <div id="ctst_tooltip" class=" mb-3 d-flex align-items-center justify-content-between" data-bs-toggle="popover"
-        data-bs-trigger="hover"
+    <div id="ctst_tooltip" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+        data-bs-toggle="popover" data-bs-trigger="hover"
         data-bs-content="Bật cái này sẽ hiển thị chú giải trên các tuỳ chọn trong trang cài đặt">
         <strong class="text-nowrap" style="flex: 2;">Chú giải:</strong>
-        <div class="form-check form-switch" style="flex: 1.15">
+        <div class="form-check form-switch" style="flex: 1">
             <input class="form-check-input pointer" type="checkbox" id="st_tooltip">
             <label class="form-check-label pointer text-nowrap" for="st_tooltip">Bật chú giải</label>
         </div>
     </div>
     <!-- BeforeQuit -->
-    <div id="ctst_closeDefault" class="mb-3 d-flex align-items-center justify-content-between" data-bs-toggle="popover"
-        data-bs-trigger="hover" data-bs-content="Chọn loại hành động sẽ thực hiện khi người dùng thoát ứng dụng">
+    <div id="ctst_closeDefault" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+        data-bs-toggle="popover" data-bs-trigger="hover"
+        data-bs-content="Chọn loại hành động sẽ thực hiện khi người dùng thoát ứng dụng">
         <strong class="text-nowrap" style="flex: 2;">Xác nhận thoát:</strong>
-        <select id="st_closeDefault" style="flex: 1;" class="form-select pointer">
+        <select id="st_closeDefault" style="flex: 1;" class="form-select form-select-sm pointer">
             <option value="ask">Luôn hỏi</option>
             <option value="tray">Ẩn</option>
             <option value="quit">Thoát</option>
         </select>
     </div>
-
-    <!-- Allow Notify -->
-
-    <!-- Start With Window -->
-
-    <!-- Open App On Startup -->
-
+    <!-- AllowNotify -->
+    <div id="ctst_notifySpend" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
+        data-bs-toggle="popover" data-bs-trigger="hover"
+        data-bs-content="Cho phép ứng dụng gửi thông báo nhắc người dùng thêm chi tiêu nếu chưa có chi tiêu nào được thêm trong ngày">
+        <strong class="text-nowrap" style="flex: 2;">Thông báo:</strong>
+        <div class="form-check form-switch" style="flex: 1">
+            <input class="form-check-input pointer" type="checkbox" id="st_notifySpend">
+            <label class="form-check-label pointer text-nowrap" for="st_notifySpend">Bật thông báo</label>
+        </div>
+    </div>
+    <!-- StartWithWindow -->
+    <div id="ctst_startWithWindow" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
+        data-bs-trigger="hover" data-bs-toggle="popover"
+        data-bs-content="Bật cái này sẽ cho phép ứng dụng được khởi động cùng với window">
+        <strong class="text-nowrap" style="flex: 2">Chạy cùng Window:</strong>
+        <div class="form-check form-switch" style="flex: 1">
+            <input id="st_startWithWindow" type="checkbox" class="form-check-input pointer">
+            <label for="st_startWithWindow" class="form-check-label pointer text-nowrap">Đang Bật</label>
+        </div>
+    </div>
     <!-- DbPath -->
-    <div id="ctst_dbPath" class="mb-3 d-flex align-items-center justify-content-center" data-bs-toggle="popover"
-        data-bs-trigger="hover" data-bs-content="Chọn đường dẫn đến thư mục lưu trữ dữ liệu">
+    <div id="ctst_dbPath" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
+        data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="Chọn đường dẫn đến thư mục lưu trữ dữ liệu">
         <div class=" input-group">
             <input type="text" class="form-control" readonly id="st_dbPath">
             <button id="btn-dbPath" class="btn btn-secondary">
@@ -93,7 +109,7 @@
         </div>
     </div>
     <!-- Reset -->
-    <div class=" mb-3 d-flex align-items-center justify-content-center">
+    <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center">
         <button id="btn-reset_setting" class="btn btn-primary" data-bs-toggle="popover" data-bs-trigger="hover"
             data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng về mặt định">Đặt lại mặt
             định</button>
@@ -102,16 +118,16 @@
     <hr>
 
     <!-- Import/Export -->
-    <div class="mb-3 d-flex align-items-center justify-content-between">
+    <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between">
         <button id="btn-export_db" class="btn btn-outline-info" data-bs-toggle="popover" data-bs-trigger="hover"
             data-bs-content="Nhấn vào nút này để xuất dữ liệu của ứng dụng ra tệp bên ngoài">
-            Xuất Data
+            Xuất dữ liệu
             <i class="fa-regular fa-file-export"></i>
         </button>
 
         <button id="btn-import_db" class="btn btn-outline-success" data-bs-toggle="popover" data-bs-trigger="hover"
             data-bs-content="Nhấn vào nút này để nhập dữ liệu từ tệp sao lưu vào ứng dụng">
-            Nhập Data
+            Nhập dữ liệu
             <i class="fa-regular fa-file-import"></i>
         </button>
     </div>

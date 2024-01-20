@@ -14,6 +14,7 @@ if (ipcRenderer) {
     })
 }
 
+// Sự kiện đóng ứng dụng
 $('#btnExit').click(() => {
     ipcRenderer.send('quit-app', $('#remember_choice_exit').prop('checked'));
 });
@@ -81,11 +82,11 @@ sidebarItems.forEach(item => {
     });
 });
 
+// Hàm kiểm tra trạng thái đăng nhập
 function checkIsLogin() {
     // Kiểm tra xem người dùng đã đăng nhập chưa
     if (localStorage.getItem('AuthToken') != null) {
         const AuthToken = JSON.parse(localStorage.getItem('AuthToken'));
-
         // Kiểm tra token có chính xác không
         if (AuthToken.token) {
             $.ajax({
@@ -128,8 +129,6 @@ function checkIsLogin() {
 
 // Btn đăng xuất
 $('#page-logout').click(() => {
-    console.log('Đã click');
-
     localStorage.removeItem('AuthToken');
     // Gửi thông điệp đến main process
     ipcRenderer.send('login-expired');
