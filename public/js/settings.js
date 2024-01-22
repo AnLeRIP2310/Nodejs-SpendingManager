@@ -6,7 +6,7 @@ function loadSettings() {
         url: urlapi + '/setting/getData',
         success: function (res) {
             if (res != null) {
-                settingsObj = res.iniObject.App;
+                settingsObj = res.iniObject.App; console.log(res.iniObject);
                 $('#st_dbPath').val(res.dbPath);
 
                 darkModeSetting();

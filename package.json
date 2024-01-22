@@ -6,7 +6,8 @@
     "scripts": {
         "start": "nodemon src/app.js",
         "wd": "electron .",
-        "package": "electron-builder"
+        "package": "electron-builder",
+        "package-all": "electron-builder -mwl"
     },
     "author": "",
     "license": "ISC",
@@ -19,6 +20,10 @@
         "win": {
             "target": "nsis",
             "icon": "./public/images/favicon.ico"
+        },
+        "mac": {
+            "target": "dmg",
+            "icon": "./public/images/favicon.icns"
         },
         "nsis": {
             "oneClick": false,
