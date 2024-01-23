@@ -1,6 +1,15 @@
 const path = require('path');
 const fs = require('fs');
-const iniFilePath = path.join(__dirname, '../../appSettings.ini');
+const { logError } = require('./logError');
+
+var iniFilePath;
+
+if (process.platform === 'win32') {
+    iniFilePath = process.env.USERPROFILE + '/documents/SpendingManager/appSettings.ini';
+} else if (process.platform === 'darwin') {
+    iniFilePath = process.env.HOME + '/Documents/SpendingManager/appSettings.ini';
+}
+
 
 const defaultConfigs = {
     Data: { dbPath: ['default'] },
@@ -73,7 +82,19 @@ function generateIniContent(objSetting, type) {
 
 // Khởi tạo tệp cấu hình .ini
 function initSetting() {
-    writeIniFile(generateIniContent(defaultConfigs, 'default'));
+    // Kiểm tra và tạo thư mục nếu chưa có
+    if (!fs.existsSync(path.dirname(iniFilePath))) {
+        try {
+            fs.mkdirSync(path.dirname(iniFilePath), { recursive: true });
+            console.log('Thư mục đã được tạo.');
+
+            // Khởi tạo tệp cài đặt
+            writeIniFile(generateIniContent(defaultConfigs, 'default'));
+        } catch (err) {
+            console.error('Lỗi khi tạo thư mục:', err);
+            logError(err); // Ghi vào nhật kí lỗi
+        }
+    }
 }
 
 // Kiểm tra nếu têp cấu hình chưa tồn tại thì tạo mới

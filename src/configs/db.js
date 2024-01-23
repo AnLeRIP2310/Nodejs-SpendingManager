@@ -1,15 +1,19 @@
 const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
+const { logError } = require('./logError');
 const appSettings = require('./appSettings')
 
 
 var db;
+
+// Kiểm tra và gán giá trị phù hợp dựa vào hệ điều hành
+var defaultDbPath;
+if (process.platform == 'win32') { defaultDbPath = process.env.USERPROFILE + '/Documents/SpendingManager/data/SpendingDB.db'; }
+else if (process.platform == 'darwin') { defaultDbPath = process.env.HOME + '/Documents/SpendingManager/data/SpendingDB.db'; }
+
 // Lấy đường dẫn database từ tệp cấu hình
 var dbPath = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8')).Data.dbPath;
-
-// Kiểm tra giá trị dbPath
-const defaultDbPath = process.env.APPDATA + '/spendingManager/data/SpendingDB.db';
 if (dbPath == 'default') { dbPath = defaultDbPath }
 
 
@@ -45,6 +49,7 @@ async function getUserId(token) {
         }
     } catch (err) {
         console.log(err)
+        logError(err);
     }
 }
 
@@ -56,7 +61,8 @@ async function initDB() {
             fs.mkdirSync(path.dirname(dbPath), { recursive: true });
             console.log('Thư mục đã được tạo.');
         } catch (err) {
-            console.error('Lỗi khi tạo thư mục:', err);
+            console.log('Lỗi khi tạo thư mục:', err);
+            logError(err);
         }
     }
 
@@ -65,7 +71,8 @@ async function initDB() {
 
     const dbExists = fs.existsSync(dbPath);
     if (!dbExists) {
-        await query(`
+        try {
+            await query(`
             CREATE TABLE IF NOT EXISTS Users (
                 Id          INTEGER  PRIMARY KEY,
                 GoogleId    TEXT,
@@ -80,7 +87,7 @@ async function initDB() {
             )
         `);
 
-        await query(`
+            await query(`
             CREATE TABLE IF NOT EXISTS AuthToken (
                 Id      INTEGER PRIMARY KEY,
                 UsersId INTEGER REFERENCES Users (Id),
@@ -88,18 +95,18 @@ async function initDB() {
             )
         `);
 
-        await query(`
+            await query(`
             CREATE TABLE IF NOT EXISTS SpendingList (
                 Id       INTEGER  PRIMARY KEY,
                 UsersId  INTEGER  REFERENCES Users (Id),
                 NameList TEXT     COLLATE NOCASE,
                 AtCreate DATETIME,
-                LastEntry DATETIME COLLATE nocase
+                LastEntry DATETIME COLLATE nocase,
                 Status   INTEGER  DEFAULT 1
             )
         `);
 
-        await query(`
+            await query(`
             CREATE TABLE IF NOT EXISTS SpendingItem (
                 Id          INTEGER  PRIMARY KEY,
                 SpendListId INTEGER  REFERENCES SpendingList (Id),
@@ -111,6 +118,11 @@ async function initDB() {
                 Status      INTEGER  DEFAULT 1
             )
         `);
+        } catch (e) {
+            console.log('Khởi tạo database thất bại:', e);
+            logError(e);
+        }
+
     }
 }
 
@@ -119,6 +131,7 @@ function connectDB() {
     db = new sqlite3.Database(dbPath, (err) => {
         if (err) {
             console.error('Lỗi kết nối đến database:', err.message);
+            logError(err);
         } else {
             console.log('Kết nối đến database thành công.');
         }
@@ -131,6 +144,7 @@ function closeDB(callback) {
         db.close((err) => {
             if (err) {
                 console.error('Có lỗi khi đóng kết nối database:', err.message);
+                logError(err);
             } else {
                 console.log('Đã đóng kết nối đến database');
             }

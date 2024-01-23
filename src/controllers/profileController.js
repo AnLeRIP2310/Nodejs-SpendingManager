@@ -1,4 +1,6 @@
-const { db, query, getUserId } = require('../configs/db')
+const { query, getUserId } = require('../configs/db')
+const { logError } = require('../configs/logError')
+
 
 module.exports = {
     getData: async (req, res) => {
@@ -17,6 +19,7 @@ module.exports = {
             }
         } catch (err) {
             console.log(err)
+            logError(err);
         }
     },
 
@@ -44,6 +47,7 @@ module.exports = {
             }
         } catch (err) {
             console.log(err)
+            logError(err);
         }
     }
 }

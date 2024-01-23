@@ -1,5 +1,7 @@
-const { db, query } = require('../configs/db')
+const { query } = require('../configs/db')
 const path = require('path')
+const { logError } = require('../configs/logError')
+
 
 function formatDate(dateStr) {
     const date = new Date(dateStr);
@@ -104,6 +106,7 @@ module.exports = {
         } catch (error) {
             res.json({ success: false, error: error })
             console.log(error);
+            logError(error);
         }
     },
 
@@ -141,6 +144,7 @@ module.exports = {
             })
         } catch (err) {
             console.log(err);
+            logError(err);
         }
     },
 }

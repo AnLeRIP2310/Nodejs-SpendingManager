@@ -1,6 +1,7 @@
-const { db, query } = require('../configs/db');
+const { query } = require('../configs/db');
 const { v4: uuidv4 } = require('uuid'); // generator token
 const crypto = require('crypto');
+const { logError } = require('../configs/logError');
 
 let urlpage = ''; // Biến global để lưu trữ urlpage
 
@@ -23,6 +24,7 @@ module.exports = {
             }
         } catch (err) {
             console.error(err);
+            logError(err);
         }
     },
 
@@ -57,6 +59,7 @@ module.exports = {
             }
         } catch (err) {
             console.error(err);
+            logError(err);
         }
     },
 
@@ -75,6 +78,7 @@ module.exports = {
             }
         } catch (err) {
             console.error(err);
+            logError(err);
         }
     },
 
@@ -171,6 +175,7 @@ module.exports = {
                 </script>`);
         } catch (err) {
             console.log(err)
+            logError(err);
         }
     },
 
@@ -236,6 +241,7 @@ module.exports = {
                 </script>`);
         } catch (err) {
             console.log(err)
+            logError(err);
         }
     },
 }

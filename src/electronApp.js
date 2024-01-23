@@ -2,12 +2,13 @@ const { app, BrowserWindow, ipcMain, dialog, screen, Tray, Menu, nativeTheme } =
 const path = require('path');
 const fs = require('fs');
 const expressApp = require('./expressApp');
-const sqlite3 = require('sqlite3').verbose();
-const { closeDB, dbPath, query } = require('./configs/db');
+const { dbPath, query } = require('./configs/db');
 const appSettings = require('./configs/appSettings');
 const notifier = require('node-notifier');
 const schedule = require('node-schedule');
-const db = new sqlite3.Database(dbPath);
+const axios = require('axios');
+const { logError } = require('./configs/logError');
+
 
 // try {
 //     require('electron-reloader')(module, {
@@ -29,8 +30,6 @@ const getCloseDefaultSetting = () => {
     const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
     return iniObject.App.closeDefault; // Lấy ra biến trong cài đặt
 }
-
-
 
 // Chạy cửa sổ chính
 app.whenReady().then(() => {
@@ -99,20 +98,8 @@ function createMainWindow() {
     tray.setToolTip('Spending Manager');
     tray.on('double-click', () => { mainWindow.isVisible() || mainWindow.show(); });
     const contextMenu = Menu.buildFromTemplate([
-        {
-            label: 'Mở',
-            click: () => {
-                mainWindow.show();
-                // mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
-            }
-        },
-        {
-            label: 'Thoát',
-            click: () => {
-                isQuitting = true;
-                app.quit();
-            }
-        }
+        { label: 'Mở', click: () => { mainWindow.show(); } },
+        { label: 'Thoát', click: () => { isQuitting = true; app.quit(); } }
     ]);
     tray.setContextMenu(contextMenu);
 
@@ -157,24 +144,21 @@ notifier.on('click', function (notifierObject, options, event) {
 
 // Hàm kiểm tra dữ liệu trước khi thông báo
 function checkForNewData() {
-    const today = new Date().toISOString().split('T')[0]; // Lấy ngày hiện tại (yyyy-mm-dd)
-
-    // Truy vấn để kiểm tra xem có bản ghi mới trong ngày không
-    const query = `SELECT COUNT(*) as count FROM spendinglist WHERE lastentry >= ?`;
-    db.get(query, [today], (err, row) => {
-        if (err) {
-            console.error('Error checking for new data:', err);
-            return;
-        }
-        const newDataCount = row.count;
-
-        if (newDataCount === 0) {
-            // Không có dữ liệu mới, gửi thông báo
-            const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
-            const notifySpend = iniObject.App.notifySpend;
-            if (notifySpend == true || notifySpend == 'true') { sendNotification(); }
-        }
-    });
+    setTimeout(() => {
+        axios.get('http://localhost:3962/setting/checkLastEntry')
+            .then(res => {
+                // Không có dữ liệu mới, gửi thông báo
+                if (res.data.result == 0) {
+                    // Kiểm tra cài đặt xem có được gửi thông báo không
+                    const notifySpend = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8')).App.notifySpend;
+                    if (notifySpend == true || notifySpend == 'true') { sendNotification() }
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi khi gửi yêu cầu:', error);
+                logError(error);
+            });
+    }, 1000);
 }
 
 // Hàm lên lịch hẹn ngẫu nhiên một lần trong khoảng thời gian từ 8h sáng đến 8h tối
@@ -249,86 +233,101 @@ ipcMain.on('login-expired', () => {
 
 // Bắt sự kiện xuất file database
 ipcMain.on('export-db', () => {
-    // Kiểm tra sự tồn tại của database
-    if (fs.existsSync(dbPath)) {
-        // Thực hiện lựa chọn vị trí lưu tệp
-        dialog.showSaveDialog({
-            title: 'Xuất tệp database',
-            defaultPath: 'SpendingDB.db', // Tên mặc định của tệp xuất
-            buttonLabel: 'Export',
-            filters: [{ name: 'SQLite database', extensions: ['db'] }]
-        }).then((result) => {
-            if (!result.canceled && result.filePath) {
-                const destinationPath = result.filePath;
-                // Sao chép tệp database vào địa chỉ mới
-                fs.copyFile(dbPath, destinationPath, (err) => {
-                    if (err) {
-                        console.error('Lỗi khi sao chép:', err);
-                    } else {
-                        console.log('Đã xuất tệp database thành công!');
-                    }
-                });
-            }
-        }).catch((err) => {
-            console.error('Lỗi khi mở cửa sổ lưu tệp:', err);
-        });
-    } else {
-        console.log('Database không tồn tại.');
+    try {
+        // Kiểm tra sự tồn tại của database
+        if (fs.existsSync(dbPath)) {
+            // Thực hiện lựa chọn vị trí lưu tệp
+            dialog.showSaveDialog({
+                title: 'Xuất tệp database',
+                defaultPath: 'SpendingDB.db', // Tên mặc định của tệp xuất
+                buttonLabel: 'Export',
+                filters: [{ name: 'SQLite database', extensions: ['db'] }]
+            }).then((result) => {
+                if (!result.canceled && result.filePath) {
+                    const destinationPath = result.filePath;
+                    // Sao chép tệp database vào địa chỉ mới
+                    fs.copyFile(dbPath, destinationPath, (err) => {
+                        if (err) {
+                            console.error('Lỗi khi sao chép:', err);
+                        } else {
+                            console.log('Đã xuất tệp database thành công!');
+                        }
+                    });
+                }
+            }).catch((err) => {
+                console.error('Lỗi khi mở cửa sổ lưu tệp:', err);
+            });
+        } else {
+            console.log('Database không tồn tại.');
+        }
+    } catch (e) {
+        console.log(e)
+        logError(e)
     }
 });
 
 // Bắt sự kiện nhập file database
 ipcMain.on('import-db', async () => {
-    // Hiển thị hộp thoại mở tệp
-    const result = await dialog.showOpenDialog({
-        properties: ['openFile'],
-        filters: [{ name: 'SQLite database', extensions: ['db'] }]
-    });
-
-    // Kiểm tra xem người dùng đã chọn tệp hay chưa
-    if (!result.canceled && result.filePaths.length > 0) {
-        const filePath = result.filePaths[0]; // Đường dẫn đến tệp người dùng đã chọn
-
-        // Thực hiện sao chép tệp đã chọn vào dbPath
-        fs.copyFile(filePath, dbPath, (err) => {
-            if (err) {
-                console.error('Lỗi khi sao chép:', err);
-                // Xử lý lỗi nếu có
-            } else {
-                console.log('Sao chép tệp thành công!');
-                // Xử lý khi sao chép thành công
-
-                app.relaunch();
-                app.exit();
-            }
+    try {
+        // Hiển thị hộp thoại mở tệp
+        const result = await dialog.showOpenDialog({
+            properties: ['openFile'],
+            filters: [{ name: 'SQLite database', extensions: ['db'] }]
         });
+
+        // Kiểm tra xem người dùng đã chọn tệp hay chưa
+        if (!result.canceled && result.filePaths.length > 0) {
+            const filePath = result.filePaths[0]; // Đường dẫn đến tệp người dùng đã chọn
+
+            // Thực hiện sao chép tệp đã chọn vào dbPath
+            fs.copyFile(filePath, dbPath, (err) => {
+                if (err) {
+                    console.error('Lỗi khi sao chép:', err);
+                    // Xử lý lỗi nếu có
+                } else {
+                    console.log('Sao chép tệp thành công!');
+                    // Xử lý khi sao chép thành công
+
+                    app.relaunch();
+                    app.exit();
+                }
+            });
+        }
+    } catch (e) {
+        console.log(e)
+        logError(e)
     }
 })
 
 // Bắt sự kiện thay đổi đường dẫn lưu database
 ipcMain.on('change-dbPath', () => {
-    dialog.showOpenDialog(mainWindow, {
-        properties: ['openDirectory'],
-    }).then(result => {
-        if (!result.canceled) {
-            const selectedDirectory = result.filePaths[0];
-            const newdbPath = path.join(selectedDirectory, 'SpendingDB.db');
+    try {
+        dialog.showOpenDialog(mainWindow, {
+            properties: ['openDirectory'],
+        }).then(result => {
+            if (!result.canceled) {
+                const selectedDirectory = result.filePaths[0];
+                const newdbPath = path.join(selectedDirectory, 'SpendingDB.db');
 
-            // Sao chép tệp db đến vị trí mới
-            fs.copyFileSync(dbPath, newdbPath);
+                // Sao chép tệp db đến vị trí mới
+                fs.copyFileSync(dbPath, newdbPath);
 
-            const resultPath = appSettings.updateSetting('dbPath', newdbPath, 'Data');
+                const resultPath = appSettings.updateSetting('dbPath', newdbPath, 'Data');
 
-            if (resultPath) {
-                app.relaunch();
-                app.exit();
-            } else {
-                console.error('Lỗi khi thay đổi thư mục:');
+                if (resultPath) {
+                    app.relaunch();
+                    app.exit();
+                } else {
+                    console.error('Lỗi khi thay đổi thư mục:');
+                }
             }
-        }
-    }).catch(err => {
-        console.error(err);
-    });
+        }).catch(err => {
+            console.error(err);
+        });
+    } catch (e) {
+        console.log(e)
+        logError(e)
+    }
 });
 
 // Bắt sự kiện kiểm tra theme trên hệ thống

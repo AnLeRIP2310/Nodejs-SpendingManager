@@ -1,5 +1,5 @@
-const { db, query } = require('../configs/db')
-const path = require('path')
+const { query } = require('../configs/db')
+const { logError } = require('../configs/logError')
 
 function formatDate(dateStr) {
     const date = new Date(dateStr);
@@ -80,6 +80,7 @@ module.exports = {
 
         } catch (error) {
             console.log(error);
+            logError(error);
         }
     },
 }

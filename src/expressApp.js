@@ -6,12 +6,13 @@ const { initDB, connectDB } = require('./configs/db')
 const passportConfigs = require('./configs/passport')
 const app = express()
 const path = require('path')
-const host = 'localhost'
-const port = 3962
+const host = process.env.HOST
+const port = process.env.PORT
+
 
 // Middleware
 app.use(session({
-    secret: 'spendingmanager',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }));

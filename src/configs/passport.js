@@ -1,3 +1,4 @@
+require('dotenv').config({ path: require('path').join(__dirname, '../../.env') });
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
@@ -5,9 +6,9 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 // Passport Đăng nhập bằng Google
 passport.use(
     new GoogleStrategy({
-        clientID: '719235217594-6nc20voe0r0u1a3f8nel2hjn39rf3752.apps.googleusercontent.com',
-        clientSecret: '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',
-        callbackURL: 'http://localhost:3962/auth/loginGoogle/callback',
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK_URL,
         scope: ['email', 'profile']
     }, (accessToken, refreshToken, profile, done) => {
         done(null, profile);
@@ -17,9 +18,9 @@ passport.use(
 // Passport đăng nhập bằng Facebook
 passport.use(
     new FacebookStrategy({
-        clientID: '1815123525607452',
-        clientSecret: '6c57d9184690ed7c40fc5d4d2cf9f210',
-        callbackURL: 'http://localhost:3962/auth/loginFacebook/callback',
+        clientID: process.env.FACEBOOK_CLIENT_ID,
+        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+        callbackURL: process.env.FACEBOOK_CALLBACK_URL,
         profileFields: ['id', 'displayName', 'photos', 'email', 'gender', 'birthday']
     }, (accessToken, refreshToken, profile, done) => {
         done(null, profile);
