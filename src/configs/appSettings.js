@@ -17,9 +17,6 @@ const defaultConfigs = {
     }
 };
 
-// Đọc và chuyển đổi tệp cấu hình .ini thành một object
-const iniObject = parseIni(fs.readFileSync(iniFilePath, 'utf8'));
-
 
 // Đọc tệp cấu hình .ini
 function parseIni(data) {
@@ -44,70 +41,39 @@ function parseIni(data) {
             }
         }
     });
-
     return config;
 }
 
 
+// Hàm ghi lại nội dung vào tệp
+function writeIniFile(content) {
+    fs.writeFileSync(iniFilePath, content, 'utf8');
+}
+
+// Hàm tạo nội dung của tệp ini
+function generateIniContent(objSetting, type) {
+    let updatedIniContent = '';
+
+    for (const section in objSetting) {
+        updatedIniContent += `[${section}]\n`;
+
+        if (type == 'default') {
+            for (const key in objSetting[section]) {
+                updatedIniContent += `${key}=${objSetting[section][key][0]}\n`;
+            }
+        } else {
+            for (const key in objSetting[section]) {
+                updatedIniContent += `${key}=${objSetting[section][key]}\n`;
+            }
+        }
+        updatedIniContent += '\n';
+    }
+    return updatedIniContent;
+}
+
 // Khởi tạo tệp cấu hình .ini
 function initSetting() {
-    let iniContent = '';
-
-    for (const section in defaultConfigs) {
-        iniContent += `[${section}]\n`;
-
-        for (const key in defaultConfigs[section]) {
-            iniContent += `${key}=${defaultConfigs[section][key][0]}\n`;
-        }
-        iniContent += '\n';
-    }
-    fs.writeFileSync(iniFilePath, iniContent, 'utf8');
-}
-
-
-// Cập nhật giá trị cài đặt
-function updateSetting(name, value, group) {
-
-    if (iniObject[group] && iniObject[group][name] !== undefined) {
-        // Chỉ cập nhật giá trị nếu thuộc tính tồn tại trong group
-        iniObject[group][name] = value;
-
-        // Ghi lại nội dung vào tệp
-        let updatedIniContent = '';
-
-        for (const section in iniObject) {
-            updatedIniContent += `[${section}]\n`;
-
-            for (const key in iniObject[section]) {
-                updatedIniContent += `${key}=${iniObject[section][key]}\n`;
-            }
-
-            updatedIniContent += '\n';
-        }
-
-        fs.writeFileSync(iniFilePath, updatedIniContent, 'utf8');
-        return true; // Trả về true nếu cập nhật thành công
-    }
-
-    return false; // Trả về false nếu không tìm thấy group hoặc name trong tệp
-}
-
-
-// Hàm kiểm tra và cập nhật giá trị từ tệp .ini
-function checkAndUpdateConfig() {
-    for (const [group, configs] of Object.entries(defaultConfigs)) {
-        for (const [name, options] of Object.entries(configs)) {
-            const value = iniObject[group]?.[name];
-            const validOptions = options;
-
-            if (value !== undefined && validOptions && validOptions.includes(value)) {
-                continue;
-            }
-
-            // Nếu giá trị không hợp lệ, cập nhật lại với giá trị mặc định
-            updateSetting(name, options[0], group);
-        }
-    }
+    writeIniFile(generateIniContent(defaultConfigs, 'default'));
 }
 
 // Kiểm tra nếu têp cấu hình chưa tồn tại thì tạo mới
@@ -116,9 +82,82 @@ if (!settingExist) {
     initSetting();
 }
 
+// Đọc và chuyển đổi tệp cấu hình .ini thành một object
+const iniObject = parseIni(fs.readFileSync(iniFilePath, 'utf8'));
 
-// Gọi hàm để kiểm tra và cập nhật giá trị khi bắt đầu chương trình
-checkAndUpdateConfig();
+
+// Cập nhật giá trị cài đặt
+function updateSetting(name, value, group) {
+    if (iniObject[group] && iniObject[group][name] !== undefined) {
+        // Chỉ cập nhật giá trị nếu thuộc tính tồn tại trong group
+        iniObject[group][name] = value;
+
+        // Ghi lại nội dung vào tệp
+        writeIniFile(generateIniContent(iniObject));
+        return true;
+    }
+    return false;
+}
+
+// Hàm thêm setting bị thiếu vào tệp ini
+function addSetting(name, value, group) {
+    if (iniObject[group]) {
+        // Nếu group đã tồn tại trong tệp .ini, thêm setting mới vào
+        iniObject[group][name] = value;
+    } else {
+        // Nếu group không tồn tại, tạo mới group và thêm setting vào
+        iniObject[group] = { [name]: value };
+    }
+
+    // Ghi lại nội dung vào tệp
+    writeIniFile(generateIniContent(iniObject));
+}
+
+// Hàm kiểm tra và cập nhật giá trị từ tệp .ini
+function checkAndFixIniConfigs() {
+    for (const [group, configs] of Object.entries(defaultConfigs)) {
+        for (const [name, options] of Object.entries(configs)) {
+            const value = iniObject[group]?.[name];
+            const validOptions = options;
+
+            if (value === undefined) {
+                // Nếu giá trị không tồn tại trong tệp .ini, tạo lại với giá trị mặc định
+                console.log(`Giá trị của ${group}.${name} bị thiếu. Đặt lại mặt định`);
+                addSetting(name, options[0], group);
+            } else if (validOptions && validOptions.includes(value)) {
+                // Nếu giá trị hợp lệ, bỏ qua
+                continue;
+            } else if (!defaultConfigs[group]?.[name]) {
+                // Nếu cài đặt không tồn tại trong defaultConfigs, xoá giá trị đó
+                console.log(`Giá trị của ${group}.${name} không tồn tại trong defaultConfigs. Xoá giá trị này.`);
+                delete iniObject[group][name];
+            } else {
+                // Nếu giá trị không hợp lệ, cập nhật lại với giá trị mặc định
+                console.log(`Giá trị của ${group}.${name} là không hợp lệ. Đặt lại mặt định: ${options[0]}`);
+                updateSetting(name, options[0], group);
+            }
+        }
+    }
+
+    // Kiểm tra và xoá các cài đặt không tồn tại trong defaultConfigs
+    for (const group in iniObject) {
+        for (const name in iniObject[group]) {
+            if (!defaultConfigs[group]?.[name]) {
+                // Nếu cài đặt không tồn tại trong defaultConfigs, xoá giá trị đó
+                console.log(`Giá trị của ${group}.${name} không tồn tại trong defaultConfigs. Xoá giá trị này.`);
+                delete iniObject[group][name];
+            }
+        }
+        // Kiểm tra và xoá các group không tồn tại trong defaultConfigs
+        if (!defaultConfigs[group]) {
+            console.log(`Group ${group} không tồn tại trong defaultConfigs. Xoá group này.`);
+            delete iniObject[group];
+        }
+    }
+    // Ghi lại nội dung vào tệp
+    writeIniFile(generateIniContent(iniObject));
+} checkAndFixIniConfigs();
+
 
 
 module.exports = {

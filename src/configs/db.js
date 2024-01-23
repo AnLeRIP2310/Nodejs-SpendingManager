@@ -2,13 +2,14 @@ const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 const appSettings = require('./appSettings')
-const defaultDbPath = process.env.APPDATA + '/spendingManager/data/SpendingDB.db';
+
 
 var db;
 // Lấy đường dẫn database từ tệp cấu hình
 var dbPath = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8')).Data.dbPath;
 
 // Kiểm tra giá trị dbPath
+const defaultDbPath = process.env.APPDATA + '/spendingManager/data/SpendingDB.db';
 if (dbPath == 'default') { dbPath = defaultDbPath }
 
 
@@ -93,6 +94,7 @@ async function initDB() {
                 UsersId  INTEGER  REFERENCES Users (Id),
                 NameList TEXT     COLLATE NOCASE,
                 AtCreate DATETIME,
+                LastEntry DATETIME COLLATE nocase
                 Status   INTEGER  DEFAULT 1
             )
         `);
