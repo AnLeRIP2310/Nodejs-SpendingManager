@@ -307,6 +307,18 @@ $('#page-setting').click(function () {
 }); $('#page-setting').click();
 
 
+// Page Noted
+$('#page-noted').click(function () {
+    fetch('templates/noted.hbs')
+        .then(response => response.text())
+        .then(template => {
+            const compiledTemplate = Handlebars.compile(template);
+            const html = compiledTemplate();
+            $('#page-content').html(html);
+        })
+})
+
+
 // mở cài đặt
 // var offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasSetting'));
 // offcanvas.show()

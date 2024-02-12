@@ -15,7 +15,7 @@ const defaultConfigs = {
     Data: { dbPath: ['default'] },
     App: {
         darkMode: ['light', 'dark', 'auto'],
-        defaultPage: ['home', 'spending', 'statisc'],
+        defaultPage: ['home', 'spending', 'statisc', 'noted'],
         defaultAction: ['add', 'del', 'edit'],
         language: ['vi', 'en'],
         reminderDelete: ['true', 'false'],

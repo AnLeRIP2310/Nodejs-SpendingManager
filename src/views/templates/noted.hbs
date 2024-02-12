@@ -1,0 +1,89 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-4 border-dark border-end">
+            <div class="d-flex mb-3 mt-2">
+                <!-- Tìm kiếm -->
+                <div id="input-group-notedSearch" class="input-group ipgroup-form me-2">
+                    <input id="txt-notedSearch" type="search" class="form-control" title="Nhập từ khoá tìm kiếm"
+                        placeholder="Nhập từ khoá tìm kiếm">
+                    <button id="btn-notedSearch" class="btn btn-secondary">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+
+                <!-- Thêm mới -->
+                <div id="input-group-notedAdd" class="input-group ipgroup-form w-auto">
+                    <input id="txt-notedAdd" type="text" class="form-control d-none" title="Nhập tên ghi chú"
+                        placeholder="Nhập tên ghi chú">
+                    <button id="btn-notedAdd" class="btn btn-secondary border-top-bottom-left-radius">
+                        <i class="fa-sharp fa-solid fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="list-group overflow-y-scroll pt-2" style="height: 467px">
+                <a class="list-group-item pointer p-0" data-id="1" data-bs-toggle="list">
+                    <div class="d-flex">
+                        <div class="w-100 p-2 overflow-hidden">
+                            <strong title="Ghi chú của tôi" class="text-nowrap text-start">Ghi chú của
+                                tôi Ghi chú của
+                                tôi</strong>
+                            <p class="m-0 text-nowrap text-end">20/11/2022</p>
+                        </div>
+
+                        <div class="noted-content">
+                            <button class="btn btn-sm btn-outline-secondary btn-noted-toggle-action" data-id="1">
+                                <i class="fa-solid fa-angle-left"></i>
+                            </button>
+                            <div class="noted-content_action">
+                                <button class="btn btn-primary text-nowrap">
+                                    Chỉnh sửa
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+
+                                <button class="btn btn-danger text-nowrap">
+                                    Xoá bỏ
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a class="list-group-item pointer p-0" data-id="2" data-bs-toggle="list">
+                    <div class="d-flex">
+                        <div class="w-100 p-2 overflow-hidden">
+                            <strong title="Ghi chú của tôi" class="text-nowrap text-start">Ghi chú của tôi</strong>
+                            <p class="m-0 text-nowrap text-end">20/11/2022</p>
+                        </div>
+
+                        <div class="noted-content">
+                            <button class="btn btn-sm btn-outline-secondary btn-noted-toggle-action" data-id="2">
+                                <i class="fa-solid fa-angle-left"></i>
+                            </button>
+                            <div class="noted-content_action">
+                                <button class="btn btn-primary text-nowrap">
+                                    Chỉnh sửa
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+
+                                <button class="btn btn-danger text-nowrap">
+                                    Xoá bỏ
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-8">
+            <div id="noted-content" class="w-100 h-100 pt-2 pb-2">
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="../../public/js/noted.js"></script>

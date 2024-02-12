@@ -288,6 +288,97 @@
 }
 
 
+
+/* ------ Noted ---------- */
+
+.list-group-item.active {
+    background-color: var(--bs-primary-border-subtle);
+    color: black;
+}
+
+.noted-content {
+    display: flex;
+    transition: all .5s ease;
+}
+
+.btn-noted-toggle-action:hover {
+    background-color: transparent;
+}
+
+.btn-noted-toggle-action {
+    margin-left: 5px;
+    border-radius: 0;
+    height: 100%;
+    border: var(--bs-list-group-border-width) solid var(--bs-list-group-border-color);
+    border-bottom: none;
+    border-top: none;
+    border-right: none;
+}
+
+.list-group-item.active .btn-noted-toggle-action {
+    border-color: var(--bs-list-group-active-border-color);
+}
+
+.noted-content_action {
+    display: none;
+    margin-right: 5px;
+    flex-direction: column;
+    justify-content: space-evenly;
+    top: 0;
+    right: 0;
+    transition: all .5s ease;
+}
+
+.noted-content_action.show {
+    display: flex;
+    animation: slide-right-show 0.5s ease forwards;
+}
+
+.noted-content_action.hidden {
+    animation: slide-right-hidden 0.5s ease forwards;
+}
+
+.noted-content_action button {
+    --bs-btn-padding-y: .25rem;
+    --bs-btn-padding-x: .3rem;
+    --bs-btn-font-size: .6rem;
+
+}
+
+@keyframes slide-right-show {
+    0% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-right-hidden {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(100%);
+    }
+}
+
+.border-top-bottom-left-radius {
+    border-top-left-radius: var(--bs-border-radius) !important;
+    border-bottom-left-radius: var(--bs-border-radius) !important;
+}
+
+.ipgroup-form {
+    transition: all 0.5s ease;
+}
+
+
 /* -----------Spendlist--------- */
 
 .form-addSpendlist {
@@ -319,4 +410,11 @@
         transform: scaleX(0);
         transform: translateX(-70%);
     }
+}
+
+
+/* ----- Noted --------- */
+
+.list-group-item.pointer.active {
+    color: white;
 }

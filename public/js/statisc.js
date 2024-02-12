@@ -125,6 +125,9 @@ function drawChart_totalspending() {
                 axisPointer: {
                     type: 'shadow'
                 },
+                formatter: function (params) {
+                    return `${formatDate(params[0].axisValueLabel)} : ${params[0].value.toLocaleString()} ₫`;
+                },
             },
             series: [{
                 name: 'Tổng tiền',
@@ -135,7 +138,7 @@ function drawChart_totalspending() {
         };
 
         myChart.setOption(option);
-    } else { }
+    }
 }
 
 
@@ -214,7 +217,9 @@ function drawChart_totalperspenditem(data) {
     var option = {
         tooltip: {
             trigger: 'item',
-            formatter: '{a} <br/>{b} : {c} ({d}%)',
+            formatter: function (params) {
+                return `${params.seriesName} <br/>${params.name} : ${params.value.toLocaleString()} ₫`;
+            },
         },
         legend: {
             type: 'scroll',
@@ -224,7 +229,7 @@ function drawChart_totalperspenditem(data) {
             top: 20,
             bottom: 20,
             textStyle: {
-                color: 'green' // Chọn màu bạn muốn ở đây
+                color: 'green'
             }
         },
         series: [

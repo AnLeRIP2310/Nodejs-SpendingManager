@@ -87,24 +87,8 @@ $('#st_darkMode').on('change', function () {
 
 // xử lý cài đặt defaultPage
 function defaultPageSetting() {
-    switch (settingsObj.defaultPage) {
-        case 'home':
-            $('#page-home').click();
-            $('#st_defaultPage').val('home');
-            break;
-        case 'spending':
-            $('#page-spending').click();
-            $('#st_defaultPage').val('spending');
-            break;
-        case 'spendlist':
-            $('#page-spendlist').click();
-            $('#st_defaultPage').val('spendlist');
-            break;
-        case 'statisc':
-            $('#page-statisc').click();
-            $('#st_defaultPage').val('statisc');
-            break;
-    }
+    $('#page-' + settingsObj.defaultPage).click();
+    $('#st_defaultPage').val(settingsObj.defaultPage);
 }
 
 // Sự kiện chọn trang mặt định
