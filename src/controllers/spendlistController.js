@@ -1,5 +1,5 @@
 const { query, getUserId } = require('../configs/db')
-const { logError } = require('../configs/logError')
+const errorLogs = require('../configs/errorLogs')
 
 
 module.exports = {
@@ -19,8 +19,7 @@ module.exports = {
                 data: result
             })
         } catch (err) {
-            console.log(err)
-            logError(err)
+            errorLogs(err)
         }
     },
 
@@ -35,8 +34,7 @@ module.exports = {
             console.log(result);
             res.json({ success: result })
         } catch (err) {
-            console.log(err)
-            logError(err)
+            errorLogs(err)
         }
     },
 
@@ -48,8 +46,7 @@ module.exports = {
             const result = await query(sql, [Id])
             res.json({ success: result })
         } catch (e) {
-            console.log(e)
-            logError(e)
+            errorLogs(e)
         }
     },
 }

@@ -265,6 +265,7 @@ $('#btn-export_db').click(function () {
     ipcRenderer.send('export-db');
 });
 
+
 // Sự kiện nhập file db
 $('#btn-import_db').click(function () {
     $('#modalConfirmImport').modal('show');
@@ -273,7 +274,233 @@ $('#btnConfirmImport').click(function () {
     ipcRenderer.send('import-db');
 });
 
+
 // Sự kiện chọn thư mục lưu trữ dữ liệu
 $('#btn-dbPath').click(function () {
     ipcRenderer.send('change-dbPath');
 });
+
+
+// btn Đăng nhập vào google drive
+$('#btn-syncData-Login').click(function () {
+    $.get('http://localhost:3962/auth/urlPage', { urlpage: window.location.href });
+
+    if (ipcRenderer == null) {
+        const width = 530;
+        const height = 600;
+
+        const popup = window.open(
+            urlapi + '/auth/loginGGDrive',
+            'google-login-popup',
+            `width=${width},height=${height}`
+        );
+
+        if (window.focus && popup) {
+            popup.focus();
+        }
+
+        return false;
+    } else {
+        ipcRenderer.send('loginGGDrive', urlapi + '/auth/loginGGDrive');
+    }
+});
+
+
+// Btn đăng xuất khỏi google drive
+$('#btn-syncData-Logout').click(function () {
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/auth/logoutGGDrive',
+        success: function (res) {
+            console.log(res);
+
+            if (res.success) {
+                checkSyncStatus();
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+});
+
+
+// Hàm xử lý chức năng đồng bộ
+async function handleSyncData(dataObj) {
+    // Tổng số mục cần thực hiện
+    const totalProcess = dataObj.spendingItem.length + dataObj.spendingList.length;
+    let currentProcess = 0;
+
+    // Hiển thị thanh tiến trình
+    $('#syncData-Progress').removeClass('d-none');
+
+    function updateProgress() {
+        currentProcess++;
+        const successProcess = Math.floor((currentProcess / totalProcess) * 100);
+        $('#syncData-Progress .progress-bar').css('width', successProcess + '%');
+        $('#syncData-Progress .progress-bar').text(`${successProcess}%`);
+        $('#syncStatus').html(`Đang đồng bộ ${currentProcess}/${totalProcess} <i class="fa-solid fa-loader fa-spin"></i>`)
+    }
+
+    async function handleSyncDataItem(apiEndpoint, data) {
+        try {
+            const res = await $.ajax({
+                type: 'POST',
+                url: urlapi + apiEndpoint,
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+            });
+
+            // Tính % hoàn thành trên thanh tiến trình
+            updateProgress();
+
+            return res;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const delay = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    var delayTicks = 10;
+
+    // Xử lý dữ liệu của spendingList
+    for (const spendList of dataObj.spendingList) {
+        const data = {
+            token: JSON.parse(localStorage.getItem('AuthToken')).token,
+            namelist: spendList.namelist,
+            atcreate: spendList.atcreate,
+            status: spendList.status,
+            lastentry: spendList.lastentry
+        };
+        await handleSyncDataItem('/setting/handleSyncSpendList', data);
+        await delay(delayTicks); // Add a delay of 1000 milliseconds (1 second)
+    }
+
+    // Xử lý dữ liệu của spendingItem
+    for (const spendItem of dataObj.spendingItem) {
+        const data = {
+            spendlistid: spendItem.spendlistid,
+            nameitem: spendItem.nameitem,
+            price: spendItem.price,
+            details: spendItem.details,
+            atcreate: spendItem.atcreate,
+            atupdate: spendItem.atupdate,
+            status: spendItem.status
+        };
+        await handleSyncDataItem('/setting/handleSyncSpendItem', data);
+        await delay(delayTicks); // Add a delay of 1000 milliseconds (1 second)
+    }
+
+    // Nếu đồng bộ hoàn tất, hiển thị thông báo
+    showSuccessToast('Đồng bộ dữ liệu hoàn tất');
+    // Ẩn thanh tiến trình
+    $('#syncData-Progress').addClass('d-none');
+    $('#syncStatus').html('Đã đồng bộ <i class="fa-sharp fa-regular fa-circle-check"></i>');
+    $('#syncStatus').removeClass('text-warning');
+}
+
+
+// btn đồng bộ dữ liệu
+$('#btn-syncData').click(function () {
+    $('#syncStatus').html('Đang đồng bộ <i class="fa-solid fa-loader fa-spin"></i>');
+    $('#syncStatus').addClass('text-warning');
+
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/setting/syncData',
+        success: function (res) {
+            if (res.success == false && res.message == 'Không tìm thấy tệp sao lưu') {
+                // Gọi hàm để sao lưu dữ liệu
+                $('#btn-backupData').click();
+            } else if (res.success && res.data != null) {
+                handleSyncData(res.data)
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+});
+
+
+// Btn sao lưu dữ liệu
+$('#btn-backupData').click(function () {
+    if ($('#syncDataContent').hasClass('d-none')) {
+        $('#syncDataContent').removeClass('d-none');
+    }
+
+    if (!$('#btn-syncData-Login').hasClass('d-none')) {
+        $('#btn-syncData-Login').addClass('d-none');
+    }
+
+    $('#syncStatus').html('Đang sao lưu <i class="fa-solid fa-loader fa-spin"></i>');
+    $('#syncStatus').addClass('text-warning');
+
+    const AuthToken = JSON.parse(localStorage.getItem('AuthToken'));
+
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/setting/backupData',
+        data: {
+            token: AuthToken.token
+        },
+        success: function (res) {
+            if (res.success) {
+                checkSyncStatus();
+
+                $('#syncStatus').removeClass('text-warning');
+                $('#syncStatus').html('Đã sao lưu <i class="fa-sharp fa-regular fa-circle-check"></i>');
+
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+});
+
+
+// Xử lý thông điệp nhận được từ GGDriveCallback
+window.addEventListener('message', function (event) {
+    const { data } = event;
+    if (data && data.message === 'syncData') {
+        console.log('Đã nhận được thông điệp từ ggdrivecallback');
+
+        $('#btn-syncData').click();
+        checkSyncStatus();
+    }
+});
+if (ipcRenderer != null) {
+    ipcRenderer.on('GGDriveCallback', (event, res) => {
+        $('#btn-syncData').click();
+        checkSyncStatus();
+    })
+}
+
+
+
+// Một ajax chạy lần đầu khi khởi động để kiểm tra trạng thái đồng bộ hay chưa
+function checkSyncStatus() {
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/setting/checkSyncStatus',
+        success: function (res) {
+            console.log(res)
+
+            if (res.status) {
+                $('#btn-syncData-Login').addClass('d-none'); // Ẩn nút đăng nhập GGDrive
+                $('#syncDataContent').removeClass('d-none'); // Hiển thị nội dung đồng bộ
+                $('#tbl_syncEmail').val(res.email); // Gán email vào thẻ input
+                $('#txt_syncDate').text(res.syncDate); // Gán thời gian sao lưu vào thẻ
+            } else {
+                $('#btn-syncData-Login').removeClass('d-none'); // Hiển thị lại nút đăng nhập GGDrive
+                $('#syncDataContent').addClass('d-none'); // Ẩn nội dung đồng bộ
+            }
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    })
+} checkSyncStatus();
+

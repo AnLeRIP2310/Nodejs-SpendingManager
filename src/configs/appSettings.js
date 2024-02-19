@@ -1,18 +1,23 @@
 const path = require('path');
 const fs = require('fs');
-const { logError } = require('./logError');
+const errorLogs  = require('./errorLogs');
 
 var iniFilePath;
 
 if (process.platform === 'win32') {
-    iniFilePath = process.env.USERPROFILE + '/documents/SpendingManager/appSettings.ini';
+    iniFilePath = process.env.USERPROFILE + '/Documents/SpendingManager/appSettings.ini';
 } else if (process.platform === 'darwin') {
     iniFilePath = process.env.HOME + '/Documents/SpendingManager/appSettings.ini';
 }
 
-
+// Khai báo cấu hình mặt định
 const defaultConfigs = {
-    Data: { dbPath: ['default'] },
+    Data: {
+        dbPath: ['default'],
+        fileGGDriveId: [''],
+        emailGGDrive: [''],
+        syncDate: [''],
+    },
     App: {
         darkMode: ['light', 'dark', 'auto'],
         defaultPage: ['home', 'spending', 'statisc', 'noted'],
@@ -82,26 +87,23 @@ function generateIniContent(objSetting, type) {
 
 // Khởi tạo tệp cấu hình .ini
 function initSetting() {
-    // Kiểm tra và tạo thư mục nếu chưa có
-    if (!fs.existsSync(path.dirname(iniFilePath))) {
+    // Kiểm tra xem tệp cấu hình đã tồn tại hay chưa
+    const settingExist = fs.existsSync(iniFilePath);
+    // Nếu tệp cấu hình chưa tồn tại
+    if (!settingExist) {
         try {
+            // Tạo thư mục chứa tệp cấu hình 
             fs.mkdirSync(path.dirname(iniFilePath), { recursive: true });
             console.log('Thư mục đã được tạo.');
 
-            // Khởi tạo tệp cài đặt
+            // Khởi tạo tệp cấu hình với nội dung mặc định
             writeIniFile(generateIniContent(defaultConfigs, 'default'));
         } catch (err) {
-            console.error('Lỗi khi tạo thư mục:', err);
-            logError(err); // Ghi vào nhật kí lỗi
+            errorLogs(err, 'Lỗi khi tạo thư mục'); // Ghi vào nhật kí lỗi
         }
     }
-}
+} initSetting();
 
-// Kiểm tra nếu têp cấu hình chưa tồn tại thì tạo mới
-const settingExist = fs.existsSync(iniFilePath);
-if (!settingExist) {
-    initSetting();
-}
 
 // Đọc và chuyển đổi tệp cấu hình .ini thành một object
 const iniObject = parseIni(fs.readFileSync(iniFilePath, 'utf8'));
@@ -134,57 +136,76 @@ function addSetting(name, value, group) {
     writeIniFile(generateIniContent(iniObject));
 }
 
-// Hàm kiểm tra và cập nhật giá trị từ tệp .ini
-function checkAndFixIniConfigs() {
-    for (const [group, configs] of Object.entries(defaultConfigs)) {
-        for (const [name, options] of Object.entries(configs)) {
+
+// Hàm kiểm tra giá trị và sửa nếu có lỗi
+function validateConfigFile(iniObject, exceptions = []) {
+    const isExempt = (group, name) => exceptions.includes(name);
+
+    for (const group in defaultConfigs) {
+        for (const name in defaultConfigs[group]) {
+            if (isExempt(group, name)) {
+                // console.log(`[Ngoại lệ] Cài đặt "${name}" trong phần "${group}" được bỏ qua.`);
+
+                // Kiểm tra và tái tạo giá trị nếu tên của cài đặt bị xoá
+                if (!iniObject[group]?.hasOwnProperty(name)) {
+                    console.log(`[Thiếu] Giá trị của ${group}.${name} bị thiếu. Đặt lại mặt định.`);
+                    addSetting(name, '', group); // Gán giá trị rỗng
+                }
+                continue;
+            }
+
             const value = iniObject[group]?.[name];
-            const validOptions = options;
+            const validOptions = defaultConfigs[group][name];
 
             if (value === undefined) {
-                // Nếu giá trị không tồn tại trong tệp .ini, tạo lại với giá trị mặc định
-                console.log(`Giá trị của ${group}.${name} bị thiếu. Đặt lại mặt định`);
-                addSetting(name, options[0], group);
+                console.log(`[Thiếu] Giá trị của ${group}.${name} bị thiếu. Đặt lại mặt định.`);
+                addSetting(name, validOptions[0], group);
             } else if (validOptions && validOptions.includes(value)) {
-                // Nếu giá trị hợp lệ, bỏ qua
                 continue;
             } else if (!defaultConfigs[group]?.[name]) {
-                // Nếu cài đặt không tồn tại trong defaultConfigs, xoá giá trị đó
-                console.log(`Giá trị của ${group}.${name} không tồn tại trong defaultConfigs. Xoá giá trị này.`);
+                console.log(`[Dư thừa] Giá trị của ${group}.${name} không tồn tại trong defaultConfigs. Xoá giá trị này.`);
                 delete iniObject[group][name];
             } else {
-                // Nếu giá trị không hợp lệ, cập nhật lại với giá trị mặc định
-                console.log(`Giá trị của ${group}.${name} là không hợp lệ. Đặt lại mặt định: ${options[0]}`);
-                updateSetting(name, options[0], group);
+                console.log(`[Không hợp lệ] Giá trị của ${group}.${name} là không hợp lệ. Đặt lại mặt định: ${validOptions[0]}`);
+                updateSetting(name, validOptions[0], group);
             }
         }
     }
 
-    // Kiểm tra và xoá các cài đặt không tồn tại trong defaultConfigs
     for (const group in iniObject) {
         for (const name in iniObject[group]) {
             if (!defaultConfigs[group]?.[name]) {
-                // Nếu cài đặt không tồn tại trong defaultConfigs, xoá giá trị đó
-                console.log(`Giá trị của ${group}.${name} không tồn tại trong defaultConfigs. Xoá giá trị này.`);
+                console.log(`[Dư thừa] Giá trị của ${group}.${name} không tồn tại trong defaultConfigs. Xoá giá trị này.`);
                 delete iniObject[group][name];
             }
         }
-        // Kiểm tra và xoá các group không tồn tại trong defaultConfigs
+
         if (!defaultConfigs[group]) {
-            console.log(`Group ${group} không tồn tại trong defaultConfigs. Xoá group này.`);
+            console.log(`[Dư thừa] Phần "${group}" không có trong cấu hình mặc định. Đang xoá bỏ.`);
             delete iniObject[group];
         }
     }
-    // Ghi lại nội dung vào tệp
+
     writeIniFile(generateIniContent(iniObject));
-} checkAndFixIniConfigs();
+}
+
+// Gọi hàm validateConfigFile với các ngoại lệ
+validateConfigFile(iniObject, ["fileGGDriveId", "emailGGDrive", "syncDate"]);
+
+
+// Hàm lấy ra giá trị của tệp
+function getValueSetting(name, group) {
+    var iniObj = parseIni(fs.readFileSync(iniFilePath, 'utf8'));
+    return iniObj[group]?.[name];
+}
 
 
 
 module.exports = {
     updateSetting,
     initSetting,
-    dbPath: iniObject.Data.dbPath,
+    dbPath: parseIni(fs.readFileSync(iniFilePath, 'utf8')).Data.dbPath,
     iniFilePath,
     parseIni,
+    getValueSetting,
 }

@@ -15,5 +15,8 @@ router.get('/loginGoogle/callback', passport.authenticate('google', { failureRed
 router.get('/loginFacebook', passport.authenticate('facebook'));
 router.get('/loginFacebook/callback', passport.authenticate('facebook', { failureRedirect: '/' }), authCtrl.loginFacebook);
 
+router.get('/loginGGDrive', authCtrl.loginGGDrive);
+router.get('/loginGGDrive/callback', authCtrl.loginGGDriveCallback);
+router.get('/logoutGGDrive', authCtrl.logoutGGDrive);
 
 module.exports = router

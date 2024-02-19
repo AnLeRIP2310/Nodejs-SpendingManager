@@ -1,7 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-function logError(error) {
+function errorLogs(error, message) {
+    message = ''; message = message || 'Ứng dụng gặp lỗi sau';
+    console.log(message, ':', error);
+
     const logDir = path.join(process.env.USERPROFILE, 'documents', 'SpendingManager', 'logs');
     const timestamp = new Date().toISOString().replace(/[-T:.]/g, '_');
     const logFileName = `error_log-${timestamp}.txt`;
@@ -15,5 +18,8 @@ function logError(error) {
     const logEntry = `${error.stack || error}\n`;
 
     fs.appendFileSync(logPath, logEntry, 'utf-8');
+
+    console.log('đã ghi nhật kí lỗi');
 }
-module.exports = { logError };
+
+module.exports = errorLogs;

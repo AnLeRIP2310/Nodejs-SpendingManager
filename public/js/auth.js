@@ -69,8 +69,12 @@ $('#btn-login').click(() => {
 
                 localStorage.setItem('AuthToken', JSON.stringify(loginInfor));
 
-                // Gửi thông điệp đến main process
-                ipcRenderer.send('login-success');
+                if (ipcRenderer != null) {
+                    // Gửi thông điệp đến main process
+                    ipcRenderer.send('login-success');
+                } else {
+                    window.location.href = 'http://127.0.0.1:5500/src/views/index.html'
+                }
             } else {
                 $('#login_username').addClass('is-invalid');
                 $('#login_password').addClass('is-invalid');
@@ -154,44 +158,60 @@ $('#login_username, #login_password').on('keyup', function (event) {
     }
 });
 
+
+// Hàm lưu token sau khi đăng nhập vào localstorage
+function handleLoginSuccess(token) {
+    const loginInfor = {
+        token: token,
+    }
+
+    let currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 30);
+    loginInfor.timeslife = formatDate(currentDate);
+
+    localStorage.setItem('AuthToken', JSON.stringify(loginInfor));
+
+    // Gửi thông điệp đến main process
+    ipcRenderer.send('login-success');
+}
+
 // Xử lý thông điệp từ cửa sổ popup
 window.addEventListener('message', function (event) {
     const { data } = event;
     if (data && data.message === 'reload') {
-        const loginInfor = {
-            token: data.token,
-        }
-
-        let currentDate = new Date();
-        currentDate.setDate(currentDate.getDate() + 30);
-        loginInfor.timeslife = formatDate(currentDate);
-
-        localStorage.setItem('AuthToken', JSON.stringify(loginInfor));
-
-        // Gửi thông điệp đến main process
-        ipcRenderer.send('login-success');
+        handleLoginSuccess(data.token);
     }
 });
+if (ipcRenderer != null) {
+    ipcRenderer.on('GGFBLogin-Success', (event, data) => {
+        handleLoginSuccess(data)
+    })
+}
+
 
 // Hàm đăng nhập bằng google
 function loginGoogle() {
     // Tạo urlpage
     $.get('http://localhost:3962/auth/urlPage', { urlpage: window.location.href });
 
-    const width = 530;
-    const height = 600;
+    if (ipcRenderer == null) {
+        const width = 530;
+        const height = 600;
 
-    const popup = window.open(
-        'http://localhost:3962/auth/loginGoogle',
-        'google-login-popup',
-        `width=${width},height=${height}`
-    );
+        const popup = window.open(
+            'http://localhost:3962/auth/loginGoogle',
+            'google-login-popup',
+            `width=${width},height=${height}`
+        );
 
-    if (window.focus && popup) {
-        popup.focus();
+        if (window.focus && popup) {
+            popup.focus();
+        }
+
+        return false;
+    } else {
+        ipcRenderer.send('loginGoogle', urlapi + '/auth/loginGoogle');
     }
-
-    return false;
 };
 
 // Btn đăng nhập bằng facebook
@@ -199,18 +219,22 @@ function loginFacebook() {
     // Tạo urlpage
     $.get('http://localhost:3962/auth/urlPage', { urlpage: window.location.href });
 
-    const width = 750;
-    const height = 600;
+    if (ipcRenderer == null) {
+        const width = 750;
+        const height = 600;
 
-    const popup = window.open(
-        'http://localhost:3962/auth/loginFacebook',
-        'facebook-login-popup',
-        `width=${width},height=${height}`
-    );
+        const popup = window.open(
+            'http://localhost:3962/auth/loginFacebook',
+            'facebook-login-popup',
+            `width=${width},height=${height}`
+        );
 
-    if (window.focus) {
-        popup.focus();
+        if (window.focus) {
+            popup.focus();
+        }
+
+        return false;
+    } else {
+        ipcRenderer.send('loginFacebook', urlapi + '/auth/loginGoogle');
     }
-
-    return false;
 };

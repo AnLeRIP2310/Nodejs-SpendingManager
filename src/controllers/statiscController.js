@@ -1,23 +1,10 @@
 const { query } = require('../configs/db')
-const path = require('path')
-const { logError } = require('../configs/logError')
+const myUtils = require('../configs/myUtils')
+const errorLogs = require('../configs/errorLogs')
 
 
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-}
-function formatDateForInput(dateStr) {
-    const parts = dateStr.split("/");
-    if (parts.length === 3) {
-        const [month, day, year] = parts;
-        return `${year}-${day}-${month}`;
-    }
-    return dateStr; // Trả về nguyên bản nếu không thể chuyển đổi
-}
+
+
 
 // Lấy ngày đầu tiên của tuần
 function getStartOfWeek(date) {
@@ -33,13 +20,13 @@ module.exports = {
         try {
             // Lấy tổng tiền ngày hôm nay
             var sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND SpendListId = ?';
-            var params = [`%${formatDateForInput(formatDate(new Date()))}%`, spendList];
+            var params = [`%${myUtils.formatDateForInput(myUtils.formatDate(new Date()))}%`, spendList];
             const todayResult = await query(sql, params);
 
             // Lấy tổng tiền ngày trước đó
             var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
             sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND SpendListId = ?';
-            params = [`%${formatDateForInput(formatDate(yesterday))}%`, spendList];
+            params = [`%${myUtils.formatDateForInput(myUtils.formatDate(yesterday))}%`, spendList];
             const yesterdayResult = await query(sql, params);
 
             // Lấy tổng tiền tuần này
@@ -48,8 +35,8 @@ module.exports = {
             startOfLastWeek.setDate(startOfLastWeek.getDate() - 7); // Ngày đầu tiên của tuần trước
 
             // Chuyển đổi ngày thành định dạng phù hợp để truy vấn trong SQL
-            let formattedStartOfThisWeek = formatDateForInput(formatDate(startOfThisWeek));
-            let formattedStartOfLastWeek = formatDateForInput(formatDate(startOfLastWeek));
+            let formattedStartOfThisWeek = myUtils.formatDateForInput(myUtils.formatDate(startOfThisWeek));
+            let formattedStartOfLastWeek = myUtils.formatDateForInput(myUtils.formatDate(startOfLastWeek));
 
             // Lấy tổng tiền tuần hiện tại
             sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND SpendListId = ?';
@@ -105,8 +92,7 @@ module.exports = {
             })
         } catch (error) {
             res.json({ success: false, error: error })
-            console.log(error);
-            logError(error);
+            errorLogs(error);
         }
     },
 
@@ -143,8 +129,7 @@ module.exports = {
                 data: resultData
             })
         } catch (err) {
-            console.log(err);
-            logError(err);
+            errorLogs(err);
         }
     },
 }

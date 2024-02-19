@@ -10,6 +10,7 @@ const host = process.env.HOST
 const port = process.env.PORT
 
 
+
 // Middleware
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -37,8 +38,8 @@ app.use('/profile', require('./routers/profileRouter'))
 app.use('/statisc', require('./routers/statiscRouter'))
 app.use('/setting', require('./routers/settingRouter'))
 
+
 app.listen(port, async () => {
     await initDB(); // Khởi tạo database
-    // connectDB(); // Kiểm tra kết nối db
     console.log(`Server chạy trên http://${host}:${port}`)
 })

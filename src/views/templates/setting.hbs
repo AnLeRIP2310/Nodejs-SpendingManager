@@ -9,7 +9,7 @@
     <!-- Dark Mode -->
     <div id="ctst_darkMode" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
         data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="Bật cái này sẽ chuyển sang chế độ tối">
-        <strong class="text-nowrap " style="flex: 2;">Chế độ tối:</strong>
+        <strong class="text-nowrap " style="flex: 2;">Chủ đề ứng dụng:</strong>
         <select id="st_darkMode" class="form-select form-select-sm pointer" style="flex: 1;">
             <option value="light">Sáng</option>
             <option value="dark">Tối</option>
@@ -52,7 +52,7 @@
     <div id="ctst_reminder" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
         data-bs-toggle="popover" data-bs-trigger="hover"
         data-bs-content="Bật cái này sẽ hiển thị thông báo xác nhận trước khi xoá dữ liệu trên bảng">
-        <strong class="text-nowrap" style="flex: 2;">Xác nhận xoá:</strong>
+        <strong class="text-nowrap" style="flex: 2;">Thông báo khi xoá:</strong>
         <div class="form-check form-switch" style="flex: 1;">
             <input class="form-check-input pointer" type="checkbox" id="st_reminder">
             <label class="form-check-label pointer text-nowrap" for="st_reminder">Bật xác nhận</label>
@@ -99,20 +99,79 @@
             <label for="st_startWithWindow" class="form-check-label pointer text-nowrap">Đang Bật</label>
         </div>
     </div>
+
+    <!-- SyncData -->
+    <div style="margin-bottom: 12px" class="d-flex flex-column align-items-center justify-content-center">
+        <button id="btn-syncData-Login" class="btn btn-sm btn-outline-success" data-bs-trigger="hover"
+            data-bs-toggle="popover"
+            data-bs-content="Liên kết với Google Drive của bạn để lưu và đồng bộ dữ liệu ứng dụng">
+            <i class="fa-brands fa-google-drive"></i>
+            Đăng nhập vào Google Drive
+        </button>
+
+        <div id="syncDataContent" class="d-none border mt-2 p-2 rounded" data-bs-trigger="hover"
+            data-bs-toggle="popover" data-bs-content="Chức năng đồng bộ/sao lưu hiện tại vẫn đang là 'THỬ NGHIỆM' 
+            nên sẽ có thể phát sinh lỗi, vui lòng sử dụng cách xuất dữ liệu thủ công bên dưới để 
+            sao lưu/khôi phục dữ liệu nếu cần thiết">
+            <div class="d-flex mb-2 w-100 align-items-center justify-content-evenly">
+                <button id="btn-syncData" class="btn btn-sm btn-outline-primary" data-bs-trigger="hover"
+                    data-bs-toggle="popover" data-bs-content="Nhấn vào nút này để tiến hành đồng bộ dữ liệu">Đồng bộ
+                    ngay</button>
+
+                <button id="btn-backupData" class="btn btn-sm btn-outline-info" data-bs-trigger="hover"
+                    data-bs-toggle="popover" data-bs-content="Nhấn vào nút này để tiến hành sao lưu dữ liệu">Sao lưu
+                    ngay</button>
+            </div>
+
+            <div class="d-flex justify-content-center align-items-center" data-bs-trigger="hover"
+                data-bs-toggle="popover" data-bs-content="Địa chỉ Email liên kết với Google Drive">
+                <label for="tbl_syncEmail" class="form-check-label pe-2">Email: </label>
+                <input id="tbl_syncEmail" type="email" readonly="true" class="form-control form-control-sm"
+                    value="abc@gmail.com">
+            </div>
+
+            <div style="margin-top: 8px">
+                <p class="mb-0">Trạng thái:
+                    <span id="syncStatus" class="text-success ">Đã sao lưu
+                        <i class="fa-sharp fa-regular fa-circle-check"></i>
+                    </span>
+                </p>
+
+                <div id="syncData-Progress" class="progress d-none mt-1 mb-1" style="height: 10px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                        style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+
+                <p class="mb-0">Ngày sao lưu/đồng bộ:
+                    <span id="txt_syncDate">14/02/2024</span>
+                </p>
+            </div>
+
+            <div class="d-flex justify-content-center w-100 mt-2">
+                <button id="btn-syncData-Logout" class="btn btn-sm btn-outline-success">
+                    <i class="fa-brands fa-google-drive"></i>
+                    Đăng xuất khỏi Google Drive
+                </button>
+            </div>
+
+        </div>
+    </div>
+
     <!-- DbPath -->
     <div id="ctst_dbPath" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
         data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="Chọn đường dẫn đến thư mục lưu trữ dữ liệu">
         <div class=" input-group">
-            <input type="text" class="form-control" readonly id="st_dbPath">
-            <button id="btn-dbPath" class="btn btn-secondary">
+            <input type="text" class="form-control form-control-sm" readonly id="st_dbPath">
+            <button id="btn-dbPath" class="btn btn-sm btn-secondary">
                 <i class="fa-solid fa-file-pen"></i>
             </button>
         </div>
     </div>
+
     <!-- Reset -->
     <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center">
-        <button id="btn-reset_setting" class="btn btn-primary" data-bs-toggle="popover" data-bs-trigger="hover"
-            data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng về mặt định">Đặt lại mặt
+        <button id="btn-reset_setting" class="btn btn-sm btn-primary" data-bs-toggle="popover" data-bs-trigger="hover"
+            data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng về mặt định">Đặt lại cài đặt mặt
             định</button>
     </div>
 
@@ -120,19 +179,23 @@
 
     <!-- Import/Export -->
     <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between">
-        <button id="btn-export_db" class="btn btn-outline-info" data-bs-toggle="popover" data-bs-trigger="hover"
+        <button id="btn-export_db" class="btn btn-sm btn-outline-info" data-bs-toggle="popover" data-bs-trigger="hover"
             data-bs-content="Nhấn vào nút này để xuất dữ liệu của ứng dụng ra tệp bên ngoài">
-            Xuất dữ liệu
+            Xuất tệp dữ liệu
             <i class="fa-regular fa-file-export"></i>
         </button>
 
-        <button id="btn-import_db" class="btn btn-outline-success" data-bs-toggle="popover" data-bs-trigger="hover"
-            data-bs-content="Nhấn vào nút này để nhập dữ liệu từ tệp sao lưu vào ứng dụng">
-            Nhập dữ liệu
+        <button id="btn-import_db" class="btn btn-sm btn-outline-success" data-bs-toggle="popover"
+            data-bs-trigger="hover" data-bs-content="Nhấn vào nút này để nhập dữ liệu từ tệp sao lưu vào ứng dụng">
+            Nhập tệp dữ liệu
             <i class="fa-regular fa-file-import"></i>
         </button>
     </div>
 </div>
+
+
+
+
 
 
 <script src="../../public/js/settings.js"></script>

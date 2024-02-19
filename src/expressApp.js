@@ -10,6 +10,7 @@ const host = process.env.HOST
 const port = process.env.PORT
 
 
+
 // Middleware
 app.use(session({
     secret: process.env.SESSION_SECRET,

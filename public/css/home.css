@@ -418,3 +418,15 @@
 .list-group-item.pointer.active {
     color: white;
 }
+
+
+/* --------Settings ---------- */
+
+#tbl_syncEmail {
+    color: transparent;
+    transition: all .5s ease;
+}
+
+#tbl_syncEmail:hover {
+    color: var(--bs-body-color);
+}

@@ -1,5 +1,5 @@
 const { query, getUserId } = require('../configs/db');
-const { logError } = require('../configs/logError')
+const errorLogs = require('../configs/errorLogs')
 
 
 module.exports = {
@@ -16,8 +16,7 @@ module.exports = {
                 spendingList: spendingList
             });
         } catch (err) {
-            console.log(err)
-            logError(err);
+            errorLogs(err);
         }
     },
 
@@ -37,8 +36,7 @@ module.exports = {
                 res.json({ success: false });
             }
         } catch (err) {
-            console.log(err);
-            logError(err);
+            errorLogs(err);
         }
     },
 
@@ -91,8 +89,7 @@ module.exports = {
                 res.json({ success: true, data: dataResult });
             }
         } catch (err) {
-            console.error(err);
-            logError(err);
+            errorLogs(err);
         }
     },
 
@@ -104,8 +101,7 @@ module.exports = {
             const names = result.map(item => item.nameitem);
             res.json({ success: true, data: names });
         } catch (err) {
-            console.log(err)
-            logError(err);
+            errorLogs(err);
         }
     },
 
@@ -140,8 +136,7 @@ module.exports = {
                 });
             }
         } catch (err) {
-            console.error(err);
-            logError(err);
+            errorLogs(err);
         }
     },
 
@@ -154,8 +149,7 @@ module.exports = {
             const result = await query(sql, params);
             res.json({ success: result });
         } catch (err) {
-            console.log(err);
-            logError(err);
+            errorLogs(err);
         }
     },
 
@@ -168,8 +162,7 @@ module.exports = {
             const result = await query(sql, params);
             res.json({ success: result });
         } catch (err) {
-            console.log(err);
-            logError(err);
+            errorLogs(err);
         }
     },
 
@@ -182,8 +175,7 @@ module.exports = {
                 data: result[0].totalprice
             })
         } catch (err) {
-            console.log(err);
-            logError(err);
+            errorLogs(err);
         }
     },
 
@@ -204,8 +196,7 @@ module.exports = {
                 price: priceResult[0].totalprice
             })
         } catch (err) {
-            console.log(err);
-            logError(err);
+            errorLogs(err);
         }
     },
 }

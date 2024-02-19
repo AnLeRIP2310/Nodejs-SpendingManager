@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, screen, Tray, Menu, nativeTheme } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, screen, Tray, Menu, nativeTheme, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const expressApp = require('./expressApp');
@@ -7,7 +7,15 @@ const appSettings = require('./configs/appSettings');
 const notifier = require('node-notifier');
 const schedule = require('node-schedule');
 const axios = require('axios');
-const { logError } = require('./configs/logError');
+const errorLogs = require('./configs/errorLogs');
+const ipc = require('node-ipc');
+
+
+
+// Cấu hình IPC
+ipc.config.id = 'electron';
+ipc.config.retry = 1500;
+ipc.config.silent = true;
 
 
 // try {
@@ -40,6 +48,7 @@ app.whenReady().then(() => {
 });
 
 
+// Hàm tạo cửa sổ đăng nhập
 function createAuthWindow() {
     const mainScreen = screen.getPrimaryDisplay().workAreaSize;
     const windowWidth = 800, windowHeight = 500;
@@ -69,6 +78,7 @@ function createAuthWindow() {
     });
 }
 
+// Hàm tạo cửa sổ chính
 function createMainWindow() {
     const mainScreen = screen.getPrimaryDisplay().workAreaSize;
     const windowWidth = 930, windowHeight = 565;
@@ -128,6 +138,8 @@ function createMainWindow() {
     });
 }
 
+
+
 // Hàm gửi thông báo
 function sendNotification() {
     notifier.notify({
@@ -156,7 +168,7 @@ function checkForNewData() {
             })
             .catch(error => {
                 console.error('Lỗi khi gửi yêu cầu:', error);
-                logError(error);
+                errorLogs(error);
             });
     }, 1000);
 }
@@ -190,6 +202,55 @@ function scheduleRandomNotifications() {
     });
 } scheduleRandomNotifications();
 
+
+
+// Bắt sự kiện của node-ipc
+ipc.serve(() => {
+    // Bắt sự kiện sau khi đăng nhập google drive
+    ipc.server.on('GGDriveCallback', (data, socket) => {
+        // Gửi về lại phía renderer
+        mainWindow.webContents.send('GGDriveCallback');
+    })
+
+    // Bắt sự kiện sau khi đăng nhập google
+    ipc.server.on('GGFBLogin-Success', (data, socket) => {
+        // Gửi về lại phía renderer
+        loginWindow.webContents.send('GGFBLogin-Success', data);
+    })
+}); ipc.server.start();
+
+// Bắt sự kiện đăng nhập google drive
+ipcMain.on('loginGGDrive', (event, url) => {
+    shell.openExternal(url); // Mở cửa sổ đăng nhập trên trình duyệt
+})
+
+// Bắt sự kiện đăng nhập google
+ipcMain.on('loginGoogle', (event, url) => {
+    shell.openExternal(url); // Mở cửa sổ đăng nhập trên trình duyệt
+})
+
+// Bắt sự kiện đăng nhập facebook
+ipcMain.on('loginFacebook', (event, url) => {
+    shell.openExternal(url); // Mở cửa sổ đăng nhập trên trình duyệt
+})
+
+// Bắt sự kiện đăng nhập thành công
+ipcMain.on('login-success', () => {
+    // Đóng cửa sổ login.html
+    loginWindow.close();
+
+    // Mở cửa sổ index.html
+    createMainWindow();
+});
+
+// Bắt sự kiện đăng nhập hết hạn
+ipcMain.on('login-expired', () => {
+    isQuitting = true;
+    mainWindow.close();
+    // Mở cửa sổ đăng nhập
+    createAuthWindow();
+})
+
 // Bắt sự kiện thoát ứng dụng
 ipcMain.on('quit-app', (event, data) => {
     if (data == true) {
@@ -212,23 +273,6 @@ ipcMain.on('collapse-tray', (event, data) => {
 ipcMain.on('reload-app', () => {
     app.relaunch();
     app.exit();
-})
-
-// Bắt sự kiện đăng nhập thành công
-ipcMain.on('login-success', () => {
-    // Đóng cửa sổ login.html
-    loginWindow.close();
-
-    // Mở cửa sổ index.html
-    createMainWindow();
-});
-
-// Bắt sự kiện đăng nhập hết hạn
-ipcMain.on('login-expired', () => {
-    isQuitting = true;
-    mainWindow.close();
-    // Mở cửa sổ đăng nhập
-    createAuthWindow();
 })
 
 // Bắt sự kiện xuất file database
@@ -262,7 +306,7 @@ ipcMain.on('export-db', () => {
         }
     } catch (e) {
         console.log(e)
-        logError(e)
+        errorLogs(e)
     }
 });
 
@@ -295,7 +339,7 @@ ipcMain.on('import-db', async () => {
         }
     } catch (e) {
         console.log(e)
-        logError(e)
+        errorLogs(e)
     }
 })
 
@@ -326,7 +370,7 @@ ipcMain.on('change-dbPath', () => {
         });
     } catch (e) {
         console.log(e)
-        logError(e)
+        errorLogs(e)
     }
 });
 
@@ -347,3 +391,4 @@ ipcMain.on('startWithWindow', () => {
         app.setLoginItemSettings({ openAtLogin: false });
     }
 })
+

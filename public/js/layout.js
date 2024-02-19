@@ -83,6 +83,16 @@ sidebarItems.forEach(item => {
 });
 
 // Hàm kiểm tra trạng thái đăng nhập
+function handleLoginExpired() {
+    localStorage.removeItem('AuthToken');
+
+    if (ipcRenderer != null) {
+        // Gửi thông điệp đến main process
+        ipcRenderer.send('login-expired');
+    } else {
+        window.location.href = 'http://127.0.0.1:5500/src/views/login.html';
+    }
+}
 function checkIsLogin() {
     // Kiểm tra xem người dùng đã đăng nhập chưa
     if (localStorage.getItem('AuthToken') != null) {
@@ -102,14 +112,10 @@ function checkIsLogin() {
                         var storedDate = new Date(formatDateForInput((AuthToken.timeslife))).getTime();
 
                         if (currentDate > storedDate) {
-                            localStorage.removeItem('AuthToken');
-                            // Gửi thông điệp đến main process
-                            ipcRenderer.send('login-expired');
+                            handleLoginExpired();
                         }
                     } else {
-                        localStorage.removeItem('AuthToken');
-                        // Gửi thông điệp đến main process
-                        ipcRenderer.send('login-expired');
+                        handleLoginExpired();
                     }
                 },
                 error: function (err) {
@@ -117,21 +123,23 @@ function checkIsLogin() {
                 }
             })
         } else {
-            localStorage.removeItem('AuthToken');
-            // Gửi thông điệp đến main process
-            ipcRenderer.send('login-expired');
+            handleLoginExpired();
         }
     } else {
-        // Gửi thông điệp đến main process
-        ipcRenderer.send('login-expired');
+        handleLoginExpired();
     }
 } checkIsLogin();
 
 // Btn đăng xuất
 $('#page-logout').click(() => {
     localStorage.removeItem('AuthToken');
-    // Gửi thông điệp đến main process
-    ipcRenderer.send('login-expired');
+
+    if (ipcRenderer != null) {
+        // Gửi thông điệp đến main process
+        ipcRenderer.send('login-expired');
+    } else {
+        window.location.href = 'http://127.0.0.1:5500/src/views/login.html'
+    }
 })
 
 

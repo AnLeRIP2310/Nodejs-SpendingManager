@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
-const { logError } = require('./logError');
+const errorLogs = require('./errorLogs');
 const appSettings = require('./appSettings')
 
 
@@ -49,7 +49,7 @@ async function getUserId(token) {
         }
     } catch (err) {
         console.log(err)
-        logError(err);
+        errorLogs(err);
     }
 }
 
@@ -62,7 +62,7 @@ async function initDB() {
             console.log('Thư mục đã được tạo.');
         } catch (err) {
             console.log('Lỗi khi tạo thư mục:', err);
-            logError(err);
+            errorLogs(err);
         }
     }
 
@@ -120,7 +120,7 @@ async function initDB() {
         `);
         } catch (e) {
             console.log('Khởi tạo database thất bại:', e);
-            logError(e);
+            errorLogs(e);
         }
 
     }
@@ -131,7 +131,7 @@ function connectDB() {
     db = new sqlite3.Database(dbPath, (err) => {
         if (err) {
             console.error('Lỗi kết nối đến database:', err.message);
-            logError(err);
+            errorLogs(err);
         } else {
             console.log('Kết nối đến database thành công.');
         }
@@ -144,7 +144,7 @@ function closeDB(callback) {
         db.close((err) => {
             if (err) {
                 console.error('Có lỗi khi đóng kết nối database:', err.message);
-                logError(err);
+                errorLogs(err);
             } else {
                 console.log('Đã đóng kết nối đến database');
             }
