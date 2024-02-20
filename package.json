@@ -1,6 +1,6 @@
 {
     "name": "nodejs-spendingmanager",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "",
     "main": "./src/electronApp.js",
     "scripts": {
@@ -39,6 +39,7 @@
         "express": "^4.18.2",
         "express-session": "^1.17.3",
         "googleapis": "^133.0.0",
+        "ini": "^4.1.1",
         "node-ipc": "^9.2.1",
         "node-notifier": "^10.0.1",
         "node-schedule": "^2.1.1",

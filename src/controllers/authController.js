@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 const { query, getUserId } = require('../configs/db');
 const errorLogs = require('../configs/errorLogs');
-const appSettings = require('../configs/appSettings');
+const appIniConfigs = require('../configs/appIniConfigs');
 const myUtils = require('../configs/myUtils');
 
 
@@ -315,8 +315,8 @@ module.exports = {
             const userEmail = userInfo.data.user.emailAddress;
 
             // Thêm email vào tệp ini
-            appSettings.updateSetting('emailGGDrive', userEmail, 'Data');
-            appSettings.updateSetting('syncDate', myUtils.formatDate(new Date()), 'Data');
+            appIniConfigs.updateIniConfigs('Data', 'emailGGDrive', userEmail);
+            appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDate(new Date()));
 
             // Mã hóa Refresh Token 
             const encryptedToken = myUtils.encryptRefreshToken(refreshToken);
@@ -354,9 +354,9 @@ module.exports = {
             fs.unlinkSync(pathSettingFolder + 'data/Token.json');
             console.log('Tệp Token.json đã được xoá thành công.');
 
-            // appSettings.updateSetting('fileGGDriveId', '', 'Data');
-            appSettings.updateSetting('emailGGDrive', '', 'Data');
-            appSettings.updateSetting('syncDate', '', 'Data');
+            // appIniConfigs.updateIniConfigs('Data', 'fileGGDriveId', '');
+            appIniConfigs.updateIniConfigs('Data', 'emailGGDrive', '');
+            appIniConfigs.updateIniConfigs('Data', 'syncDate', '');
 
             res.json({ success: true, message: "Đăng xuất khỏi GGDrive thành công" })
         } else {

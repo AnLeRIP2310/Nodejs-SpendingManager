@@ -1,5 +1,6 @@
-const appSettings = require('../configs/appSettings');
+const appIniConfigs = require('../configs/appIniConfigs');
 const fs = require('fs');
+const path = require('path');
 const { dbPath, defaultDbPath, query, getUserId } = require('../configs/db');
 const errorLogs = require('../configs/errorLogs')
 const ggDrive = require('../configs/ggDrive');
@@ -9,10 +10,8 @@ ggDrive.setAuthen();
 
 
 
-// Đường dẫn đến thư mục lưu trữ
-var pathSettingFolder;
-if (process.platform === 'win32') { pathSettingFolder = process.env.USERPROFILE + '/Documents/SpendingManager/'; }
-else if (process.platform === 'darwin') { pathSettingFolder = process.env.HOME + '/Documents/SpendingManager/'; }
+// Lấy ra đường dẫn đến thư mục cấu hình của ứng dụng
+var folderAppConfigs = appIniConfigs.getfolderAppConfigs();
 
 
 
@@ -22,13 +21,13 @@ else if (process.platform === 'darwin') { pathSettingFolder = process.env.HOME +
 
 module.exports = {
     getData: (req, res) => {
-        // Đọc và chuyển đổi đổi tượng
         try {
-            const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
+            // Lấy ra các cài đặt trong tệp ini
+            const iniConfigs = appIniConfigs.getIniConfigs();
 
             res.json({
                 dbPath: dbPath,
-                iniObject,
+                iniObject: iniConfigs,
             });
         } catch (e) {
             console.log(e)
@@ -40,28 +39,24 @@ module.exports = {
         const { name, value, group } = req.body;
 
         try {
-            const result = appSettings.updateSetting(name, value, group);
-
-            if (result) {
-                res.json({ success: true });
-            } else {
-                res.json({ success: false });
-            }
+            appIniConfigs.updateIniConfigs(group, name, value);
+            res.json({ success: true });
         } catch (e) {
-            console.log(e)
             errorLogs(e)
         }
     },
 
     resetData: (req, res) => {
-        if (appSettings.dbPath != 'default') {
-            // sao chép database về vị trí mặt định
+        if (appIniConfigs.getIniConfigs('dbPath') == 'default') {
+            // Sao chép database về vị trí mặt định
             fs.copyFileSync(defaultDbPath, dbPath);
 
-            appSettings.initSetting();
+            // Tạo lại tệp cấu hình .ini để reset tất cả cài đặt
+            appIniConfigs.createIniConfigs();
             res.json({ success: true, action: 'reload' });
         } else {
-            appSettings.initSetting();
+            // Tạo lại tệp cấu hình .ini để reset tất cả cài đặt
+            appIniConfigs.createIniConfigs();
             res.json({ success: true });
         }
     },
@@ -83,11 +78,9 @@ module.exports = {
 
     checkSyncStatus: async (req, res) => {
         // Kiểm tra xem tệp refresh_token có tồn tại không
-        if (fs.existsSync(pathSettingFolder + 'data/Token.json')) {
-            const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
-
-            const emailGGDrive = iniObject.Data.emailGGDrive;
-            const syncDate = iniObject.Data.syncDate;
+        if (fs.existsSync(path.join(folderAppConfigs, 'data', 'Token.json'))) {
+            const emailGGDrive = appIniConfigs.getIniConfigs('emailGGDrive');
+            const syncDate = appIniConfigs.getIniConfigs('syncDate');
 
             if (emailGGDrive != '', syncDate != '') {
                 res.json({ status: true, message: 'Đã đăng nhập GGDrive', email: emailGGDrive, syncDate: syncDate })
@@ -104,7 +97,7 @@ module.exports = {
 
         try {
             // Kiểm tra xem fileId có tồn tại trong tệp cấu hình không
-            var fileId = appSettings.getValueSetting('fileGGDriveId', 'Data');
+            var fileId = appIniConfigs.getIniConfigs('fileGGDriveId');
 
             if (fileId != '') {
                 // Nếu fileId tồn tại trong tệp ini thì tiến hành lấy ra id đó để xoá tệp trên ggdrive
@@ -136,11 +129,11 @@ module.exports = {
 
             // Lưu id tệp vô settings ini
             if (resultUpload) {
-                appSettings.updateSetting('fileGGDriveId', resultUpload.data.id, 'Data');
+                appIniConfigs.updateIniConfigs('Data', 'fileGGDriveId', resultUpload.data.id);
             }
 
             // Lưu ngày sao lưu vào settings ini
-            appSettings.updateSetting('syncDate', myUtils.formatDate(new Date()), 'Data');
+            appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDate(new Date()));
 
             res.json({ success: true });
         } catch (e) {
@@ -153,10 +146,10 @@ module.exports = {
 
         try {
             // Lấy ra fileId trong cài dặt
-            var fileId = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8')).Data.fileGGDriveId;
+            var fileId = appIniConfigs.getIniConfigs('fileGGDriveId');
 
             // Nếu fileId không tồn tại thì lấy ra fileId từ ggDrive
-            if (fileId == '' || fileId == 'null' || fileId == 'undefined') {
+            if (fileId == '' || fileId == null || fileId == undefined) {
                 const getFileId = await ggDrive.getListFile()
 
                 // Kiểm tra xem có tệp tin nào không
@@ -166,8 +159,8 @@ module.exports = {
                     fileId = getFileId.files[lastFileId].id
 
                     // Lưu fileId vào setting ini để sử dụng sau này
-                    appSettings.updateSetting('fileGGDriveId', fileId, 'Data');
-                    appSettings.updateSetting('syncDate', myUtils.formatDate(new Date()), 'Data');
+                    appIniConfigs.updateIniConfigs('Data', 'fileGGDriveId', fileId);
+                    appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDate(new Date()));
                 } else {
                     // Trường hợp chưa có bất kì file nào thì trả về kết quả
                     res.json({ success: false, message: 'Không tìm thấy tệp sao lưu' })
@@ -179,7 +172,7 @@ module.exports = {
             }
 
             // Sau khi đã có fileId, tiến hành tải về máy
-            const downloadResult = await ggDrive.downloadFile(fileId, pathSettingFolder + 'data/SpendingData.json');
+            const downloadResult = await ggDrive.downloadFile(fileId, path.join(folderAppConfigs, 'data', 'SpendingData.json'));
 
             // Sau khi đã tải về, đọc nội dung của tệp
             const spendData = JSON.parse(fs.readFileSync(downloadResult.pathSave, 'utf8'))

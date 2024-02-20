@@ -3,17 +3,19 @@ const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
 const errorLogs = require('./errorLogs');
+const appIniConfigs = require('./appIniConfigs');
 
 
 
 // Khai báo các đường dẫn mặt định
-var pathSettingFolder, defaultPathSave;
+var folderAppConfigs = appIniConfigs.getfolderAppConfigs();
+const pathToJsonToken = path.join(folderAppConfigs, 'data', 'Token.json');
+var defaultPathSave;
+
 if (process.platform === 'win32') {
-    pathSettingFolder = process.env.USERPROFILE + '/Documents/SpendingManager/';
-    defaultPathSave = process.env.USERPROFILE + '/Downloads/';
+    defaultPathSave = path.join(process.env.USERPROFILE, 'Downloads');
 } else if (process.platform === 'darwin') {
-    pathSettingFolder = process.env.HOME + '/Documents/SpendingManager/';
-    defaultPathSave = process.env.HOME + '/Downloads/';
+    defaultPathSave = path.join(process.env.HOME, 'Downloads');
 }
 
 
@@ -56,10 +58,10 @@ module.exports = {
             );
 
             // Kiểm tra xem tệp token có tồn tại không
-            if (fs.existsSync(pathSettingFolder + 'data/Token.json')) {
+            if (fs.existsSync(pathToJsonToken)) {
                 // Thiết lập thông tin xác thực
                 oauth2Client.setCredentials({
-                    refresh_token: decryptRefreshToken(pathSettingFolder + 'data/Token.json') || refreshToken,
+                    refresh_token: decryptRefreshToken(pathToJsonToken) || refreshToken,
                 });
 
                 // Tạo phiên làm việc với đối tượng OAuth2Client

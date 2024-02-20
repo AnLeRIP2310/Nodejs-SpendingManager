@@ -2,18 +2,16 @@ const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 const errorLogs = require('./errorLogs');
-const appSettings = require('./appSettings')
+const appIniConfigs = require('./appIniConfigs');
 
 
 var db;
 
-// Kiểm tra và gán giá trị phù hợp dựa vào hệ điều hành
-var defaultDbPath;
-if (process.platform == 'win32') { defaultDbPath = process.env.USERPROFILE + '/Documents/SpendingManager/data/SpendingDB.db'; }
-else if (process.platform == 'darwin') { defaultDbPath = process.env.HOME + '/Documents/SpendingManager/data/SpendingDB.db'; }
+// Lấy ra đường dẫn đến tệp database mặt định
+var defaultDbPath = path.join(appIniConfigs.getfolderAppConfigs(), 'data', 'SpendingDB.db');
 
 // Lấy đường dẫn database từ tệp cấu hình
-var dbPath = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8')).Data.dbPath;
+var dbPath = appIniConfigs.getIniConfigs('dbPath');
 if (dbPath == 'default') { dbPath = defaultDbPath }
 
 

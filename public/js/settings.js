@@ -234,7 +234,8 @@ $('#st_startWithWindow').on('change', function () {
     settingsObj.startWithWindow = this.checked;
     editSettings('startWithWindow', this.checked, 'App', startWithWindowSetting)
     // Gửi sự kiện đến main process để xử lý
-    ipcRenderer.send('startWithWindow')
+    if (ipcRenderer != null)
+        ipcRenderer.send('startWithWindow')
 });
 
 // Sự kiện đặt lại cài đặt mặt định
@@ -312,8 +313,6 @@ $('#btn-syncData-Logout').click(function () {
         type: 'GET',
         url: urlapi + '/auth/logoutGGDrive',
         success: function (res) {
-            console.log(res);
-
             if (res.success) {
                 checkSyncStatus();
             }
@@ -465,8 +464,6 @@ $('#btn-backupData').click(function () {
 window.addEventListener('message', function (event) {
     const { data } = event;
     if (data && data.message === 'syncData') {
-        console.log('Đã nhận được thông điệp từ ggdrivecallback');
-
         $('#btn-syncData').click();
         checkSyncStatus();
     }
@@ -486,8 +483,6 @@ function checkSyncStatus() {
         type: 'GET',
         url: urlapi + '/setting/checkSyncStatus',
         success: function (res) {
-            console.log(res)
-
             if (res.status) {
                 $('#btn-syncData-Login').addClass('d-none'); // Ẩn nút đăng nhập GGDrive
                 $('#syncDataContent').removeClass('d-none'); // Hiển thị nội dung đồng bộ

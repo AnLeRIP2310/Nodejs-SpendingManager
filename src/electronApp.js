@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const expressApp = require('./expressApp');
 const { dbPath, query } = require('./configs/db');
-const appSettings = require('./configs/appSettings');
+const appIniConfigs = require('./configs/appIniConfigs');
 const notifier = require('node-notifier');
 const schedule = require('node-schedule');
 const axios = require('axios');
@@ -32,12 +32,7 @@ var isQuitting = false;
 
 
 
-// hàm lấy ra cấu hình trong cài đặt
-const getCloseDefaultSetting = () => {
-    // Đọc và chuyển đổi đổi tượng
-    const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
-    return iniObject.App.closeDefault; // Lấy ra biến trong cài đặt
-}
+
 
 // Chạy cửa sổ chính
 app.whenReady().then(() => {
@@ -58,12 +53,12 @@ function createAuthWindow() {
     loginWindow = new BrowserWindow({
         width: windowWidth,
         height: windowHeight,
-        resizable: true,
+        resizable: false,
         autoHideMenuBar: true,
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
-            devTools: true,
+            devTools: false,
             preload: path.join(__dirname, '/configs/preload.js')
         },
         x: Math.floor(screenWidth * 0.65 - windowWidth / 2),
@@ -120,7 +115,7 @@ function createMainWindow() {
 
     // Bắt sự kiện close của mainWindow
     mainWindow.on('close', (event) => {
-        var closeDefault = getCloseDefaultSetting();
+        var closeDefault = appIniConfigs.getIniConfigs('closeDefault');
 
         if (isQuitting == false) {
             event.preventDefault();
@@ -162,7 +157,7 @@ function checkForNewData() {
                 // Không có dữ liệu mới, gửi thông báo
                 if (res.data.result == 0) {
                     // Kiểm tra cài đặt xem có được gửi thông báo không
-                    const notifySpend = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8')).App.notifySpend;
+                    const notifySpend = appIniConfigs.getIniConfigs('notifySpend');
                     if (notifySpend == true || notifySpend == 'true') { sendNotification() }
                 }
             })
@@ -254,7 +249,7 @@ ipcMain.on('login-expired', () => {
 // Bắt sự kiện thoát ứng dụng
 ipcMain.on('quit-app', (event, data) => {
     if (data == true) {
-        appSettings.updateSetting('closeDefault', 'quit', 'App');
+        appIniConfigs.updateIniConfigs('App', 'closeDefault', 'quit');
     }
     isQuitting = true;
     app.quit();
@@ -263,7 +258,7 @@ ipcMain.on('quit-app', (event, data) => {
 // Bắt sự kiện thu xuống khay hệ thống
 ipcMain.on('collapse-tray', (event, data) => {
     if (data == true) {
-        appSettings.updateSetting('closeDefault', 'tray', 'App');
+        appIniConfigs.updateIniConfigs('App', 'closeDefault', 'tray');
     }
     closeDefault = getCloseDefaultSetting();
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
@@ -356,7 +351,7 @@ ipcMain.on('change-dbPath', () => {
                 // Sao chép tệp db đến vị trí mới
                 fs.copyFileSync(dbPath, newdbPath);
 
-                const resultPath = appSettings.updateSetting('dbPath', newdbPath, 'Data');
+                const resultPath = appIniConfigs.updateIniConfigs('Data', 'dbPath', newdbPath);
 
                 if (resultPath) {
                     app.relaunch();
@@ -382,8 +377,7 @@ ipcMain.on('get-system-theme', (event) => {
 
 // Bắt sự kiện thêm ứng dụng vào khởi động cùng window
 ipcMain.on('startWithWindow', () => {
-    const iniObject = appSettings.parseIni(fs.readFileSync(appSettings.iniFilePath, 'utf8'));
-    const startWithWindow = iniObject.App.startWithWindow
+    const startWithWindow = appIniConfigs.getIniConfigs('startWithWindow')
 
     if (startWithWindow == true || startWithWindow == 'true') {
         app.setLoginItemSettings({ openAtLogin: true });
