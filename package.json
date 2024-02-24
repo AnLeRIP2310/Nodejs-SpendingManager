@@ -1,15 +1,16 @@
 {
     "name": "nodejs-spendingmanager",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "",
     "main": "./src/electronApp.js",
     "scripts": {
         "start": "nodemon src/app.js",
-        "wd": "electron .",
+        "wd": "nodemon --exec electron .",
         "package": "electron-builder",
-        "package-all": "electron-builder -mwl"
+        "package-all": "electron-builder -mwl",
+        "postinstall": "electron-builder install-app-deps"
     },
-    "author": "",
+    "author": "ALR2310",
     "license": "ISC",
     "build": {
         "appId": "com.alr2310.spendingmanager",
@@ -29,13 +30,19 @@
             "oneClick": false,
             "allowToChangeInstallationDirectory": true
         },
-        "asar": true
+        "asar": true,
+        "publish": {
+            "provider": "github",
+            "owner": "ALR2310",
+            "repo": "SpendingManager"
+        }
     },
     "dependencies": {
         "axios": "^1.6.5",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
         "dotenv": "^16.3.2",
+        "electron-updater": "^6.1.8",
         "express": "^4.18.2",
         "express-session": "^1.17.3",
         "googleapis": "^133.0.0",
@@ -52,8 +59,7 @@
     },
     "devDependencies": {
         "electron": "^27.1.2",
-        "electron-builder": "^24.11.0",
-        "electron-reloader": "^1.2.3",
+        "electron-builder": "^24.12.0",
         "nodemon": "^3.0.1"
     }
 }

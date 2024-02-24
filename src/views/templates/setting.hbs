@@ -100,6 +100,27 @@
         </div>
     </div>
 
+    <!-- AutoUpdate -->
+    <div style="margin-bottom: 12px;" class="d-flex align-items-center justify-content-center" data-bs-trigger="hover"
+        data-bs-toggle="popover" data-bs-content="Bật cái này sẽ tự động kiểm tra và cập nhật ứng dụng nếu có">
+        <strong class="text-nowrap" style="flex: 2">Tự động cập nhật:</strong>
+        <div class="form-check form-switch" style="flex: 1">
+            <input id="st_autoUpdater" type="checkbox" class="form-check-input pointer">
+            <label for="st_autoUpdater" class="form-check-label pointer text-nowrap">Đang Bật</label>
+        </div>
+    </div>
+
+    <!-- CheckForUpdate -->
+    <div style="margin-bottom: 12px;" class="d-flex align-items-center justify-content-center" data-bs-trigger="hover"
+        data-bs-toggle="popover" data-bs-content="Nhấn vào nút này để kiểm tra và cập nhật ứng dụng nếu có">
+        <button id="btn-CheckForUpdate" class="btn btn-sm btn-outline-primary btn-progress">
+            Kiểm tra và cập nhật ứng dụng
+            <div class="btn-progress-bar"></div>
+        </button>
+    </div>
+
+    <hr>
+
     <!-- SyncData -->
     <div style="margin-bottom: 12px" class="d-flex flex-column align-items-center justify-content-center">
         <button id="btn-syncData-Login" class="btn btn-sm btn-outline-success" data-bs-trigger="hover"

@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, dialog, screen, Tray, Menu, nativeTheme, shell } = require('electron');
+const { autoUpdater, AppUpdater } = require('electron-updater')
 const path = require('path');
 const fs = require('fs');
 const expressApp = require('./expressApp');
@@ -11,18 +12,63 @@ const errorLogs = require('./configs/errorLogs');
 const ipc = require('node-ipc');
 
 
+Object.defineProperty(app, 'isPackaged', {
+    get() {
+        return true;
+    }
+});
+
+
+// Cấu hình autoUpdater
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = false;
+
+// Bắt sự kiện autoUpdater từ client
+ipcMain.on('check-for-update', () => {
+    autoUpdater.checkForUpdates();
+})
+
+autoUpdater.on('update-available', () => {
+    // Hiển thị thông báo hoặc ghi log khi có bản cập nhật mới
+    console.log('co ban cap nhat moi.');
+    errorLogs('Có bản cập nhật mới.');
+});
+
+autoUpdater.on('update-not-available', () => {
+    // Hiển thị thông báo hoặc ghi log khi không có bản cập nhật mới
+    console.log('khong co ban cap nhat moi.');
+    errorLogs('Không có bản cập nhật mới.');
+});
+
+autoUpdater.on('update-downloaded', () => {
+    // Hiển thị thông báo hoặc ghi log khi bản cập nhật đã được tải về
+    dialog.showMessageBox({
+        type: 'info',
+        message: 'Bản cập nhật đã được tải về. Ứng dụng sẽ khởi động lại để cài đặt cập nhật.',
+        buttons: ['OK'],
+    }, () => {
+        // Cài đặt bản cập nhật và khởi động lại ứng dụng
+        autoUpdater.quitAndInstall();
+    });
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+    // Log tiến trình tải xuống
+    console.log(`dang tai xuong: ${progressObj.percent.toFixed(2)}%`);
+    errorLogs(`Đang tải xuống: ${progressObj.percent.toFixed(2)}%`);
+});
+
+autoUpdater.on('error', (err) => {
+    // Log lỗi khi có sự cố trong quá trình cập nhật
+    console.error('loi cap nhat:', err);
+    errorLogs('Lỗi khi câp nhật:', err);
+});
+
 
 // Cấu hình IPC
 ipc.config.id = 'electron';
 ipc.config.retry = 1500;
 ipc.config.silent = true;
-
-
-// try {
-//     require('electron-reloader')(module, {
-//         // ignored: "./data/SpendingDB.sqlite",
-//     });
-// } catch (_) { }
 
 
 let loginWindow;
@@ -31,14 +77,13 @@ let tray;
 var isQuitting = false;
 
 
-
-
-
 // Chạy cửa sổ chính
 app.whenReady().then(() => {
     expressApp.startServer(() => {
         // Đặt cửa sổ khởi chạy chính
         createMainWindow();
+
+        autoUpdater.checkForUpdates();
     });
 });
 
@@ -46,7 +91,8 @@ app.whenReady().then(() => {
 // Hàm tạo cửa sổ đăng nhập
 function createAuthWindow() {
     const mainScreen = screen.getPrimaryDisplay().workAreaSize;
-    const windowWidth = 800, windowHeight = 500;
+    const windowWidth = 800;
+    const windowHeight = 500;
     const screenWidth = mainScreen.width;
     const screenHeight = mainScreen.height;
 
@@ -76,7 +122,8 @@ function createAuthWindow() {
 // Hàm tạo cửa sổ chính
 function createMainWindow() {
     const mainScreen = screen.getPrimaryDisplay().workAreaSize;
-    const windowWidth = 930, windowHeight = 565;
+    const windowWidth = 930;
+    const windowHeight = 565;
     const screenWidth = mainScreen.width;
     const screenHeight = mainScreen.height;
 

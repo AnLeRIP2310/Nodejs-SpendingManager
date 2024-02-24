@@ -152,18 +152,21 @@ module.exports = {
             if (fileId == '' || fileId == null || fileId == undefined) {
                 const getFileId = await ggDrive.getListFile()
 
-                // Kiểm tra xem có tệp tin nào không
-                if (getFileId.files.length > 0) {
-                    // Lấy ra giá trị cuối cùng của mảng
-                    const lastFileId = getFileId.files.length - 1
-                    fileId = getFileId.files[lastFileId].id
+                // Nếu có tệp
+                if (getFileId.files) {
+                    // Kiểm tra xem có tệp tin nào không
+                    if (getFileId.files.length > 0) {
+                        // Lấy ra giá trị cuối cùng của mảng
+                        const lastFileId = getFileId.files.length - 1
+                        fileId = getFileId.files[lastFileId].id
 
-                    // Lưu fileId vào setting ini để sử dụng sau này
-                    appIniConfigs.updateIniConfigs('Data', 'fileGGDriveId', fileId);
-                    appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDate(new Date()));
-                } else {
-                    // Trường hợp chưa có bất kì file nào thì trả về kết quả
-                    res.json({ success: false, message: 'Không tìm thấy tệp sao lưu' })
+                        // Lưu fileId vào setting ini để sử dụng sau này
+                        appIniConfigs.updateIniConfigs('Data', 'fileGGDriveId', fileId);
+                        appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDate(new Date()));
+                    } else {
+                        // Trường hợp chưa có bất kì file nào thì trả về kết quả
+                        res.json({ success: false, message: 'Không tìm thấy tệp sao lưu' })
+                    }
                 }
             }
 

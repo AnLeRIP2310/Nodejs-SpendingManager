@@ -476,7 +476,6 @@ if (ipcRenderer != null) {
 }
 
 
-
 // Một ajax chạy lần đầu khi khởi động để kiểm tra trạng thái đồng bộ hay chưa
 function checkSyncStatus() {
     $.ajax({
@@ -499,3 +498,23 @@ function checkSyncStatus() {
     })
 } checkSyncStatus();
 
+
+
+
+// $('#btn-CheckForUpdate').click(function () {
+//     for (let i = 0; i < 101; i++) {
+
+//         setTimeout(() => {
+//             console.log(i);
+//             $('.btn-progress-bar').css('width', i + '%');
+//         }, 1000);
+
+//     }
+// })
+
+
+$('#btn-CheckForUpdate').click(function () {
+    if (ipcRenderer != null) {
+        ipcRenderer.send('check-for-update')
+    }
+})
