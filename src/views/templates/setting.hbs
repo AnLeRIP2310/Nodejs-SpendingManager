@@ -110,17 +110,6 @@
         </div>
     </div>
 
-    <!-- CheckForUpdate -->
-    <div style="margin-bottom: 12px;" class="d-flex align-items-center justify-content-center" data-bs-trigger="hover"
-        data-bs-toggle="popover" data-bs-content="Nhấn vào nút này để kiểm tra và cập nhật ứng dụng nếu có">
-        <button id="btn-CheckForUpdate" class="btn btn-sm btn-outline-primary btn-progress">
-            Kiểm tra và cập nhật ứng dụng
-            <div class="btn-progress-bar"></div>
-        </button>
-    </div>
-
-    <hr>
-
     <!-- SyncData -->
     <div style="margin-bottom: 12px" class="d-flex flex-column align-items-center justify-content-center">
         <button id="btn-syncData-Login" class="btn btn-sm btn-outline-success" data-bs-trigger="hover"
@@ -188,30 +177,60 @@
             </button>
         </div>
     </div>
-
-    <!-- Reset -->
-    <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center">
-        <button id="btn-reset_setting" class="btn btn-sm btn-primary" data-bs-toggle="popover" data-bs-trigger="hover"
-            data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng về mặt định">Đặt lại cài đặt mặt
-            định</button>
-    </div>
-
     <hr>
 
     <!-- Import/Export -->
-    <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between">
-        <button id="btn-export_db" class="btn btn-sm btn-outline-info" data-bs-toggle="popover" data-bs-trigger="hover"
-            data-bs-content="Nhấn vào nút này để xuất dữ liệu của ứng dụng ra tệp bên ngoài">
-            Xuất tệp dữ liệu
-            <i class="fa-regular fa-file-export"></i>
+    <div style="margin-bottom: 12px" class="row">
+        <div class="col-6">
+            <button id="btn-export_db" class="btn btn-sm btn-outline-info w-100" data-bs-toggle="popover"
+                data-bs-trigger="hover"
+                data-bs-content="Nhấn vào nút này để xuất dữ liệu của ứng dụng ra tệp bên ngoài">
+                Xuất tệp Json
+                <i class="fa-regular fa-file-export"></i>
+            </button>
+        </div>
+
+        <div class="col-6">
+            <button id="btn-import_db" class="btn btn-sm btn-outline-info w-100" data-bs-toggle="popover"
+                data-bs-trigger="hover" data-bs-content="Nhấn vào nút này để nhập dữ liệu từ tệp sao lưu vào ứng dụng">
+                Nhập tệp Json
+                <i class="fa-regular fa-file-import"></i>
+            </button>
+        </div>
+    </div>
+    <hr>
+
+    <!-- Button Update App -->
+    <div style="margin-bottom: 12px;" class="d-flex flex-column align-items-center justify-content-center">
+        <button id="btn-CheckForUpdate" class="btn btn-sm btn-outline-primary">
+            Kiểm tra và cập nhật ứng dụng
+            <i class="fa-solid fa-arrow-up-from-square"></i>
         </button>
 
-        <button id="btn-import_db" class="btn btn-sm btn-outline-success" data-bs-toggle="popover"
-            data-bs-trigger="hover" data-bs-content="Nhấn vào nút này để nhập dữ liệu từ tệp sao lưu vào ứng dụng">
-            Nhập tệp dữ liệu
-            <i class="fa-regular fa-file-import"></i>
+        <div id="updateApp-content" class="border rounded mt-2 p-2 animate__animated animate__fadeOutDown d-none">
+            <p class="p-0">Trạng thái:
+                <span id="updateApp-Status" class="text-warning">
+                    Đang kiểm tra <i class="fa-solid fa-loader fa-spin"></i>
+                </span>
+            </p>
+
+            <div id="updateApp-Progress" class="progress mt-1 mb-1 d-none" style="height: 10px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                    style="width: 10%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button Reset Settings -->
+    <div style="margin-bottom: 12px;" class="d-flex align-items-center justify-content-center">
+        <button id="btn-reset_setting" class="btn btn-sm btn-outline-danger" data-bs-toggle="popover"
+            data-bs-trigger="hover"
+            data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng về mặt định">Khôi phục lại cài
+            đặt mặt định
+            <i class="fa-solid fa-arrows-retweet"></i>
         </button>
     </div>
+</div>
 </div>
 
 

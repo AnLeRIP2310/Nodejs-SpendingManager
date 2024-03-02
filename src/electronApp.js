@@ -1,9 +1,9 @@
 const { app, BrowserWindow, ipcMain, dialog, screen, Tray, Menu, nativeTheme, shell } = require('electron');
-const { autoUpdater, AppUpdater } = require('electron-updater')
+const { autoUpdater } = require('electron-updater')
 const path = require('path');
 const fs = require('fs');
 const expressApp = require('./expressApp');
-const { dbPath, query } = require('./configs/db');
+const { dbPath } = require('./configs/db');
 const appIniConfigs = require('./configs/appIniConfigs');
 const notifier = require('node-notifier');
 const schedule = require('node-schedule');
@@ -28,19 +28,36 @@ ipcMain.on('check-for-update', () => {
     autoUpdater.checkForUpdates();
 })
 
+// Bắt sự kiện cho phép tải về bản cập nhật
+ipcMain.on('allow-download-update', () => {
+    autoUpdater.downloadUpdate();
+})
+
+
 autoUpdater.on('update-available', () => {
-    // Hiển thị thông báo hoặc ghi log khi có bản cập nhật mới
-    console.log('co ban cap nhat moi.');
-    errorLogs('Có bản cập nhật mới.');
+    // Gửi về client renderer
+    mainWindow.webContents.send('update-available');
 });
 
 autoUpdater.on('update-not-available', () => {
-    // Hiển thị thông báo hoặc ghi log khi không có bản cập nhật mới
-    console.log('khong co ban cap nhat moi.');
-    errorLogs('Không có bản cập nhật mới.');
+    // Gửi về client renderer
+    mainWindow.webContents.send('update-not-available');
+});
+
+autoUpdater.on('error', (err) => {
+    // Gửi về client renderer
+    mainWindow.webContents.send('update-error', err);
+    errorLogs('Lỗi khi câp nhật:', err);
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+    // Gửi về client renderer
+    mainWindow.webContents.send('download-progress', progressObj);
 });
 
 autoUpdater.on('update-downloaded', () => {
+    // Gửi về client renderer
+    mainWindow.webContents.send('update-downloaded');
     // Hiển thị thông báo hoặc ghi log khi bản cập nhật đã được tải về
     dialog.showMessageBox({
         type: 'info',
@@ -52,17 +69,6 @@ autoUpdater.on('update-downloaded', () => {
     });
 });
 
-autoUpdater.on('download-progress', (progressObj) => {
-    // Log tiến trình tải xuống
-    console.log(`dang tai xuong: ${progressObj.percent.toFixed(2)}%`);
-    errorLogs(`Đang tải xuống: ${progressObj.percent.toFixed(2)}%`);
-});
-
-autoUpdater.on('error', (err) => {
-    // Log lỗi khi có sự cố trong quá trình cập nhật
-    console.error('loi cap nhat:', err);
-    errorLogs('Lỗi khi câp nhật:', err);
-});
 
 
 // Cấu hình IPC
@@ -82,8 +88,6 @@ app.whenReady().then(() => {
     expressApp.startServer(() => {
         // Đặt cửa sổ khởi chạy chính
         createMainWindow();
-
-        autoUpdater.checkForUpdates();
     });
 });
 

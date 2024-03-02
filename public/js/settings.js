@@ -500,21 +500,65 @@ function checkSyncStatus() {
 
 
 
-
-// $('#btn-CheckForUpdate').click(function () {
-//     for (let i = 0; i < 101; i++) {
-
-//         setTimeout(() => {
-//             console.log(i);
-//             $('.btn-progress-bar').css('width', i + '%');
-//         }, 1000);
-
-//     }
-// })
-
-
+// nút kiểm tra và cập nhật ứng dụng
 $('#btn-CheckForUpdate').click(function () {
     if (ipcRenderer != null) {
         ipcRenderer.send('check-for-update')
     }
+
+    if ($('#updateApp-content').hasClass('animate__fadeOutDown')) {
+        $('#updateApp-content').removeClass('d-none');
+    } else {
+        setTimeout(() => {
+            $('#updateApp-content').addClass('d-none');
+        }, 500);
+    }
+
+    $('#updateApp-content').toggleClass('animate__fadeOutDown animate__fadeInDown');
 })
+
+// Đóng modal và gọi sự kiện tải về
+$('#btnConfirmDownloadUpdate').click(function () {
+    if (ipcRenderer != null) {
+        ipcRenderer.send('allow-download-update')
+    }
+})
+
+// nhận các event liên quan đến cập nhật ứng dụng
+if (ipcRenderer != null) {
+    // Nhận event phát hiện bản cập nhật
+    ipcRenderer.on('update-available', () => {
+        $('#modalConfirmDownloadUpdate').modal('show'); // Hiển thị modal
+        $('#updateApp-status').html('Có bản cập nhật mới'); // Gán text vào status
+    });
+
+    // Nhận event không có bản cập nhật
+    ipcRenderer.on('update-not-available', () => {
+        // Gán text vào status
+        $('#updateApp-status').html('Không cần cập nhật <i class="fa-solid fa-circle-check"></i>');
+    })
+
+    // Nhận event phát sinh lỗi
+    ipcRenderer.on('update-error', (event, err) => {
+        // Gán text vào status
+        $('#updateApp-status').html('Lỗi khi cập nhật <i class="fa-solid fa-circle-exclamation"></i>');
+        console.error(err);
+    });
+
+    // Nhận event tiếng trình tải về
+    ipcRenderer.on('download-progress', (event, progressObj) => {
+        // Gán text vào status
+        $('#updateApp-status').html('Đang tải cập nhật <i class="fa-solid fa-file-arrow-down fa-fade"></i>');
+
+        // Gán tiến trình vào thanh tiến trình
+        $('#updateApp-Progress').removeClass('d-none');
+        $('#updateApp-Progress .progress-bar').css('width', progressObj.percent.toFixed(2) + '%');
+        $('#updateApp-Progress .progress-bar').text(progressObj.percent.toFixed(2) + '%');
+    });
+
+    // Nhận event sau khi tải về hoàn tất
+    ipcRenderer.on('update-downloaded', () => {
+        // Gán text vào status
+        $('#updateApp-status').html('Tải về hoàn tất <i class="fa-solid fa-circle-check"></i>');
+    })
+}

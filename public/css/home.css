@@ -430,23 +430,3 @@
 #tbl_syncEmail:hover {
     color: var(--bs-body-color);
 }
-
-.btn-progress {
-    position: relative;
-}
-
-/* .btn-progress:hover {
-    background-color: inherit;
-    color: initial;
-}
-
-.btn-progress-bar {
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 1%;
-    background-color: var(--bs-btn-hover-border-color);
-    transition: width 0.3s ease-in-out;
-} */

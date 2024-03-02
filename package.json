@@ -5,7 +5,8 @@
     "main": "./src/electronApp.js",
     "scripts": {
         "start": "nodemon src/app.js",
-        "wd": "nodemon --exec electron .",
+        "wd": "electron .",
+        "watch": "nodemon --exec electron .",
         "package": "electron-builder",
         "package-all": "electron-builder -mwl",
         "postinstall": "electron-builder install-app-deps"

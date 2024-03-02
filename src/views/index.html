@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../public/lib/bootstrap-5.3.2-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../public/lib/fontawesome-6.4.2/css/all.css">
     <link rel="stylesheet" href="../../public/lib/jquery-autocomplete-1.0.7/jquery.auto-complete.css">
+    <link rel="stylesheet" href="../../public/lib/animate-4.1.1/animate.min.css">
     <link rel="stylesheet" href="../../public/lib/toast/toast.css">
     <link rel="stylesheet" href="../../public/css/main.css">
     <link rel="stylesheet" href="../../public/css/home.css">
@@ -135,9 +136,9 @@
                                 <br>- Ứng dụng sẽ tự khởi động lại sau vài giây để áp dụng các thay đổi khi hoàn
                                 tất</strong>
                             <div class="mt-3 d-flex justify-content-between">
-                                <button type="button" class="btn btn-success" style="width: 110px;"
+                                <button type="button" class="btn btn-sm btn-outline-primary" style="width: 110px;"
                                     data-bs-dismiss="modal">Thoát</button>
-                                <button id="btnConfirmImport" type="button" class="btn btn-primary"
+                                <button id="btnConfirmImport" type="button" class="btn btn-sm btn-success"
                                     style="width: 110px;">Nhập Data</button>
                             </div>
                         </div>
@@ -145,7 +146,7 @@
                 </div>
             </div>
 
-            <!-- Modal Cònirm Exit App -->
+            <!-- Modal Confirm Exit App -->
             <div class="modal modal-sm fade" id="modalConfirmExit" tabindex="-1" aria-labelledby="modalConfirmExit"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -165,9 +166,9 @@
                             </div>
 
                             <div class="mt-3 d-flex justify-content-between">
-                                <button id="btnExit" type="button" class="btn btn-sm btn-success" style="width: 110px;"
-                                    data-bs-dismiss="modal">Thoát</button>
-                                <button id="btnTray" type="button" class="btn btn-sm btn-primary"
+                                <button id="btnExit" type="button" class="btn btn-sm btn-outline-primary"
+                                    style="width: 110px;" data-bs-dismiss="modal">Thoát</button>
+                                <button id="btnTray" type="button" class="btn btn-sm btn-success"
                                     style="width: 110px;">Thu
                                     xuống</button>
                             </div>
@@ -175,6 +176,35 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Modal Cofrim Download Update -->
+            <div class="modal modal-sm fade" id="modalConfirmDownloadUpdate" tabindex="-1"
+                aria-labelledby="modalConfirmDownloadUpdate" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <strong class="text-info">
+                                Phát hiện có bản cập nhật mới, bạn có muốn tải về và cài đặt ngay không?
+                            </strong>
+
+                            <div class="input-group-sm mt-3">
+                                <input id="remember_checkUpdater" type="checkbox" class="form-check-input">
+                                <label for="remember_checkUpdater" class="form-check-label">
+                                    Ghi nhớ lựa chọn của tôi
+                                </label>
+                            </div>
+
+                            <div class="mt-3 d-flex justify-content-between">
+                                <button type="button" class="btn btn-sm btn-outline-primary" style="width: 110px;"
+                                    data-bs-dismiss="modal">Thoát</button>
+                                <button id="btnConfirmDownloadUpdate" type="button" class="btn btn-sm btn-success"
+                                    style="width: 110px;" data-bs-dismiss="modal">Tải Về</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script src="../../public/lib/sheetJS-0.20.0/xlsx.full.min.js"></script>
