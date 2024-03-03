@@ -430,3 +430,7 @@
 #tbl_syncEmail:hover {
     color: var(--bs-body-color);
 }
+
+.app_authName {
+    font-family: 'Courgette', sans-serif;
+}

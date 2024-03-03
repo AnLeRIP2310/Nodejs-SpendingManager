@@ -8,6 +8,7 @@ const appIniConfigs = require('./configs/appIniConfigs');
 const notifier = require('node-notifier');
 const schedule = require('node-schedule');
 const axios = require('axios');
+const prettyBytes = require('pretty-bytes');
 const errorLogs = require('./configs/errorLogs');
 const ipc = require('node-ipc');
 
@@ -16,57 +17,6 @@ Object.defineProperty(app, 'isPackaged', {
     get() {
         return true;
     }
-});
-
-
-// Cấu hình autoUpdater
-autoUpdater.autoDownload = false;
-autoUpdater.autoInstallOnAppQuit = false;
-
-// Bắt sự kiện autoUpdater từ client
-ipcMain.on('check-for-update', () => {
-    autoUpdater.checkForUpdates();
-})
-
-// Bắt sự kiện cho phép tải về bản cập nhật
-ipcMain.on('allow-download-update', () => {
-    autoUpdater.downloadUpdate();
-})
-
-
-autoUpdater.on('update-available', () => {
-    // Gửi về client renderer
-    mainWindow.webContents.send('update-available');
-});
-
-autoUpdater.on('update-not-available', () => {
-    // Gửi về client renderer
-    mainWindow.webContents.send('update-not-available');
-});
-
-autoUpdater.on('error', (err) => {
-    // Gửi về client renderer
-    mainWindow.webContents.send('update-error', err);
-    errorLogs('Lỗi khi câp nhật:', err);
-});
-
-autoUpdater.on('download-progress', (progressObj) => {
-    // Gửi về client renderer
-    mainWindow.webContents.send('download-progress', progressObj);
-});
-
-autoUpdater.on('update-downloaded', () => {
-    // Gửi về client renderer
-    mainWindow.webContents.send('update-downloaded');
-    // Hiển thị thông báo hoặc ghi log khi bản cập nhật đã được tải về
-    dialog.showMessageBox({
-        type: 'info',
-        message: 'Bản cập nhật đã được tải về. Ứng dụng sẽ khởi động lại để cài đặt cập nhật.',
-        buttons: ['OK'],
-    }, () => {
-        // Cài đặt bản cập nhật và khởi động lại ứng dụng
-        autoUpdater.quitAndInstall();
-    });
 });
 
 
@@ -83,11 +33,20 @@ let tray;
 var isQuitting = false;
 
 
+
 // Chạy cửa sổ chính
 app.whenReady().then(() => {
+    // Gán phiên bản vào tệp .ini
+    const appVersion = require('../package.json').version;
+    appIniConfigs.updateIniConfigs('App', 'version', appVersion);
+
+    // Khởi chạy express server
     expressApp.startServer(() => {
         // Đặt cửa sổ khởi chạy chính
         createMainWindow();
+
+        // Kiểm tra phiên bản mới
+        autoUpdateSettings();
     });
 });
 
@@ -437,3 +396,79 @@ ipcMain.on('startWithWindow', () => {
     }
 })
 
+
+// Cấu hình autoUpdater
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = false;
+
+
+// Hàm tự động cập nhật
+function autoUpdateSettings() {
+    let autoUpdate = appIniConfigs.getIniConfigs('autoUpdate');
+
+    if (autoUpdate) {
+        setTimeout(() => {
+            autoUpdater.checkForUpdates();
+        }, 5000);
+    }
+}
+
+
+// Bắt sự kiện autoUpdater từ client
+ipcMain.on('check-for-update', () => {
+    autoUpdater.checkForUpdates();
+})
+
+// Bắt sự kiện có bản cập nhật
+autoUpdater.on('update-available', () => {
+    const downloadPrompt = appIniConfigs.getIniConfigs('downloadPrompt')
+    // Gửi về client renderer
+    mainWindow.webContents.send('update-available', downloadPrompt);
+});
+
+// Bắt sự kiện cho phép tải về bản cập nhật
+ipcMain.on('allow-download-update', () => {
+    autoUpdater.downloadUpdate();
+})
+
+// Bắt sự kiện không có bản cập nhật
+autoUpdater.on('update-not-available', () => {
+    // Gửi về client renderer
+    mainWindow.webContents.send('update-not-available');
+});
+
+// Bắt sự kiện có lỗi khi cập nhật
+autoUpdater.on('error', (err) => {
+    // Gửi về client renderer
+    mainWindow.webContents.send('update-error', err);
+    errorLogs('Có lỗi khi câp nhật:', err);
+});
+
+// Bắt sự kiện tiến trình tải về
+autoUpdater.on('download-progress', (progressObj) => {
+    progressObj.bytesPerSecond = prettyBytes(progressObj.bytesPerSecond);
+    progressObj.total = prettyBytes(progressObj.total);
+    progressObj.transferred = prettyBytes(progressObj.transferred);
+    progressObj.percent = Math.floor(progressObj.percent);
+
+    // Gửi về client renderer
+    mainWindow.webContents.send('download-progress', progressObj);
+});
+
+// Bắt sự kiện sau khi tải hoàn tất
+autoUpdater.on('update-downloaded', () => {
+    // Gửi về client renderer
+    mainWindow.webContents.send('update-downloaded');
+
+    // Hiển thị thông báo khi bản cập nhật đã được tải về
+    dialog.showMessageBox({
+        type: 'info',
+        message: 'Bản cập nhật đã được tải về. Ứng dụng sẽ khởi động lại để cài đặt cập nhật.',
+        buttons: ['OK'],
+    }).then((response) => {
+        if (response.response === 0) {
+            isQuitting = true;
+            autoUpdater.quitAndInstall();
+        }
+    });
+});

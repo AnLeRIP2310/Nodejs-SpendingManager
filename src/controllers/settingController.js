@@ -9,14 +9,8 @@ ggDrive.setAuthen();
 
 
 
-
 // Lấy ra đường dẫn đến thư mục cấu hình của ứng dụng
 var folderAppConfigs = appIniConfigs.getfolderAppConfigs();
-
-
-
-
-
 
 
 module.exports = {

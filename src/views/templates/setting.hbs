@@ -5,7 +5,7 @@
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 </div>
 
-<div class="offcanvas-body">
+<div class="offcanvas-body" style="padding-left: 12px; padding-right: 12px">
     <!-- Dark Mode -->
     <div id="ctst_darkMode" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
         data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="Bật cái này sẽ chuyển sang chế độ tối">
@@ -105,8 +105,18 @@
         data-bs-toggle="popover" data-bs-content="Bật cái này sẽ tự động kiểm tra và cập nhật ứng dụng nếu có">
         <strong class="text-nowrap" style="flex: 2">Tự động cập nhật:</strong>
         <div class="form-check form-switch" style="flex: 1">
-            <input id="st_autoUpdater" type="checkbox" class="form-check-input pointer">
-            <label for="st_autoUpdater" class="form-check-label pointer text-nowrap">Đang Bật</label>
+            <input id="st_autoUpdate" type="checkbox" class="form-check-input pointer">
+            <label for="st_autoUpdate" class="form-check-label pointer text-nowrap">Đang Bật</label>
+        </div>
+    </div>
+
+    <!-- Download Prompt -->
+    <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center" data-bs-trigger="hover"
+        data-bs-toggle="popover" data-bs-content="Bật cái này sẽ hiển thị thông báo trước khi tải xuống bản cập nhật">
+        <strong class="text-nowrap" style="flex: 2">Lời nhắc tải xuống:</strong>
+        <div class="form-check form-switch" style="flex: 1">
+            <input id="st_downloadPrompt" type="checkbox" class="form-check-input pointer">
+            <label for="st_downloadPrompt" class="form-check-label pointer text-nowrap">Đang Bật</label>
         </div>
     </div>
 
@@ -181,39 +191,63 @@
 
     <!-- Import/Export -->
     <div style="margin-bottom: 12px" class="row">
-        <div class="col-6">
+        <div class="col-6" style="padding-right: 6px;">
             <button id="btn-export_db" class="btn btn-sm btn-outline-info w-100" data-bs-toggle="popover"
                 data-bs-trigger="hover"
                 data-bs-content="Nhấn vào nút này để xuất dữ liệu của ứng dụng ra tệp bên ngoài">
-                Xuất tệp Json
+                Xuất tệp dữ liệu
                 <i class="fa-regular fa-file-export"></i>
             </button>
         </div>
 
-        <div class="col-6">
+        <div class="col-6" style="padding-left: 6px;">
             <button id="btn-import_db" class="btn btn-sm btn-outline-info w-100" data-bs-toggle="popover"
                 data-bs-trigger="hover" data-bs-content="Nhấn vào nút này để nhập dữ liệu từ tệp sao lưu vào ứng dụng">
-                Nhập tệp Json
+                Nhập tệp dữ liệu
                 <i class="fa-regular fa-file-import"></i>
             </button>
         </div>
     </div>
     <hr>
 
-    <!-- Button Update App -->
-    <div style="margin-bottom: 12px;" class="d-flex flex-column align-items-center justify-content-center">
-        <button id="btn-CheckForUpdate" class="btn btn-sm btn-outline-primary">
-            Kiểm tra và cập nhật ứng dụng
-            <i class="fa-solid fa-arrow-up-from-square"></i>
-        </button>
+    <!-- Reset Settings / Update Apps -->
+    <div style="margin-bottom: 12px">
+        <div class="d-flex align-items-center justify-content-between">
+            <!-- Btn Reset Settings -->
+            <button id="btn-reset_setting" class="btn btn-sm btn-outline-danger" data-bs-toggle="popover"
+                data-bs-trigger="hover"
+                data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng về mặt định">
+                Khôi phục cài đặt
+                <i class="fa-solid fa-arrows-retweet"></i>
+            </button>
 
-        <div id="updateApp-content" class="border rounded mt-2 p-2 animate__animated animate__fadeOutDown d-none">
-            <p class="p-0">Trạng thái:
-                <span id="updateApp-Status" class="text-warning">
-                    Đang kiểm tra <i class="fa-solid fa-loader fa-spin"></i>
+            <!-- Btn Update App -->
+            <button id="btn-CheckForUpdate" class="btn btn-sm btn-outline-primary" data-bs-toggle="popover"
+                data-bs-trigger="hover"
+                data-bs-content="Nhấn vào nút này để tiến hành kiểm tra và cập nhật ứng dụng lên phiên bản mới nhất nếu có">
+                Kiểm tra cập nhật
+                <i class="fa-solid fa-arrow-up-from-square"></i>
+            </button>
+        </div>
+
+        <!-- Update Content -->
+        <div id="updateApp-content" class="border rounded mt-2 p-2 animate__animated d-none">
+            <!-- Status -->
+            <p class="m-0">Trạng thái:
+                <span id="updateApp-Status" class="ms-1" style="color: var(--bs-warning);">
+                    Đang kiểm tra
+                    <i class="fa-solid fa-loader fa-spin"></i>
                 </span>
             </p>
 
+            <!-- Info -->
+            <p id="updateApp-info" class="m-0 me-1 text-center text-info d-none">
+                <span class="uApp_bytesPerSecond">0</span> -
+                <span class="uApp_transferred">0</span> /
+                <span class="uApp_total">0</span>
+            </p>
+
+            <!-- Progress -->
             <div id="updateApp-Progress" class="progress mt-1 mb-1 d-none" style="height: 10px;">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
                     style="width: 10%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">0%</div>
@@ -221,14 +255,12 @@
         </div>
     </div>
 
-    <!-- Button Reset Settings -->
-    <div style="margin-bottom: 12px;" class="d-flex align-items-center justify-content-center">
-        <button id="btn-reset_setting" class="btn btn-sm btn-outline-danger" data-bs-toggle="popover"
-            data-bs-trigger="hover"
-            data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng về mặt định">Khôi phục lại cài
-            đặt mặt định
-            <i class="fa-solid fa-arrows-retweet"></i>
-        </button>
+
+    <!-- Version And Auth -->
+    <div style="" class="d-flex align-items-center justify-content-between">
+        <p class="m-0">Phiên bản: <span id="app_version">1.0.0</span></p>
+
+        <p class="m-0 app_authName">ALR2310</p>
     </div>
 </div>
 </div>

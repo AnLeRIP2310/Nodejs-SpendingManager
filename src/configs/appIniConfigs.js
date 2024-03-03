@@ -4,6 +4,31 @@ const ini = require('ini');
 
 
 
+// Tạo biến lưu cấu hình mặt định của tệp ini
+const defaultConfigs = {
+    Data: {
+        dbPath: ['default'],
+        fileGGDriveId: [''],
+        emailGGDrive: [''],
+        syncDate: [''],
+    },
+    App: {
+        version: [''],
+        darkMode: ['light', 'dark', 'auto'],
+        defaultPage: ['home', 'spending', 'statisc', 'noted'],
+        defaultAction: ['add', 'del', 'edit'],
+        language: ['vi', 'en'],
+        reminderDelete: [true, false],
+        tooltip: [true, false],
+        closeDefault: ['ask', 'quit', 'tray'],
+        notifySpend: [true, false],
+        startWithWindow: [false, true],
+        autoUpdate: [false, true],
+        downloadPrompt: [true, false],
+    }
+};
+
+
 var folderAppConfigs; // Biến lưu thư mục cấu hình
 if (process.platform === 'win32') {
     folderAppConfigs = path.join(process.env.USERPROFILE, 'Documents', 'SpendingManager');
@@ -16,30 +41,8 @@ if (!fs.existsSync(folderAppConfigs)) {
     fs.mkdirSync(folderAppConfigs, { recursive: true });
 }
 
-
 // Tạo biến lưu đường dẫn đến tệp cấu hình ini
 const iniFilePath = path.join(folderAppConfigs, 'appConfigs.ini');
-
-// Tạo biến lưu cấu hình mặt định của tệp ini
-const defaultConfigs = {
-    Data: {
-        dbPath: ['default'],
-        fileGGDriveId: [''],
-        emailGGDrive: [''],
-        syncDate: [''],
-    },
-    App: {
-        darkMode: ['light', 'dark', 'auto'],
-        defaultPage: ['home', 'spending', 'statisc', 'noted'],
-        defaultAction: ['add', 'del', 'edit'],
-        language: ['vi', 'en'],
-        reminderDelete: [true, false],
-        tooltip: [true, false],
-        closeDefault: ['ask', 'quit', 'tray'],
-        notifySpend: [true, false],
-        startWithWindow: [false, true],
-    }
-};
 
 
 /**
@@ -199,7 +202,7 @@ function deleteIniConfigs(group, name) {
  * - Lấy ra một giá trị trong tệp ini
  * getIniConfigs('dbPath');
  * 
- * - Nếu muốn lấy ra chính xác giá trị thì có thể truyền vào tham số [group]
+ * - Nếu muốn lấy ra chính xác giá trị thì có thể truyền vào tham số group
  * getIniConfigs('dbPath', 'Data');
  */
 function getIniConfigs(name, group) {
@@ -303,9 +306,10 @@ if (!fs.existsSync(iniFilePath)) {
 }
 
 // Gọi hàm để kiểm tra tệp .ini
-validateConfigs(['fileGGDriveId', 'emailGGDrive', 'syncDate']);
+validateConfigs(['fileGGDriveId', 'emailGGDrive', 'syncDate', 'version', 'dbPath']);
 
-
+// Kiểm tra giá trị của biến dbPath tránh trường hợp giá trị bị rỗng
+if (getIniConfigs('dbPath') == '') { updateIniConfigs('Data', 'dbPath', 'default'); }
 
 
 module.exports = {
