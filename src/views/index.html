@@ -183,11 +183,16 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-body">
-                            <strong class="text-info">
-                                Phát hiện có bản cập nhật mới, bạn có muốn tải về và cài đặt ngay không?
+                            <strong class="d-block text-info text-center">
+                                Phát hiện có bản cập nhật mới, bạn có muốn tải về không?
                             </strong>
 
-                            <div class="input-group-sm mt-3">
+                            <div class="border mt-2 p-2 rounded bg-body-secondary overflow-y-scroll"
+                                style="max-height: 150px;">
+                                <p id="updateApp-releaseNote" class="m-0"></p>
+                            </div>
+
+                            <div class="input-group-sm mt-2">
                                 <input id="remember_checkUpdater" type="checkbox" class="form-check-input">
                                 <label for="remember_checkUpdater" class="form-check-label">
                                     Ghi nhớ lựa chọn của tôi

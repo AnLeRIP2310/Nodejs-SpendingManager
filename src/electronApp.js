@@ -11,13 +11,14 @@ const axios = require('axios');
 const prettyBytes = require('pretty-bytes');
 const errorLogs = require('./configs/errorLogs');
 const ipc = require('node-ipc');
+const packageObj = require('../package.json');
 
 
-Object.defineProperty(app, 'isPackaged', {
-    get() {
-        return true;
-    }
-});
+// Object.defineProperty(app, 'isPackaged', {
+//     get() {
+//         return true;
+//     }
+// });
 
 
 
@@ -37,8 +38,7 @@ var isQuitting = false;
 // Chạy cửa sổ chính
 app.whenReady().then(() => {
     // Gán phiên bản vào tệp .ini
-    const appVersion = require('../package.json').version;
-    appIniConfigs.updateIniConfigs('App', 'version', appVersion);
+    appIniConfigs.updateIniConfigs('App', 'version', packageObj.version);
 
     // Khởi chạy express server
     expressApp.startServer(() => {
@@ -99,7 +99,7 @@ function createMainWindow() {
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
-            devTools: true,
+            devTools: false,
             preload: path.join(__dirname, '/configs/preload.js')
 
         },
@@ -310,7 +310,6 @@ ipcMain.on('export-db', () => {
             console.log('Database không tồn tại.');
         }
     } catch (e) {
-        console.log(e)
         errorLogs(e)
     }
 });
@@ -343,7 +342,6 @@ ipcMain.on('import-db', async () => {
             });
         }
     } catch (e) {
-        console.log(e)
         errorLogs(e)
     }
 })
@@ -374,7 +372,6 @@ ipcMain.on('change-dbPath', () => {
             console.error(err);
         });
     } catch (e) {
-        console.log(e)
         errorLogs(e)
     }
 });
@@ -413,6 +410,17 @@ function autoUpdateSettings() {
     }
 }
 
+// Hàm để lấy thông tin release từ GitHub
+async function getGitHubReleaseInfo(owner, repo) {
+    try {
+        const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/releases/latest`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching GitHub release info:', error.message);
+        return null;
+    }
+}
+
 
 // Bắt sự kiện autoUpdater từ client
 ipcMain.on('check-for-update', () => {
@@ -420,10 +428,22 @@ ipcMain.on('check-for-update', () => {
 })
 
 // Bắt sự kiện có bản cập nhật
-autoUpdater.on('update-available', () => {
+autoUpdater.on('update-available', async () => {
+    // Lấy ra cấu hình về việc có được hiển thị thông báo không
     const downloadPrompt = appIniConfigs.getIniConfigs('downloadPrompt')
+
+    // Lấy thông tin về bản cập nhật
+    const owner = packageObj.build.publish.owner;
+    const repo = packageObj.build.publish.repo;
+    const githubReleaseInfo = await getGitHubReleaseInfo(owner, repo);
+    var releaseNote;
+
+    if (githubReleaseInfo) {
+        releaseNote = githubReleaseInfo.body || 'Không có thông tin về bản cập nhật';
+    }
+
     // Gửi về client renderer
-    mainWindow.webContents.send('update-available', downloadPrompt);
+    mainWindow.webContents.send('update-available', { downloadPrompt, releaseNote });
 });
 
 // Bắt sự kiện cho phép tải về bản cập nhật

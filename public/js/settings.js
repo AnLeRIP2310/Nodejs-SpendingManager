@@ -64,10 +64,12 @@ function applyTheme(theme) {
     $('.sidebar').toggleClass('bg-secondary', isDark);
 }
 function applyAutoTheme() {
-    ipcRenderer.send('get-system-theme')
-    ipcRenderer.on('reply-system-theme', (event, res) => {
-        applyTheme(res ? 'dark' : 'light');
-    });
+    if (ipcRenderer != null) {
+        ipcRenderer.send('get-system-theme')
+        ipcRenderer.on('reply-system-theme', (event, res) => {
+            applyTheme(res ? 'dark' : 'light');
+        });
+    }
 }
 
 // xử lý cài đặt darkMode
@@ -568,13 +570,19 @@ if (ipcRenderer != null) {
     const updateStatus = $('#updateApp-Status');
 
     // Nhận event phát hiện bản cập nhật
-    ipcRenderer.on('update-available', (event, downloadprompt) => {
-        if (downloadprompt) {
+    ipcRenderer.on('update-available', (event, res) => {
+        const downloadPrompt = res.downloadPrompt;
+
+        if (downloadPrompt) {
             // Hiển thị modal xác nhận tải xuống
             $('#modalConfirmDownloadUpdate').modal('show');
         } else {
             ipcRenderer.send('allow-download-update')
         }
+
+        // hiển thị release note trên modal
+        const releaseNote = res.releaseNote.replace(/\r\n/g, '<br>');
+        $('#updateApp-releaseNote').html(releaseNote)
 
         updateStatus.css('color', 'var(--bs-info)');
         updateStatus.html('Có bản cập nhật mới <i class="fa-solid fa-sparkles fa-fade"></i>');
