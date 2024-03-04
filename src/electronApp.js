@@ -99,7 +99,7 @@ function createMainWindow() {
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
-            devTools: false,
+            devTools: true,
             preload: path.join(__dirname, '/configs/preload.js')
 
         },

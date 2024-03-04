@@ -1,6 +1,6 @@
 {
     "name": "spendingmanager",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "description": "",
     "main": "./src/electronApp.js",
     "scripts": {
@@ -52,7 +52,7 @@
         "node-ipc": "^9.2.1",
         "node-notifier": "^10.0.1",
         "node-schedule": "^2.1.1",
-        "nodemailer": "^6.9.7",
+        "nodemailer": "^6.9.11",
         "passport": "^0.6.0",
         "passport-facebook": "^3.0.0",
         "passport-google-oauth20": "^2.0.0",
