@@ -39,7 +39,7 @@
             "oneClick": false,
             "allowToChangeInstallationDirectory": true
         },
-        "asar": false,
+        "asar": true,
         "artifactName": "Spending-Manager-Setup-${version}.${ext}",
         "publish": {
             "provider": "github",
