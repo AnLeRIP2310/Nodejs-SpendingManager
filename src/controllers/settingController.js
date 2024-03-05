@@ -41,9 +41,9 @@ module.exports = {
     },
 
     resetData: (req, res) => {
-        if (appIniConfigs.getIniConfigs('dbPath') == 'default') {
+        if (appIniConfigs.getIniConfigs('dbPath') != 'default') {
             // Sao chép database về vị trí mặt định
-            fs.copyFileSync(defaultDbPath, dbPath);
+            fs.copyFileSync(dbPath, defaultDbPath);
 
             // Tạo lại tệp cấu hình .ini để reset tất cả cài đặt
             appIniConfigs.createIniConfigs();

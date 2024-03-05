@@ -416,7 +416,7 @@ async function getGitHubReleaseInfo(owner, repo) {
         const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/releases/latest`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching GitHub release info:', error.message);
+        errorLogs(error.message, 'Error fetching GitHub release info:')
         return null;
     }
 }

@@ -290,9 +290,9 @@ $('#btn-reset_setting').click(function () {
                 showSuccessToast('Đặt lại cài đặt ứng dụng thành công');
                 loadSettings();
 
-                if (res.action == 'reload') { ipcRenderer.send('reload-app') }
+                if (res.action == 'reload' && ipcRenderer) { ipcRenderer.send('reload-app') }
 
-                // fix lỗi element bị treo khi reset
+                // fix lỗi element tooltip bị treo khi reset
                 $('.popover.bs-popover-auto.fade.show').remove();
             }
         },
