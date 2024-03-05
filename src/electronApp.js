@@ -9,9 +9,10 @@ const notifier = require('node-notifier');
 const schedule = require('node-schedule');
 const axios = require('axios');
 const prettyBytes = require('pretty-bytes');
-const errorLogs = require('./configs/errorLogs');
+const logger = require('./configs/logger');
 const ipc = require('node-ipc');
 const packageObj = require('../package.json');
+
 
 
 // Object.defineProperty(app, 'isPackaged', {
@@ -19,7 +20,6 @@ const packageObj = require('../package.json');
 //         return true;
 //     }
 // });
-
 
 
 // Cấu hình IPC
@@ -172,8 +172,7 @@ function checkForNewData() {
                 }
             })
             .catch(error => {
-                console.error('Lỗi khi gửi yêu cầu:', error);
-                errorLogs(error);
+                logger.error(error, 'Lỗi khi gửi yêu cầu');
             });
     }, 1000);
 }
@@ -297,20 +296,20 @@ ipcMain.on('export-db', () => {
                     // Sao chép tệp database vào địa chỉ mới
                     fs.copyFile(dbPath, destinationPath, (err) => {
                         if (err) {
-                            console.error('Lỗi khi sao chép:', err);
+                            logger.error(err, 'Lỗi khi sao chép database');
                         } else {
                             console.log('Đã xuất tệp database thành công!');
                         }
                     });
                 }
             }).catch((err) => {
-                console.error('Lỗi khi mở cửa sổ lưu tệp:', err);
+                logger.error(err, 'Lỗi khi mở cửa sổ lưu tệp');
             });
         } else {
-            console.log('Database không tồn tại.');
+            logger.error('Không tìm thấy database');
         }
     } catch (e) {
-        errorLogs(e)
+        logger.error(e)
     }
 });
 
@@ -330,7 +329,7 @@ ipcMain.on('import-db', async () => {
             // Thực hiện sao chép tệp đã chọn vào dbPath
             fs.copyFile(filePath, dbPath, (err) => {
                 if (err) {
-                    console.error('Lỗi khi sao chép:', err);
+                    logger.error('Lỗi khi sao chép:', err);
                     // Xử lý lỗi nếu có
                 } else {
                     console.log('Sao chép tệp thành công!');
@@ -342,7 +341,7 @@ ipcMain.on('import-db', async () => {
             });
         }
     } catch (e) {
-        errorLogs(e)
+        logger.error(e)
     }
 })
 
@@ -365,14 +364,14 @@ ipcMain.on('change-dbPath', () => {
                     app.relaunch();
                     app.exit();
                 } else {
-                    console.error('Lỗi khi thay đổi thư mục:');
+                    logger.error('Lỗi khi thay đổi thư mục:');
                 }
             }
         }).catch(err => {
-            console.error(err);
+            logger.error(err);
         });
     } catch (e) {
-        errorLogs(e)
+        logger.error(e)
     }
 });
 
@@ -416,7 +415,7 @@ async function getGitHubReleaseInfo(owner, repo) {
         const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/releases/latest`);
         return response.data;
     } catch (error) {
-        errorLogs(error.message, 'Error fetching GitHub release info:')
+        logger.error(error.message, 'Lỗi khi lấy thông tin ghi chú phát hành của github')
         return null;
     }
 }
@@ -429,21 +428,31 @@ ipcMain.on('check-for-update', () => {
 
 // Bắt sự kiện có bản cập nhật
 autoUpdater.on('update-available', async () => {
-    // Lấy ra cấu hình về việc có được hiển thị thông báo không
-    const downloadPrompt = appIniConfigs.getIniConfigs('downloadPrompt')
+    try {
+        const gitUrl = packageObj.repository.url
+        var releaseNote, owner, repo;
 
-    // Lấy thông tin về bản cập nhật
-    const owner = packageObj.build.publish.owner;
-    const repo = packageObj.build.publish.repo;
-    const githubReleaseInfo = await getGitHubReleaseInfo(owner, repo);
-    var releaseNote;
+        // Sử dụng biểu thức chính quy để tìm owner và repo
+        const match = gitUrl.match(/github\.com\/([^\/]+)\/([^\/]+)\.git/i);
 
-    if (githubReleaseInfo) {
-        releaseNote = githubReleaseInfo.body || 'Không có thông tin về bản cập nhật';
+        if (match) {
+            owner = match[1]; repo = match[2];
+
+            // Lấy thông tin về bản cập nhật
+            const githubReleaseInfo = await getGitHubReleaseInfo(owner, repo);
+            if (githubReleaseInfo) {
+                releaseNote = githubReleaseInfo.body || 'Không có ghi chú phát hành về bản cập nhật';
+            }
+        }
+
+        // Lấy ra cấu hình về việc có được hiển thị thông báo không
+        const downloadPrompt = appIniConfigs.getIniConfigs('downloadPrompt')
+
+        // Gửi về client renderer
+        mainWindow.webContents.send('update-available', { downloadPrompt, releaseNote });
+    } catch (e) {
+        logger.error(e)
     }
-
-    // Gửi về client renderer
-    mainWindow.webContents.send('update-available', { downloadPrompt, releaseNote });
 });
 
 // Bắt sự kiện cho phép tải về bản cập nhật
@@ -461,7 +470,7 @@ autoUpdater.on('update-not-available', () => {
 autoUpdater.on('error', (err) => {
     // Gửi về client renderer
     mainWindow.webContents.send('update-error', err);
-    errorLogs('Có lỗi khi câp nhật:', err);
+    logger.error('Có lỗi khi câp nhật:', err);
 });
 
 // Bắt sự kiện tiến trình tải về

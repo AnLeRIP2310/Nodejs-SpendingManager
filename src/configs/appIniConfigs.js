@@ -46,10 +46,10 @@ const iniFilePath = path.join(folderAppConfigs, 'appConfigs.ini');
 
 
 /**
- * @return {string} Đường dẫn lưu thư mục cấu hình của ứng dụng
+ * @returns {string} Đường dẫn lưu thư mục cấu hình của ứng dụng
  * 
  * @example
- * - Lấy ra đường dẫn lưu thư mục cấu hình
+ * - Lấy ra đường dẫn đến thư mục cấu hình
  * getfolderAppConfigs();
  */
 function getfolderAppConfigs() {
@@ -312,10 +312,15 @@ validateConfigs(['fileGGDriveId', 'emailGGDrive', 'syncDate', 'version', 'dbPath
 if (getIniConfigs('dbPath') == '') { updateIniConfigs('Data', 'dbPath', 'default'); }
 
 
-module.exports = {
+// Tạo một đối tượng để xuất
+const appIniConfigs = {
     getfolderAppConfigs,
     createIniConfigs,
     updateIniConfigs,
     deleteIniConfigs,
     getIniConfigs
 }
+
+
+
+module.exports = appIniConfigs

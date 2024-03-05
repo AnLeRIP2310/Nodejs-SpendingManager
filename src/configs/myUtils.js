@@ -79,9 +79,7 @@ function decryptRefreshTokenByPath(pathToJsonFile) {
     }
 }
 
-
-
-module.exports = {
+const myUtils = {
     formatDate,
     formatDateForInput,
     formatCurrency,
@@ -89,3 +87,5 @@ module.exports = {
     decryptRefreshToken,
     decryptRefreshTokenByPath
 }
+
+module.exports = myUtils;

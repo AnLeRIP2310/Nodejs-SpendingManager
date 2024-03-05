@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
-const errorLogs = require('./errorLogs');
+const logger = require('./logger');
 const appIniConfigs = require('./appIniConfigs');
 
 
@@ -46,8 +46,7 @@ async function getUserId(token) {
             return null;
         }
     } catch (err) {
-        console.log(err)
-        errorLogs(err);
+        logger.error(err);
     }
 }
 
@@ -59,8 +58,7 @@ async function initDB() {
             fs.mkdirSync(path.dirname(dbPath), { recursive: true });
             console.log('Thư mục đã được tạo.');
         } catch (err) {
-            console.log('Lỗi khi tạo thư mục:', err);
-            errorLogs(err);
+            logger.error(err, 'Lỗi khi tạo thư mục');
         }
     }
 
@@ -117,8 +115,7 @@ async function initDB() {
             )
         `);
         } catch (e) {
-            console.log('Khởi tạo database thất bại:', e);
-            errorLogs(e);
+            logger.error(e, 'Khởi tạo database thất bại');
         }
 
     }
@@ -128,8 +125,7 @@ async function initDB() {
 function connectDB() {
     db = new sqlite3.Database(dbPath, (err) => {
         if (err) {
-            console.error('Lỗi kết nối đến database:', err.message);
-            errorLogs(err);
+            logger.error(err, 'Lỗi kết nối đến Database');
         } else {
             console.log('Kết nối đến database thành công.');
         }
@@ -141,8 +137,7 @@ function closeDB(callback) {
     if (db) {
         db.close((err) => {
             if (err) {
-                console.error('Có lỗi khi đóng kết nối database:', err.message);
-                errorLogs(err);
+                logger.error(err, 'Có lỗi khi đóng kết nối database');
             } else {
                 console.log('Đã đóng kết nối đến database');
             }

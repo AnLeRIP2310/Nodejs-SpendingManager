@@ -2,7 +2,7 @@ const { google } = require('googleapis');
 const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
-const errorLogs = require('./errorLogs');
+const logger = require('./logger');
 const appIniConfigs = require('./appIniConfigs');
 
 
@@ -38,7 +38,7 @@ function decryptRefreshToken(pathToJsonFile) {
 
         return decryptedToken;
     } catch (err) {
-        errorLogs(err, 'Lỗi khi đọc tệp JSON');
+        logger.error(err, 'Lỗi khi đọc tệp JSON');
         return null;
     }
 }
@@ -70,7 +70,7 @@ module.exports = {
                 drive = 'Chưa được khởi tạo tham số';
             }
         } catch (e) {
-            errorLogs(e)
+            logger.error(e)
         }
     },
 
@@ -119,7 +119,7 @@ module.exports = {
                 return { success: false, message: `Lỗi HTTP: ${response.status}` };
             }
         } catch (e) {
-            errorLogs(e, 'Lỗi khi tải lên tệp JSON')
+            logger.error(e, 'Lỗi khi tải lên tệp JSON')
             return { success: false, message: 'Lỗi khi thực hiện yêu cầu' };
         }
     },
@@ -154,7 +154,7 @@ module.exports = {
                 return { success: false, message: `Lỗi HTTP: ${response.status}` };
             }
         } catch (e) {
-            errorLogs(e, 'Lỗi khi tải về tệp JSON')
+            logger.error(e, 'Lỗi khi tải về tệp JSON')
             return { success: false, message: 'Lỗi khi thực hiện yêu cầu' };
         }
     },
@@ -178,7 +178,7 @@ module.exports = {
                 return { success: false, message: `Lỗi HTTP: ${response.status}` };
             }
         } catch (e) {
-            errorLogs(e, 'Lỗi khi xóa tệp tin');
+            logger.error(e, 'Lỗi khi xóa tệp tin');
             return { success: false, message: 'Xóa tệp tin thất bại' };
         }
     },
@@ -203,7 +203,7 @@ module.exports = {
             }
 
         } catch (e) {
-            errorLogs(e, 'Lỗi khi lấy thông tin tệp tin');
+            logger.error(e, 'Lỗi khi lấy thông tin tệp tin');
             return { success: false, message: 'Lỗi khi thực hiện yêu cầu lấy thông tin tệp tin' };
         }
     },
@@ -235,7 +235,7 @@ module.exports = {
                 return { success: false, message: `Lỗi yêu cầu HTTP: ${response.status}`, };
             }
         } catch (e) {
-            errorLogs(e, 'Lỗi khi lấy danh sách tệp tin');
+            logger.error(e, 'Lỗi khi lấy danh sách tệp tin');
             return { success: false, message: 'Lỗi khi thực hiện yêu cầu lấy danh sách tệp tin', };
         }
     },

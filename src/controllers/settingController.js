@@ -2,7 +2,7 @@ const appIniConfigs = require('../configs/appIniConfigs');
 const fs = require('fs');
 const path = require('path');
 const { dbPath, defaultDbPath, query, getUserId } = require('../configs/db');
-const errorLogs = require('../configs/errorLogs')
+const logger = require('../configs/logger');
 const ggDrive = require('../configs/ggDrive');
 const myUtils = require('../configs/myUtils');
 ggDrive.setAuthen();
@@ -24,8 +24,7 @@ module.exports = {
                 iniObject: iniConfigs,
             });
         } catch (e) {
-            console.log(e)
-            errorLogs(e)
+            logger.error(e)
         }
     },
 
@@ -36,7 +35,7 @@ module.exports = {
             appIniConfigs.updateIniConfigs(group, name, value);
             res.json({ success: true });
         } catch (e) {
-            errorLogs(e)
+            logger.error(e)
         }
     },
 
@@ -65,8 +64,7 @@ module.exports = {
 
             res.json({ success: true, result: result[0].count });
         } catch (e) {
-            console.log(e)
-            errorLogs(e)
+            logger.error(e)
         }
     },
 
@@ -131,7 +129,7 @@ module.exports = {
 
             res.json({ success: true });
         } catch (e) {
-            errorLogs(e); res.json({ success: false });
+            logger.error(e); res.json({ success: false });
         }
     },
 
@@ -212,10 +210,8 @@ module.exports = {
                 message: 'Đã lấy ra danh sách cần đóng bộ',
                 data: dataNotExist
             });
-
-
         } catch (e) {
-            errorLogs(e)
+            logger.error(e)
         }
     },
 
@@ -230,7 +226,7 @@ module.exports = {
             const result = await query(sql, params);
             res.json({ success: result })
         } catch (e) {
-            errorLogs(e)
+            logger.error(e)
         }
     },
 
@@ -243,7 +239,7 @@ module.exports = {
             const result = await query(sql, params);
             res.json({ success: result })
         } catch (e) {
-            errorLogs(e)
+            logger.error(e)
         }
     },
 }

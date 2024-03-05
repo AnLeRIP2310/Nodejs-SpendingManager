@@ -1,5 +1,6 @@
 const { query, getUserId } = require('../configs/db');
-const errorLogs = require('../configs/errorLogs')
+const logger = require('../configs/logger');
+
 
 
 module.exports = {
@@ -16,7 +17,7 @@ module.exports = {
                 spendingList: spendingList
             });
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -36,7 +37,7 @@ module.exports = {
                 res.json({ success: false });
             }
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -89,7 +90,7 @@ module.exports = {
                 res.json({ success: true, data: dataResult });
             }
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -101,7 +102,7 @@ module.exports = {
             const names = result.map(item => item.nameitem);
             res.json({ success: true, data: names });
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -136,7 +137,7 @@ module.exports = {
                 });
             }
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -149,7 +150,7 @@ module.exports = {
             const result = await query(sql, params);
             res.json({ success: result });
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -162,7 +163,7 @@ module.exports = {
             const result = await query(sql, params);
             res.json({ success: result });
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -175,7 +176,7 @@ module.exports = {
                 data: result[0].totalprice
             })
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -196,7 +197,7 @@ module.exports = {
                 price: priceResult[0].totalprice
             })
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 }

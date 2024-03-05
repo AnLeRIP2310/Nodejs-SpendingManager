@@ -3,8 +3,8 @@ const fs = require('fs');
 const { google } = require('googleapis');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
-const { query, getUserId } = require('../configs/db');
-const errorLogs = require('../configs/errorLogs');
+const { query } = require('../configs/db');
+const logger = require('../configs/logger');
 const appIniConfigs = require('../configs/appIniConfigs');
 const myUtils = require('../configs/myUtils');
 
@@ -52,7 +52,7 @@ module.exports = {
                 res.json({ success: result, message: 'Đăng ký thành công' });
             }
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -86,7 +86,7 @@ module.exports = {
                 res.json({ success: false });
             }
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -104,7 +104,7 @@ module.exports = {
                 res.json({ success: false });
             }
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -209,7 +209,7 @@ module.exports = {
                     window.close();
                 </script>`);
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -283,7 +283,7 @@ module.exports = {
                     window.close();
                 </script>`);
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -343,7 +343,7 @@ module.exports = {
             <h2>Đã uỷ quyền thành công, hãy đóng trang này và quay lại ứng dụng của bạn</h2>`);
 
         } catch (error) {
-            errorLogs(error, 'Lỗi xử lý callback');
+            logger.error(error, 'Lỗi xử lý callback');
             res.status(500).send('Đã xảy ra lỗi!');
         }
     },

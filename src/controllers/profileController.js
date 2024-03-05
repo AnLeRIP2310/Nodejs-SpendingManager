@@ -1,5 +1,5 @@
 const { query, getUserId } = require('../configs/db')
-const errorLogs = require('../configs/errorLogs')
+const logger = require('../configs/logger')
 
 
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
                 res.json({ success: false })
             }
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     },
 
@@ -45,7 +45,7 @@ module.exports = {
                 res.json({ success: false, message: 'Mật khẩu cũ không chính xác' })
             }
         } catch (err) {
-            errorLogs(err);
+            logger.error(err);
         }
     }
 }

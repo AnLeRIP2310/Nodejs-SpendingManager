@@ -1,7 +1,6 @@
 const { query } = require('../configs/db')
-const errorLogs = require('../configs/errorLogs')
+const logger = require('../configs/logger')
 const myUtils = require('../configs/myUtils')
-
 
 
 
@@ -68,7 +67,7 @@ module.exports = {
             })
 
         } catch (error) {
-            errorLogs(error);
+            logger.error(error);
         }
     },
 }

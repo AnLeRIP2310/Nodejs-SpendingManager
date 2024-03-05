@@ -1,6 +1,6 @@
 {
     "name": "spendingmanager",
-    "version": "1.4.2",
+    "version": "1.5.0",
     "description": "",
     "main": "./src/electronApp.js",
     "scripts": {
@@ -13,6 +13,14 @@
     },
     "author": "ALR2310",
     "license": "ISC",
+    "homepage": "https://github.com/ALR2310/SpendingManager#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ALR2310/SpendingManager.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ALR2310/SpendingManager/issues"
+    },
     "build": {
         "appId": "com.alr2310.spendingmanager",
         "productName": "Spending Manager",
@@ -31,7 +39,7 @@
             "oneClick": false,
             "allowToChangeInstallationDirectory": true
         },
-        "asar": true,
+        "asar": false,
         "artifactName": "Spending-Manager-Setup-${version}.${ext}",
         "publish": {
             "provider": "github",
