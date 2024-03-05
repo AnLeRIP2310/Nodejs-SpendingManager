@@ -1,6 +1,6 @@
 {
     "name": "spendingmanager",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "description": "",
     "main": "./src/electronApp.js",
     "scripts": {
@@ -62,7 +62,7 @@
     },
     "devDependencies": {
         "electron": "^27.1.2",
-        "electron-builder": "^24.12.0",
+        "electron-builder": "^24.13.3",
         "nodemon": "^3.0.1"
     }
 }
