@@ -1,10 +1,10 @@
-const appIniConfigs = require('../configs/appIniConfigs');
+const appIniConfigs = require('../../configs/appIniConfigs');
 const fs = require('fs');
 const path = require('path');
-const { dbPath, defaultDbPath, query, getUserId } = require('../configs/db');
-const logger = require('../configs/logger');
-const ggDrive = require('../configs/ggDrive');
-const myUtils = require('../configs/myUtils');
+const { dbPath, defaultDbPath, query, getUserId } = require('../../configs/db');
+const logger = require('../../configs/logger');
+const ggDrive = require('../../configs/ggDrive');
+const myUtils = require('../../configs/myUtils');
 ggDrive.setAuthen();
 
 

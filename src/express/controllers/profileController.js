@@ -1,5 +1,5 @@
-const { query, getUserId } = require('../configs/db')
-const logger = require('../configs/logger')
+const { query, getUserId } = require('../../configs/db')
+const logger = require('../../configs/logger')
 
 
 module.exports = {

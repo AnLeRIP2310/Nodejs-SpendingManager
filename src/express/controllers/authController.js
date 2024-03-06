@@ -3,10 +3,10 @@ const fs = require('fs');
 const { google } = require('googleapis');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
-const { query } = require('../configs/db');
-const logger = require('../configs/logger');
-const appIniConfigs = require('../configs/appIniConfigs');
-const myUtils = require('../configs/myUtils');
+const { query } = require('../../configs/db');
+const logger = require('../../configs/logger');
+const appIniConfigs = require('../../configs/appIniConfigs');
+const myUtils = require('../../configs/myUtils');
 
 
 

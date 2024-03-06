@@ -27,16 +27,16 @@ app.use(passportConfigs.session())
 app.use(passportConfigs.initialize())
 
 // Folder Public 
-app.use(express.static(path.join(__dirname, '../public')))
+app.use(express.static(path.join(__dirname, '..', 'public')))
 
 // Router
-app.use('/spending', require('./routers/spendingRouter'))
-app.use('/spendlist', require('./routers/spendlistRouter'))
-app.use('/auth', require('./routers/authRouter'))
-app.use('/home', require('./routers/homeRouter'))
-app.use('/profile', require('./routers/profileRouter'))
-app.use('/statisc', require('./routers/statiscRouter'))
-app.use('/setting', require('./routers/settingRouter'))
+app.use('/spending', require('./express/routers/spendingRouter'))
+app.use('/spendlist', require('./express/routers/spendlistRouter'))
+app.use('/auth', require('./express/routers/authRouter'))
+app.use('/home', require('./express/routers/homeRouter'))
+app.use('/profile', require('./express/routers/profileRouter'))
+app.use('/statisc', require('./express/routers/statiscRouter'))
+app.use('/setting', require('./express/routers/settingRouter'))
 
 
 let serverInstance; // Tạo biến để lưu trữ instance của server
@@ -66,4 +66,6 @@ function stopServer(callback) {
     }
 }
 
-module.exports = { startServer, stopServer }
+const expressApp = { startServer, stopServer }
+
+module.exports = expressApp

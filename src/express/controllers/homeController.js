@@ -1,7 +1,6 @@
-const { query } = require('../configs/db')
-const myUtils = require('../configs/myUtils')
-const logger = require('../configs/logger')
-
+const { query } = require('../../configs/db')
+const logger = require('../../configs/logger')
+const myUtils = require('../../configs/myUtils')
 
 
 
@@ -49,7 +48,7 @@ module.exports = {
             const lastWeekResult = await query(sql, params);
 
             // Lấy tổng tiền mỗi ngày
-            sql = 'SELECT DATE(AtUpdate) AS Date, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? GROUP BY DATE(AtUpdate) ORDER BY Date DESC';
+            sql = 'SELECT DATE(AtCreate) AS Date, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? GROUP BY DATE(AtCreate) ORDER BY Date DESC';
             params = [spendList];
             const totalPerDay = await query(sql, params);
 
@@ -57,79 +56,18 @@ module.exports = {
             sql = 'SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? GROUP BY NameItem ORDER BY TotalPrice DESC';
             const totalPerSpendItem = await query(sql, params);
 
-            // Lấy tổng các khoản chi
-            sql = 'SELECT COUNT(DISTINCT NameItem) AS Total FROM SpendingItem WHERE SpendListId = ?';
-            const totalSpendItem = await query(sql, params);
-
-            // Lấy tổng ngày chi
-            sql = 'SELECT COUNT(DISTINCT AtUpdate) AS Total FROM SpendingItem WHERE SpendListId = ?';
-            const totalDate = await query(sql, params);
-
-            // Lấy tổng tiền chi
-            sql = 'SELECT SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ?';
-            const totalPrice = await query(sql, params);
-
-            // Lấy các năm
-            sql = `SELECT strftime(?, AtUpdate) AS Year FROM SpendingItem WHERE SpendListId = 1 
-                AND Status = 1 GROUP BY strftime(?, AtUpdate) ORDER BY strftime(?, AtUpdate) DESC;`
-            const yearList = await query(sql, ['%Y', '%Y', '%Y']);
-
             res.json({
                 success: true,
                 today: todayResult[0].total, // Tổng tiền ngày hôm nay
                 yesterday: yesterdayResult[0].total, // Tổng tiền ngày hôm qua
                 thisWeek: thisWeekResult[0].total, // Tổng tiền tuần hiện tại
                 lastWeek: lastWeekResult[0].total, // Tổng tiền tuần trước
-
                 totalPerDay: totalPerDay, // Tổng tiền mỗi ngày
                 totalPerSpendItem: totalPerSpendItem, // Tổng tiền mỗi khoán chi
-
-                totalSpendItem: totalSpendItem[0].total, // Tổng các khoản chi
-                totalDate: totalDate[0].total, // Tổng ngày chi
-                totalPrice: totalPrice[0].total, // Tổng tiền chi
-
-                yearList: yearList, // Lấy các năm
             })
+
         } catch (error) {
-            res.json({ success: false, error: error })
             logger.error(error);
-        }
-    },
-
-    getDataForChart2: async (req, res) => {
-        const { type, value, SpendListId } = req.query;
-
-        try {
-            var sql, param;
-            let resultData;
-
-            if (value == '' || value == undefined) {
-                sql = `SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? AND Status = 1 
-                    GROUP BY NameItem ORDER BY TotalPrice DESC`;
-                const result = await query(sql, [SpendListId])
-                resultData = result;
-            } else {
-                sql = `SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? AND Status = 1 
-                    AND strftime(?, AtUpdate) = ? GROUP BY NameItem ORDER BY TotalPrice DESC`;
-
-                if (type === 'date') {
-                    param = [SpendListId, '%Y-%m-%d', value];
-                } else if (type === 'month') {
-                    param = [SpendListId, '%Y-%m', value];
-                } else {
-                    param = [SpendListId, '%Y', value];
-                }
-
-                const result = await query(sql, param)
-                resultData = result;
-            }
-
-            res.json({
-                success: true,
-                data: resultData
-            })
-        } catch (err) {
-            logger.error(err);
         }
     },
 }
