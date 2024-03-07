@@ -1,74 +1,77 @@
+const sqlite3 = require('sqlite3').verbose();
+const appIniConfigs = require('./appIniConfigs');
+const logger = require('./logger');
 const path = require('path');
 const fs = require('fs');
-const sqlite3 = require('sqlite3').verbose();
-const logger = require('./logger');
-const appIniConfigs = require('./appIniConfigs');
 
 
-var db;
 
-// Lấy ra đường dẫn đến tệp database mặt định
-var defaultDbPath = path.join(appIniConfigs.getfolderAppConfigs(), 'data', 'SpendingDB.db');
-
-// Lấy đường dẫn database từ tệp cấu hình
-var dbPath = appIniConfigs.getIniConfigs('dbPath');
-if (dbPath == 'default') { dbPath = defaultDbPath }
+let database;
+let pathToDb = appIniConfigs.getIniConfigs('dbPath');
+let isConnected = false;
+const defPathToDb = path.join(appIniConfigs.getfolderAppConfigs(), 'data', 'SpendingDB.db');
 
 
-// Truy vấn bất đồng bộ với SQLite sử dụng promise
-const query = (sql, params) => {
+// Kiểm tra và gán đường dẫn db từ tệp .ini
+if (pathToDb == 'default') { pathToDb = defPathToDb; }
+
+
+/**
+ * Thực hiện một truy vấn SQL với các tham số tùy chọn.
+ * 
+ * @param {string} sql - Truy vấn SQL cần thực hiện.
+ * @param {Array} params - Các tham số sẽ được sử dụng trong truy vấn.
+ * @returns {Promise} - Một promise sẽ được resolve với kết quả của truy vấn hoặc reject với lỗi.
+ * 
+ * @example
+ * // Sử dụng truy vấn select
+ * const rows = await db.query('SELECT * FROM users', []);
+ * 
+ * // Sử dụng truy vấn khác
+ * const result = db.await query('UPDATE users SET active = 1', []);
+ */
+function query(sql, params) {
     sql = sql.toLowerCase();
     if (sql.startsWith('select')) {
         return new Promise((resolve, reject) => {
-            db.all(sql, params, (err, rows) => {
-                if (err) reject(err);
-                resolve(rows);
+            database.all(sql, params, (err, rows) => {
+                if (err) { reject(err) }
+                else { resolve(rows) }
             });
         });
     } else {
         return new Promise((resolve, reject) => {
-            db.run(sql, params, (err) => {
-                if (err) reject(err);
-                resolve(true);
+            database.run(sql, params, (err) => {
+                if (err) { reject(err) }
+                else {
+                    resolve({ success: true })
+                }
             });
         });
     }
 };
 
-// Hàm lấy ra userId bằng mã token
-async function getUserId(token) {
-    try {
-        var sql = 'select * from AuthToken where token = ?';
-        const checkToken = await query(sql, [token]);
-        if (checkToken.length > 0) {
-            return checkToken[0].usersid;
-        } else {
-            return null;
-        }
-    } catch (err) {
-        logger.error(err);
-    }
-}
 
-// Hàm khởi tạo database và bảng
+/**
+ * Gọi phương thức này để khởi tạo kết nối đến database và tạo các bảng nếu chưa tồn tại
+ * 
+ * @example
+ * // Gọi hàm
+ * await db.initDB();
+ */
 async function initDB() {
-    // Kiểm tra nếu thư mục không tồn tại, thì tạo mới
-    if (!fs.existsSync(path.dirname(dbPath))) {
-        try {
-            fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-            console.log('Thư mục đã được tạo.');
-        } catch (err) {
-            logger.error(err, 'Lỗi khi tạo thư mục');
+    try {
+        // Tạo mới thư mục nếu không tồn tại
+        if (!fs.existsSync(path.dirname(pathToDb))) {
+            fs.mkdirSync(path.dirname(pathToDb), { recursive: true });
         }
-    }
 
-    // Gán dữ liệu cho biến db
-    db = new sqlite3.Database(dbPath);
+        // Khởi tạo database
+        database = new sqlite3.Database(pathToDb);
+        isConnected = true;
 
-    const dbExists = fs.existsSync(dbPath);
-    if (!dbExists) {
-        try {
-            await query(`
+        // Tạo các bảng
+        await query(`
             CREATE TABLE IF NOT EXISTS Users (
                 Id          INTEGER  PRIMARY KEY,
                 GoogleId    TEXT,
@@ -83,7 +86,7 @@ async function initDB() {
             )
         `);
 
-            await query(`
+        await query(`
             CREATE TABLE IF NOT EXISTS AuthToken (
                 Id      INTEGER PRIMARY KEY,
                 UsersId INTEGER REFERENCES Users (Id),
@@ -91,7 +94,7 @@ async function initDB() {
             )
         `);
 
-            await query(`
+        await query(`
             CREATE TABLE IF NOT EXISTS SpendingList (
                 Id       INTEGER  PRIMARY KEY,
                 UsersId  INTEGER  REFERENCES Users (Id),
@@ -102,7 +105,7 @@ async function initDB() {
             )
         `);
 
-            await query(`
+        await query(`
             CREATE TABLE IF NOT EXISTS SpendingItem (
                 Id          INTEGER  PRIMARY KEY,
                 SpendListId INTEGER  REFERENCES SpendingList (Id),
@@ -114,40 +117,137 @@ async function initDB() {
                 Status      INTEGER  DEFAULT 1
             )
         `);
-        } catch (e) {
-            logger.error(e, 'Khởi tạo database thất bại');
-        }
-
+    } catch (e) {
+        logger.error(e, 'Khởi tạo database thất bại');
     }
 }
 
-// Hàm kiểm tra kết nối đến database
+/**
+ * Tạo hoặc kiểm tra kết nối đến cơ sở dữ liệu SQLite.
+ *
+ * @example
+ * // Kết nối hoặc kiểm tra kết nối đến cơ sở dữ liệu
+ * db.connectDB();
+ */
 function connectDB() {
-    db = new sqlite3.Database(dbPath, (err) => {
-        if (err) {
-            logger.error(err, 'Lỗi kết nối đến Database');
+    try {
+        if (!isConnected) {
+            database = new sqlite3.Database(pathToDb);
+            isConnected = true;
+            console.log('Kết nối đến database thành công')
         } else {
-            console.log('Kết nối đến database thành công.');
+            console.log('Đã có kết nối đến database')
         }
-    });
-}
-
-// Hàm đóng kết nối đến database
-function closeDB(callback) {
-    if (db) {
-        db.close((err) => {
-            if (err) {
-                logger.error(err, 'Có lỗi khi đóng kết nối database');
-            } else {
-                console.log('Đã đóng kết nối đến database');
-            }
-
-            if (callback) {
-                callback();
-            }
-        });
+    } catch (e) {
+        logger.error(e, 'Lỗi kết nối đến database');
     }
 }
 
 
-module.exports = { dbPath, defaultDbPath, query, getUserId, initDB, connectDB, closeDB };
+/**
+ * Đóng kết nối đến cơ sở dữ liệu SQLite.
+ * @param {Function} [callback] - Hàm callback được gọi sau khi đóng kết nối (nếu được cung cấp).
+ *
+ * @example
+ * // Đóng kết nối đến cơ sở dữ liệu và không sử dụng callback
+ * db.closeDB();
+ *
+ * // Đóng kết nối đến cơ sở dữ liệu và sử dụng callback
+ * db.closeDB(() => {
+ *    console.log('Kết nối đã được đóng.');
+ * });
+ */
+function closeDB(callback) {
+    try {
+        if (isConnected) {
+            database.close();
+            isConnected = false;
+            console.log('Đã đóng kết nối đối database');
+        } else {
+            console.log('Chưa có kết nối đến database')
+        }
+
+        if (callback) { callback() };
+    } catch (e) {
+        logger.error(e, 'Có lỗi khi đóng kết nối database');
+    }
+}
+
+
+/**
+ * Lấy giá trị ID của bản ghi được chèn gần đây nhất trong cơ sở dữ liệu.
+ * @returns {Promise<number>} Giá trị ID của bản ghi được chèn gần đây nhất.
+ *
+ * @example
+ * // Gọi hàm lastInsertId để lấy Id được chèn gần nhất
+ * await db.lastInsertId();
+ */
+async function lastInsertId() {
+    try {
+        const lastId = await query('select last_insert_rowid() as id')
+        return lastId[0].id
+    } catch (e) {
+        logger.error(e)
+    }
+}
+
+
+const users = {
+    /**
+     * Lấy ID người dùng bằng mã xác thực token trong database
+     * @param {string} token - mã xác thực Token.
+     * @returns {Promise<number|null>} ID người dùng hoặc null nếu không tìm thấy.
+     *
+     * @example
+     * // Sử dụng hàm getId từ đối tượng users
+     * const Id = await db.users.getId(token);
+     */
+    getId: async (token) => {
+        try {
+            const result = await query('select * from AuthToken where token = ?', [token]);
+            if (result && result.length > 0) {
+                return result[0].usersid;
+            } else {
+                return null;
+            }
+        } catch (e) {
+            logger.error(e)
+        }
+    }
+}
+
+const dbPath = {
+    /**
+     * Lấy đường dẫn đến cơ sở dữ liệu hiện tại.
+     * @returns {string} Đường dẫn đến cơ sở dữ liệu hiện tại.
+     *
+     * @example
+     * // Sử dụng hàm get để lấy đường dẫn đến cơ sở dữ liệu
+     * const currentPath = db.dbPath.get();
+     * console.log('Đường dẫn đến database:', currentPath);
+     */
+    get: () => pathToDb,
+    /**
+     * Lấy đường dẫn đến cơ sở dữ liệu mặc định.
+     * @returns {string} Đường dẫn đến cơ sở dữ liệu mặc định.
+     *
+     * @example
+     * // Sử dụng hàm getDefault để lấy đường dẫn đến cơ sở dữ liệu mặc định
+     * const defaultPath = db.dbPath.getDefault();
+     * console.log('Đường dẫn đến database mặc định:', defaultPath);
+     */
+    getDefault: () => defPathToDb
+}
+
+
+const db = {
+    query,
+    initDB,
+    closeDB,
+    connectDB,
+    lastInsertId,
+    dbPath,
+    table: { users },
+}
+
+module.exports = db

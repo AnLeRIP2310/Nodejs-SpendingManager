@@ -2,7 +2,7 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const session = require('express-session')
-const { initDB, connectDB } = require('./configs/db')
+const db = require('./configs/db')
 const passportConfigs = require('./configs/passport')
 const app = express()
 const path = require('path')
@@ -40,6 +40,6 @@ app.use('/setting', require('./express/routers/settingRouter'))
 
 
 app.listen(port, async () => {
-    await initDB(); // Khởi tạo database
+    await db.initDB(); // Khởi tạo database
     console.log(`Server chạy trên http://${host}:${port}`)
 })

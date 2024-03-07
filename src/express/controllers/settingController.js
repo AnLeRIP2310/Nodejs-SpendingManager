@@ -1,7 +1,7 @@
 const appIniConfigs = require('../../configs/appIniConfigs');
 const fs = require('fs');
 const path = require('path');
-const { dbPath, defaultDbPath, query, getUserId } = require('../../configs/db');
+const db = require('../../configs/db');
 const logger = require('../../configs/logger');
 const ggDrive = require('../../configs/ggDrive');
 const myUtils = require('../../configs/myUtils');
@@ -20,7 +20,7 @@ module.exports = {
             const iniConfigs = appIniConfigs.getIniConfigs();
 
             res.json({
-                dbPath: dbPath,
+                dbPath: db.dbPath.get(),
                 iniObject: iniConfigs,
             });
         } catch (e) {
@@ -40,6 +40,9 @@ module.exports = {
     },
 
     resetData: (req, res) => {
+        let dbPath = db.dbPath.get();
+        let defaultDbPath = db.dbPath.getDefault();
+
         if (appIniConfigs.getIniConfigs('dbPath') != 'default') {
             // Sao chép database về vị trí mặt định
             fs.copyFileSync(dbPath, defaultDbPath);
@@ -60,7 +63,7 @@ module.exports = {
             const today = new Date().toISOString().split('T')[0];
 
             var sql = 'SELECT COUNT(*) as count FROM spendinglist WHERE lastentry >= ?'
-            const result = await query(sql, [today])
+            const result = await db.query(sql, [today])
 
             res.json({ success: true, result: result[0].count });
         } catch (e) {
@@ -97,15 +100,15 @@ module.exports = {
             }
 
             // Lấy ra id người dùng
-            const userId = await getUserId(token);
+            const userId = await db.table.users.getId(token);
 
             // Lấy danh sách chi tiêu
             var sql = 'select * from spendinglist where usersid = ?';
-            const spendList = await query(sql, [userId]);
+            const spendList = await db.query(sql, [userId]);
 
             // Lấy ra các mục của danh sách chi tiêu
             sql = 'select * from spendingitem';
-            const spendItem = await query(sql);
+            const spendItem = await db.query(sql);
 
             // Tạo biến obj chứa dữ liệu
             const dataObj = {
@@ -182,7 +185,7 @@ module.exports = {
             for (const spendList of spendData.spendingList) {
                 var sql = 'select * from spendinglist where id = ? and namelist = ? and atcreate = ?';
                 var params = [spendList.id, spendList.namelist, spendList.atcreate];
-                const result = await query(sql, params);
+                const result = await db.query(sql, params);
 
                 // Nếu không tồn tại thì thêm vào biến dataNotExist
                 if (result.length == 0) {
@@ -196,7 +199,7 @@ module.exports = {
                     and price = ? and details = ? and atcreate = ?`;
                 var params = [spendItem.id, spendItem.spendlistid, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate];
 
-                const result = await query(sql, params);
+                const result = await db.query(sql, params);
 
                 // Nếu không tồn tại thì thêm vào biến dataNotExist
                 if (result.length == 0) {
@@ -219,11 +222,11 @@ module.exports = {
         const { token, namelist, atcreate, status, lastentry } = req.body;
 
         try {
-            const userId = await getUserId(token);
+            const userId = await db.table.users.getId(token);
 
             var sql = 'insert into spendinglist (usersid, namelist, atcreate, status, lastentry) values (?, ?, ?, ?, ?)';
             var params = [userId, namelist, atcreate, status, lastentry];
-            const result = await query(sql, params);
+            const result = await db.query(sql, params);
             res.json({ success: result })
         } catch (e) {
             logger.error(e)
@@ -236,7 +239,7 @@ module.exports = {
         try {
             var sql = 'insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)';
             var params = [spendlistid, nameitem, price, details, atcreate, atupdate, status];
-            const result = await query(sql, params);
+            const result = await db.query(sql, params);
             res.json({ success: result })
         } catch (e) {
             logger.error(e)

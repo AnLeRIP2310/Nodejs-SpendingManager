@@ -1,4 +1,4 @@
-const { query } = require('../../configs/db')
+const db = require('../../configs/db')
 const myUtils = require('../../configs/myUtils')
 const logger = require('../../configs/logger')
 
@@ -21,13 +21,13 @@ module.exports = {
             // Lấy tổng tiền ngày hôm nay
             var sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND SpendListId = ?';
             var params = [`%${myUtils.formatDateForInput(myUtils.formatDate(new Date()))}%`, spendList];
-            const todayResult = await query(sql, params);
+            const todayResult = await db.query(sql, params);
 
             // Lấy tổng tiền ngày trước đó
             var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
             sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND SpendListId = ?';
             params = [`%${myUtils.formatDateForInput(myUtils.formatDate(yesterday))}%`, spendList];
-            const yesterdayResult = await query(sql, params);
+            const yesterdayResult = await db.query(sql, params);
 
             // Lấy tổng tiền tuần này
             let startOfThisWeek = getStartOfWeek(new Date()); // Ngày đầu tiên của tuần hiện tại
@@ -41,38 +41,38 @@ module.exports = {
             // Lấy tổng tiền tuần hiện tại
             sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND SpendListId = ?';
             params = [formattedStartOfThisWeek, spendList];
-            const thisWeekResult = await query(sql, params);
+            const thisWeekResult = await db.query(sql, params);
 
             // Lấy tổng tiền tuần trước đó
             sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND AtUpdate < ? AND SpendListId = ?';
             params = [formattedStartOfLastWeek, formattedStartOfThisWeek, spendList];
-            const lastWeekResult = await query(sql, params);
+            const lastWeekResult = await db.query(sql, params);
 
             // Lấy tổng tiền mỗi ngày
             sql = 'SELECT DATE(AtUpdate) AS Date, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? GROUP BY DATE(AtUpdate) ORDER BY Date DESC';
             params = [spendList];
-            const totalPerDay = await query(sql, params);
+            const totalPerDay = await db.query(sql, params);
 
             // Lấy tổng tiền mỗi khoản chi
             sql = 'SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? GROUP BY NameItem ORDER BY TotalPrice DESC';
-            const totalPerSpendItem = await query(sql, params);
+            const totalPerSpendItem = await db.query(sql, params);
 
             // Lấy tổng các khoản chi
             sql = 'SELECT COUNT(DISTINCT NameItem) AS Total FROM SpendingItem WHERE SpendListId = ?';
-            const totalSpendItem = await query(sql, params);
+            const totalSpendItem = await db.query(sql, params);
 
             // Lấy tổng ngày chi
             sql = 'SELECT COUNT(DISTINCT AtUpdate) AS Total FROM SpendingItem WHERE SpendListId = ?';
-            const totalDate = await query(sql, params);
+            const totalDate = await db.query(sql, params);
 
             // Lấy tổng tiền chi
             sql = 'SELECT SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ?';
-            const totalPrice = await query(sql, params);
+            const totalPrice = await db.query(sql, params);
 
             // Lấy các năm
             sql = `SELECT strftime(?, AtUpdate) AS Year FROM SpendingItem WHERE SpendListId = 1 
                 AND Status = 1 GROUP BY strftime(?, AtUpdate) ORDER BY strftime(?, AtUpdate) DESC;`
-            const yearList = await query(sql, ['%Y', '%Y', '%Y']);
+            const yearList = await db.query(sql, ['%Y', '%Y', '%Y']);
 
             res.json({
                 success: true,
@@ -106,7 +106,7 @@ module.exports = {
             if (value == '' || value == undefined) {
                 sql = `SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? AND Status = 1 
                     GROUP BY NameItem ORDER BY TotalPrice DESC`;
-                const result = await query(sql, [SpendListId])
+                const result = await db.query(sql, [SpendListId])
                 resultData = result;
             } else {
                 sql = `SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? AND Status = 1 
@@ -120,7 +120,7 @@ module.exports = {
                     param = [SpendListId, '%Y', value];
                 }
 
-                const result = await query(sql, param)
+                const result = await db.query(sql, param)
                 resultData = result;
             }
 

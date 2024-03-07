@@ -1,4 +1,4 @@
-const { query, getUserId } = require('../../configs/db');
+const db = require('../../configs/db');
 const logger = require('../../configs/logger');
 
 
@@ -8,10 +8,10 @@ module.exports = {
         const { token } = req.query;
 
         try {
-            const userId = await getUserId(token);
+            const userId = await db.table.users.getId(token);
             var sql = 'select * from spendinglist where usersId = ? and status = 1';
             var params = [userId];
-            const spendingList = await query(sql, params);
+            const spendingList = await db.query(sql, params);
 
             res.json({
                 spendingList: spendingList
@@ -25,11 +25,11 @@ module.exports = {
         const { token, namelist, atcreate, status } = req.body;
 
         try {
-            const userId = await getUserId(token);
+            const userId = await db.table.users.getId(token);
 
             sql = 'insert into spendinglist (usersId, namelist, atcreate, status) values (?, ?, ?, ?)';
             params = [userId, namelist, atcreate, status];
-            const result = await query(sql, params);
+            const result = await db.query(sql, params);
 
             if (result) {
                 res.json({ success: true });
@@ -59,7 +59,7 @@ module.exports = {
                 }
             }
 
-            const dataResult = await query(sql, params);
+            const dataResult = await db.query(sql, params);
 
             // Nếu có từ khoá tìm kiếm
             if (SearchKey != '') {
@@ -83,7 +83,7 @@ module.exports = {
                     params = [IdList, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, tbLimit, tblOffset];
                 }
 
-                const dataResultSearch = await query(sql, params);
+                const dataResultSearch = await db.query(sql, params);
 
                 res.json({ success: true, data: dataResultSearch });
             } else {
@@ -97,7 +97,7 @@ module.exports = {
     getListNameSpending: async (req, res) => {
         try {
             var sql = 'SELECT NameItem FROM SpendingItem Where Status = 1';
-            const result = await query(sql);
+            const result = await db.query(sql);
             // Xử lý kết quả để lấy danh sách các tên
             const names = result.map(item => item.nameitem);
             res.json({ success: true, data: names });
@@ -112,19 +112,19 @@ module.exports = {
         try {
             var sql = 'insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)';
             var params = [ListId, Name, Price, Details, AtCreate, AtUpdate, Status];
-            const insertResult = await query(sql, params);
+            const insertResult = await db.query(sql, params);
 
             if (insertResult) {
                 sql = 'select last_insert_rowid() as id'
-                const getId = await query(sql);
+                const getId = await db.query(sql);
 
                 // Cập nhật thời gian của spendlist
                 sql = 'update spendinglist set lastentry = ? where id = ?';
-                await query(sql, [AtUpdate, ListId]);
+                await db.query(sql, [AtUpdate, ListId]);
 
                 if (getId) {
                     sql = 'select * from spendingitem where id = ?'
-                    const selectResult = await query(sql, [getId[0].id]);
+                    const selectResult = await db.query(sql, [getId[0].id]);
 
                     res.json({
                         success: insertResult,
@@ -147,7 +147,7 @@ module.exports = {
         try {
             var sql = "update spendingitem set spendlistid = ?, nameitem = ?, price = ?, details = ?, atupdate = ? where id = ?";
             var params = [ListId, Name, Price, Details, AtUpdate, Id];
-            const result = await query(sql, params);
+            const result = await db.query(sql, params);
             res.json({ success: result });
         } catch (err) {
             logger.error(err);
@@ -160,7 +160,7 @@ module.exports = {
         try {
             var sql = "update spendingitem set status = 0 where id = ?";
             var params = [Id];
-            const result = await query(sql, params);
+            const result = await db.query(sql, params);
             res.json({ success: result });
         } catch (err) {
             logger.error(err);
@@ -170,7 +170,7 @@ module.exports = {
     calculateTotalPrice: async (req, res) => {
         try {
             var sql = 'SELECT SUM(Price) AS TotalPrice FROM SpendingItem WHERE Status = 1';
-            const result = await query(sql);
+            const result = await db.query(sql);
             res.json({
                 success: true,
                 data: result[0].totalprice
@@ -186,10 +186,10 @@ module.exports = {
         try {
             var sql = 'select count(*) as count from spendingitem where NameItem = ? and status = 1';
             var params = [SpendName];
-            const countResult = await query(sql, params);
+            const countResult = await db.query(sql, params);
 
             sql = 'select sum(Price) as totalprice from spendingitem where NameItem = ? and status = 1';
-            const priceResult = await query(sql, params);
+            const priceResult = await db.query(sql, params);
 
             res.json({
                 success: true,

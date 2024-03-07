@@ -1,4 +1,4 @@
-const { query, getUserId } = require('../../configs/db')
+const db = require('../../configs/db')
 const logger = require('../../configs/logger')
 
 
@@ -8,12 +8,12 @@ module.exports = {
         const { token } = req.query
 
         try {
-            const userId = await getUserId(token)
+            const userId = await db.table.users.getId(token);
 
             var sql = `SELECT spl.*, COALESCE(SUM(sp.price), 0) AS totalprice FROM spendinglist AS spl 
                 LEFT JOIN spendingitem AS sp ON spl.id = sp.spendlistid AND sp.status = 1 
                 WHERE spl.usersid = ? AND spl.status = 1 GROUP BY spl.id;`
-            const result = await query(sql, [userId])
+            const result = await db.query(sql, [userId])
 
             res.json({
                 success: true,
@@ -30,7 +30,7 @@ module.exports = {
         try {
             var sql = 'update SpendingList set NameList = ? where id = ?'
             var params = [SpendName, Id]
-            const result = await query(sql, params)
+            const result = await db.query(sql, params)
 
             console.log(result);
             res.json({ success: result })
@@ -44,7 +44,7 @@ module.exports = {
 
         try {
             var sql = 'update SpendingList set status = 0 where id = ?'
-            const result = await query(sql, [Id])
+            const result = await db.query(sql, [Id])
             res.json({ success: result })
         } catch (e) {
             logger.error(e)

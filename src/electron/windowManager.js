@@ -1,7 +1,6 @@
 const { app, BrowserWindow, screen, Tray, Menu } = require('electron');
 const appIniConfigs = require('../configs/appIniConfigs');
 const path = require('path');
-const logger = require('../configs/logger');
 
 
 

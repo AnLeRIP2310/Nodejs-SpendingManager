@@ -1,5 +1,5 @@
 const { ipcMain, dialog, app } = require('electron');
-const { dbPath } = require('../../configs/db');
+const db = require('../../configs/db');
 const fs = require('fs');
 const logger = require('../../configs/logger');
 const path = require('path');
@@ -10,6 +10,8 @@ const appIniConfigs = require('../../configs/appIniConfigs');
 // Bắt sự kiện xuất file database
 ipcMain.on('export-db', () => {
     try {
+        let dbPath = db.dbPath.get();
+
         // Kiểm tra sự tồn tại của database
         if (fs.existsSync(dbPath)) {
             // Thực hiện lựa chọn vị trí lưu tệp
@@ -44,6 +46,7 @@ ipcMain.on('export-db', () => {
 // Bắt sự kiện nhập file database
 ipcMain.on('import-db', async () => {
     try {
+        let dbPath = db.dbPath.get();
         // Hiển thị hộp thoại mở tệp
         const result = await dialog.showOpenDialog({
             properties: ['openFile'],
@@ -75,6 +78,8 @@ ipcMain.on('import-db', async () => {
 // Bắt sự kiện thay đổi đường dẫn lưu database
 ipcMain.on('change-dbPath', () => {
     try {
+        let dbPath = db.dbPath.get();
+
         dialog.showOpenDialog({
             properties: ['openDirectory'],
         }).then(result => {

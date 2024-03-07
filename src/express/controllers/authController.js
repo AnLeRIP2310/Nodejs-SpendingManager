@@ -3,7 +3,7 @@ const fs = require('fs');
 const { google } = require('googleapis');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
-const { query } = require('../../configs/db');
+const db = require('../../configs/db');
 const logger = require('../../configs/logger');
 const appIniConfigs = require('../../configs/appIniConfigs');
 const myUtils = require('../../configs/myUtils');
@@ -41,14 +41,14 @@ module.exports = {
         try {
             var sql = 'select * from users where username = ?';
             var params = [username];
-            const checkIsExist = await query(sql, params);
+            const checkIsExist = await db.query(sql, params);
 
             if (checkIsExist.length != 0) {
                 res.json({ success: false, message: 'Tài khoản đã tồn tại' });
             } else {
                 sql = 'insert into users (username, password) values (?, ?)';
                 params = [username, password];
-                const result = await query(sql, params);
+                const result = await db.query(sql, params);
                 res.json({ success: result, message: 'Đăng ký thành công' });
             }
         } catch (err) {
@@ -62,14 +62,14 @@ module.exports = {
 
         try {
             var sql = 'select * from users where username = ? and password = ?';
-            const checkUsers = await query(sql, [username, password]);
+            const checkUsers = await db.query(sql, [username, password]);
 
             if (checkUsers.length > 0) {
                 // Kiểm tra authToken và đăng nhập
                 const userId = checkUsers[0].id;
 
                 sql = 'select * from authtoken where usersId = ?';
-                const checkToken = await query(sql, [userId]);
+                const checkToken = await db.query(sql, [userId]);
 
                 if (checkToken.length > 0) {
                     // Nếu có token
@@ -78,7 +78,7 @@ module.exports = {
                     // nếu không có token, tạo token
                     token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
                     sql = 'insert into authtoken (usersId, Token) values (?, ?)';
-                    await query(sql, [userId, token]);
+                    await db.query(sql, [userId, token]);
                 }
 
                 res.json({ success: true, token: token });
@@ -96,7 +96,7 @@ module.exports = {
         try {
             var sql = 'select * from authtoken where Token = ?';
             var params = [token];
-            const checkToken = await query(sql, params);
+            const checkToken = await db.query(sql, params);
 
             if (checkToken.length > 0) {
                 res.json({ success: true });
@@ -125,12 +125,12 @@ module.exports = {
         try {
             // Kiểm tra email
             var sql = 'select * from users where Email = ?';
-            const checkEmail = await query(sql, [email]);
+            const checkEmail = await db.query(sql, [email]);
 
             if (checkEmail.length > 0) {
                 // Email có tồn tại, kiểm tra GoogleId
                 sql = 'select * from users where GoogleId = ? and Email = ?';
-                const checkGoogleId = await query(sql, [googleId, email]);
+                const checkGoogleId = await db.query(sql, [googleId, email]);
 
                 const userId = checkGoogleId[0].id;
 
@@ -138,13 +138,13 @@ module.exports = {
                     // Nếu có GoogleId, tiến hành đăng nhập
                     // Kiểm tra authToken và đăng nhập
                     sql = 'select * from authtoken where usersId = ?';
-                    const checkToken = await query(sql, [userId]);
+                    const checkToken = await db.query(sql, [userId]);
 
                     if (checkToken.length == 0) {
                         // nếu không có token, tạo token
                         token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
                         sql = 'insert into authtoken (usersId, Token) values (?, ?)';
-                        await query(sql, [userId, token]);
+                        await db.query(sql, [userId, token]);
                     } else {
                         // Nếu có token
                         token = checkToken[0].token; // Gán token vào biến
@@ -152,17 +152,17 @@ module.exports = {
                 } else {
                     // nếu không có googleId, thêm googleId vào tài khoản
                     sql = 'update users set GoogleId = ? where Id = ?';
-                    await query(sql, [googleId, userId]);
+                    await db.query(sql, [googleId, userId]);
 
                     // Kiểm tra authToken và đăng nhập
                     sql = 'select * from authtoken where usersId = ?';
-                    const checkToken = await query(sql, [userId]);
+                    const checkToken = await db.query(sql, [userId]);
 
                     if (checkToken.length == 0) {
                         // nếu không có token, tạo token
                         token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
                         sql = 'insert into authtoken (usersId, Token) values (?, ?)';
-                        await query(sql, [userId, token]);
+                        await db.query(sql, [userId, token]);
                     } else {
                         // Nếu có token
                         token = checkToken[0].token; // Gán token vào biến
@@ -171,22 +171,23 @@ module.exports = {
             } else {
                 // Email không tồn tại, đăng ký tài khoản
                 sql = 'insert into users(GoogleId, Avatar, DisplayName, Email) values (?, ?, ?, ?)';
-                await query(sql, [googleId, avatar, displayName, email]);
+                await db.query(sql, [googleId, avatar, displayName, email]);
 
                 // Lấy ra userId
-                sql = 'select * from users where Email = ? and GoogleId = ?';
-                const checkUsers = await query(sql, [email, googleId]);
-                const userId = checkUsers[0].id;
+                const userId = await db.lastInsertId();
+                // sql = 'select * from users where Email = ? and GoogleId = ?';
+                // const checkUsers = await db.query(sql, [email, googleId]);
+                // const userId = checkUsers[0].id;
 
                 // Kiểm tra authToken và đăng nhập
                 sql = 'select * from authtoken where usersId = ?';
-                const checkToken = await query(sql, [userId]);
+                const checkToken = await db.query(sql, [userId]);
 
                 if (checkToken.length == 0) {
                     // nếu không có token, tạo token
                     token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
                     sql = 'insert into authtoken (usersId, Token) values (?, ?)';
-                    await query(sql, [userId, token]);
+                    await db.query(sql, [userId, token]);
                 } else {
                     // Nếu có token
                     token = checkToken[0].token; // Gán token vào biến
@@ -223,7 +224,7 @@ module.exports = {
         try {
             // Kiểm tra FacebookId
             var sql = 'select * from users where FacebookId = ?';
-            const checkFacebookId = await query(sql, [facebookId]);
+            const checkFacebookId = await db.query(sql, [facebookId]);
 
             if (checkFacebookId.length > 0) {
                 // Nếu facebookId tồn tại, tiến hành đăng nhập
@@ -231,13 +232,13 @@ module.exports = {
 
                 // Kiểm tra authToken và đăng nhập
                 sql = 'select * from authtoken where usersId = ?';
-                const checkToken = await query(sql, [userId]);
+                const checkToken = await db.query(sql, [userId]);
 
                 if (checkToken.length == 0) {
                     // nếu không có token, tạo token
                     token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
                     sql = 'insert into authtoken (usersId, Token) values (?, ?)';
-                    await query(sql, [userId, token]);
+                    await db.query(sql, [userId, token]);
                 } else {
                     // Nếu có token
                     token = checkToken[0].token; // Gán token vào biến
@@ -245,22 +246,23 @@ module.exports = {
             } else {
                 // nếu facebookId không tồn tại, tạo mới tài khoản và thêm vào database
                 sql = 'INSERT INTO Users (FacebookId, Avatar, DisplayName) VALUES (?, ?, ?)';
-                const insertUserResult = await query(sql, [facebookId, avatar, displayName]);
+                await db.query(sql, [facebookId, avatar, displayName]);
 
                 // Lấy ra userId
-                sql = 'select * from users where FacebookId = ?';
-                const checkUsers = await query(sql, [facebookId]);
-                const userId = checkUsers[0].id;
+                const userId = await db.lastInsertId();
+                // sql = 'select * from users where FacebookId = ?';
+                // const checkUsers = await db.query(sql, [facebookId]);
+                // const userId = checkUsers[0].id;
 
                 // Kiểm tra authToken và đăng nhập
                 sql = 'select * from authtoken where usersId = ?';
-                const checkToken = await query(sql, [userId]);
+                const checkToken = await db.query(sql, [userId]);
 
                 if (checkToken.length == 0) {
                     // nếu không có token, tạo token
                     token = crypto.createHash('sha256').update(uuidv4()).digest('hex');
                     sql = 'insert into authtoken (usersId, Token) values (?, ?)';
-                    await query(sql, [userId, token]);
+                    await db.query(sql, [userId, token]);
                 } else {
                     // Nếu có token
                     token = checkToken[0].token; // Gán token vào biến

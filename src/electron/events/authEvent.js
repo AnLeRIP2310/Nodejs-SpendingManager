@@ -1,4 +1,4 @@
-const { app, shell, ipcMain } = require('electron');
+const { shell, ipcMain } = require('electron');
 const windowManager = require('../windowManager');
 const ipc = require('node-ipc');
 
