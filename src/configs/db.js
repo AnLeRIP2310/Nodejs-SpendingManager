@@ -80,7 +80,7 @@ async function initDB() {
                 PassWord    TEXT,
                 Avatar      TEXT,
                 DisplayName TEXT     COLLATE NOCASE,
-                AtCreate    DATETIME,
+                AtCreate    DATETIME COLLATE nocase,
                 Email       TEXT     COLLATE NOCASE,
                 Status      INTEGER  DEFAULT 1
             )
@@ -88,20 +88,21 @@ async function initDB() {
 
         await query(`
             CREATE TABLE IF NOT EXISTS AuthToken (
-                Id      INTEGER PRIMARY KEY,
-                UsersId INTEGER REFERENCES Users (Id),
-                Token   TEXT
+                Id          INTEGER PRIMARY KEY,
+                UsersId     INTEGER REFERENCES Users (Id),
+                Token       TEXT
             )
         `);
 
         await query(`
             CREATE TABLE IF NOT EXISTS SpendingList (
-                Id       INTEGER  PRIMARY KEY,
-                UsersId  INTEGER  REFERENCES Users (Id),
-                NameList TEXT     COLLATE NOCASE,
-                AtCreate DATETIME,
-                LastEntry DATETIME COLLATE nocase,
-                Status   INTEGER  DEFAULT 1
+                Id          INTEGER  PRIMARY KEY,
+                UsersId     INTEGER  REFERENCES Users (Id),
+                NameList    TEXT     COLLATE NOCASE,
+                AtCreate    DATETIME COLLATE nocase,
+                AtUpdate    DATETIME DEFAULT CURRENT_TIMESTAMP,
+                LastEntry   DATETIME COLLATE nocase,
+                Status      INTEGER  DEFAULT 1
             )
         `);
 
@@ -116,6 +117,18 @@ async function initDB() {
                 AtUpdate    DATETIME DEFAULT CURRENT_TIMESTAMP,
                 Status      INTEGER  DEFAULT 1
             )
+        `);
+
+        await query(`
+            CREATE TABLE IF NOT EXISTS Noted (
+                Id          INTEGER  PRIMARY KEY,
+                UsersId     INTEGER  REFERENCES users (id),
+                NameList    TEXT     COLLATE nocase,
+                Content     TEXT     COLLATE nocase,
+                AtCreate    DATETIME COLLATE nocase,
+                AtUpdate    DATETIME DEFAULT CURRENT_TIMESTAMP,
+                Status      INTEGER  DEFAULT 1
+            );   
         `);
     } catch (e) {
         logger.error(e, 'Khởi tạo database thất bại');

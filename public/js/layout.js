@@ -317,13 +317,34 @@ $('#page-setting').click(function () {
 
 // Page Noted
 $('#page-noted').click(function () {
-    fetch('templates/noted.hbs')
-        .then(response => response.text())
-        .then(template => {
-            const compiledTemplate = Handlebars.compile(template);
-            const html = compiledTemplate();
-            $('#page-content').html(html);
-        })
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/noted/getData',
+        data: {
+            token: JSON.parse(localStorage.getItem('AuthToken')).token
+        },
+        success: function (res) {
+            res.notedlist.forEach((item) => {
+                item.atcreate = formatDate(item.atcreate)
+                item.atupdate = formatDate(item.atupdate)
+            })
+
+            fetch('templates/noted.hbs')
+                .then(response => response.text())
+                .then(template => {
+                    const compiledTemplate = Handlebars.compile(template);
+                    const html = compiledTemplate({
+                        notedList: res.notedlist
+                    });
+                    $('#page-content').html(html);
+                })
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+
+
 })
 
 

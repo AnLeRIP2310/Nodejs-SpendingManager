@@ -37,6 +37,7 @@ app.use('/home', require('./express/routers/homeRouter'))
 app.use('/profile', require('./express/routers/profileRouter'))
 app.use('/statisc', require('./express/routers/statiscRouter'))
 app.use('/setting', require('./express/routers/settingRouter'))
+app.use('/noted', require('./express/routers/notedRouter'))
 
 
 app.listen(port, async () => {

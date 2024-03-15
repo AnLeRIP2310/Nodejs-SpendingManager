@@ -21,27 +21,31 @@
                 </div>
             </div>
 
-            <div class="list-group overflow-y-scroll pt-2" style="height: 467px">
-                <a class="list-group-item pointer p-0" data-id="1" data-bs-toggle="list">
+            <div id="list-noted" class="list-group overflow-y-scroll overflow-x-hidden pt-2" style="height: 467px">
+                {{#if notedList}}
+                {{#each notedList}}
+                <a class="list-group-item pointer p-0" data-id="{{this.id}}" data-bs-toggle="list">
                     <div class="d-flex">
                         <div class="w-100 p-2 overflow-hidden">
-                            <strong title="Ghi chú của tôi" class="text-nowrap text-start">Ghi chú của
-                                tôi Ghi chú của
-                                tôi</strong>
-                            <p class="m-0 text-nowrap text-end">20/11/2022</p>
+                            <strong title="Ghi chú của tôi"
+                                class="txt-notedname text-nowrap text-start">{{this.namelist}}</strong>
+                            <input class="tbl-notedname form-control form-control-sm d-none" value="{{this.namelist}}"
+                                type="text">
+                            <p class="m-0 text-nowrap text-end">{{this.atupdate}}</p>
                         </div>
 
                         <div class="noted-content">
-                            <button class="btn btn-sm btn-outline-secondary btn-noted-toggle-action" data-id="1">
+                            <button class="btn btn-sm btn-outline-secondary btn-noted-toggle-action"
+                                data-id="{{this.id}}">
                                 <i class="fa-solid fa-angle-left"></i>
                             </button>
-                            <div class="noted-content_action">
-                                <button class="btn btn-primary text-nowrap">
+                            <div class="noted-content_action" data-id="{{this.id}}">
+                                <button class="btn-notedEdit btn btn-primary text-nowrap">
                                     Chỉnh sửa
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
 
-                                <button class="btn btn-danger text-nowrap">
+                                <button class="btn-notedDelete btn btn-danger text-nowrap">
                                     Xoá bỏ
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -49,37 +53,64 @@
                         </div>
                     </div>
                 </a>
-
-                <a class="list-group-item pointer p-0" data-id="2" data-bs-toggle="list">
-                    <div class="d-flex">
-                        <div class="w-100 p-2 overflow-hidden">
-                            <strong title="Ghi chú của tôi" class="text-nowrap text-start">Ghi chú của tôi</strong>
-                            <p class="m-0 text-nowrap text-end">20/11/2022</p>
-                        </div>
-
-                        <div class="noted-content">
-                            <button class="btn btn-sm btn-outline-secondary btn-noted-toggle-action" data-id="2">
-                                <i class="fa-solid fa-angle-left"></i>
-                            </button>
-                            <div class="noted-content_action">
-                                <button class="btn btn-primary text-nowrap">
-                                    Chỉnh sửa
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-
-                                <button class="btn btn-danger text-nowrap">
-                                    Xoá bỏ
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </a>
+                {{/each}}
+                {{else}}
+                <p class="p-0">Chưa có danh sách nào được tạo! <br>Hãy tạo một cái để tiếp tục.</p>
+                {{/if}}
             </div>
+            <script type="text/x-handlebars-template" id="template-list-noted">
+                %#if notedList%
+                %#each notedList%
+                <a class="list-group-item pointer p-0" data-id="%this.id%" data-bs-toggle="list">
+                    <div class="d-flex">
+                        <div class="w-100 p-2 overflow-hidden">
+                            <strong title="Ghi chú của tôi" class="text-nowrap text-start">%this.namelist%</strong>
+                            <p class="m-0 text-nowrap text-end">%this.atupdate%</p>
+                        </div>
+
+                        <div class="noted-content">
+                            <button class="btn btn-sm btn-outline-secondary btn-noted-toggle-action"
+                                data-id="%this.id%">
+                                <i class="fa-solid fa-angle-left"></i>
+                            </button>
+                            <div class="noted-content_action" data-id="%this.id%">
+                                <button class="btn-notedEdit btn btn-primary text-nowrap">
+                                    Chỉnh sửa
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+
+                                <button class="btn-notedDelete btn btn-danger text-nowrap">
+                                    Xoá bỏ
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                %/each%
+                %else%
+                <p class="p-0">Chưa có danh sách nào được tạo! <br>Hãy tạo một cái để tiếp tục.</p>
+                %/if%
+            </script>
         </div>
 
-        <div class="col-8">
-            <div id="noted-content" class="w-100 h-100 pt-2 pb-2">
+        <div class="col-8 ">
+            <div id="noted-content" class="overflow-y-scroll mt-2 mb-2" style="max-height: 510px;"></div>
+            <div id="noted-content_editor" class="overflow-y-hidden position-relative mt-2 mb-2 d-none"
+                style="height: 510px;">
+                <div id="ckeditor_balloon" class="w-100 h-100"></div>
+
+                <div class="position-absolute" style="bottom: 2%; right: 2%;">
+                    <button id="btn-noted-close" class="btn btn-sm btn-secondary me-2">
+                        Huỷ bỏ
+                        <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+
+                    <button id="btn-noted-save" class="btn btn-sm btn-success">
+                        Lưu lại
+                        <i class="fa-solid fa-floppy-disk"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
