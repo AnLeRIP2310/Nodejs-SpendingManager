@@ -33,7 +33,7 @@ module.exports = {
             const result = await db.query(sql, params)
 
             console.log(result);
-            res.json({ success: result })
+            res.json({ success: true })
         } catch (err) {
             logger.error(err)
         }
@@ -45,7 +45,7 @@ module.exports = {
         try {
             var sql = 'update SpendingList set status = 0 where id = ?'
             const result = await db.query(sql, [Id])
-            res.json({ success: result })
+            res.json({ success: true })
         } catch (e) {
             logger.error(e)
         }

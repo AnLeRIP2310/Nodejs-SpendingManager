@@ -115,29 +115,34 @@ module.exports = {
             const insertResult = await db.query(sql, params);
 
             if (insertResult) {
-                sql = 'select last_insert_rowid() as id'
-                const getId = await db.query(sql);
+                const lastId = await db.lastInsertId();
 
                 // Cập nhật thời gian của spendlist
                 sql = 'update spendinglist set lastentry = ? where id = ?';
                 await db.query(sql, [AtUpdate, ListId]);
 
-                if (getId) {
-                    sql = 'select * from spendingitem where id = ?'
-                    const selectResult = await db.query(sql, [getId[0].id]);
+                // Lấy ra dữ liệu sau khi insert
+                sql = 'select * from spendingitem where id = ?'
+                const lastDataResult = await db.query(sql, [lastId]);
 
-                    res.json({
-                        success: insertResult,
-                        data: selectResult
-                    });
-                }
+                res.json({
+                    success: true,
+                    data: lastDataResult,
+                    message: 'Thêm dữ liệu thành công'
+                });
+
             } else {
                 res.json({
-                    success: false
+                    success: false,
+                    message: 'Thêm dữ liệu thất bại'
                 });
             }
         } catch (err) {
             logger.error(err);
+            res.json({
+                success: false,
+                message: 'Có lỗi khi thêm dữ liệu'
+            });
         }
     },
 
@@ -148,9 +153,16 @@ module.exports = {
             var sql = "update spendingitem set spendlistid = ?, nameitem = ?, price = ?, details = ?, atupdate = ? where id = ?";
             var params = [ListId, Name, Price, Details, AtUpdate, Id];
             const result = await db.query(sql, params);
-            res.json({ success: result });
+
+            if (result) {
+                res.json({ success: true, message: 'Cập nhật bảng ghi thành công' });
+            } else {
+                res.json({ success: false, message: 'Cập nhật bảng ghi thất bại' });
+            }
+
         } catch (err) {
             logger.error(err);
+            res.json({ success: false, message: 'Có lỗi khi cập nhật bảng ghi' });
         }
     },
 
@@ -161,9 +173,15 @@ module.exports = {
             var sql = "update spendingitem set status = 0 where id = ?";
             var params = [Id];
             const result = await db.query(sql, params);
-            res.json({ success: result });
+
+            if (result) {
+                res.json({ success: true, message: 'Xoá bảng ghi thành công' });
+            } else {
+                res.json({ success: false, message: 'Xoá bảng ghi thất bại' })
+            }
         } catch (err) {
             logger.error(err);
+            res.json({ success: false, message: 'Có lỗi khi xoá bảng ghi này' })
         }
     },
 

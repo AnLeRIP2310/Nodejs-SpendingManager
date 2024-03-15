@@ -227,7 +227,7 @@ module.exports = {
             var sql = 'insert into spendinglist (usersid, namelist, atcreate, status, lastentry) values (?, ?, ?, ?, ?)';
             var params = [userId, namelist, atcreate, status, lastentry];
             const result = await db.query(sql, params);
-            res.json({ success: result })
+            res.json({ success: true })
         } catch (e) {
             logger.error(e)
         }
@@ -240,7 +240,7 @@ module.exports = {
             var sql = 'insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)';
             var params = [spendlistid, nameitem, price, details, atcreate, atupdate, status];
             const result = await db.query(sql, params);
-            res.json({ success: result })
+            res.json({ success: true })
         } catch (e) {
             logger.error(e)
         }

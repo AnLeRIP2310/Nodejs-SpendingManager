@@ -49,10 +49,15 @@ module.exports = {
                 sql = 'insert into users (username, password) values (?, ?)';
                 params = [username, password];
                 const result = await db.query(sql, params);
-                res.json({ success: result, message: 'Đăng ký thành công' });
+                if (result) {
+                    res.json({ success: true, message: 'Đăng ký thành công' });
+                } else {
+                    res.json({ success: false, message: 'Đăng ký thất bại' });
+                }
             }
         } catch (err) {
             logger.error(err);
+            res.json({ success: false, message: 'Có lỗi khi đăng ký' });
         }
     },
 

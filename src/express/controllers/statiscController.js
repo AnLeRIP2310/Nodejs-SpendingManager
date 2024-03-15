@@ -5,7 +5,6 @@ const logger = require('../../configs/logger')
 
 
 
-
 // Lấy ngày đầu tiên của tuần
 function getStartOfWeek(date) {
     let day = date.getDay();
