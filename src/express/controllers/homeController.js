@@ -4,32 +4,24 @@ const myUtils = require('../../configs/myUtils')
 
 
 
-
-// Lấy ngày đầu tiên của tuần
-function getStartOfWeek(date) {
-    let day = date.getDay();
-    let diff = date.getDate() - day + (day === 0 ? -6 : 1);
-    return new Date(date.setDate(diff));
-}
-
 module.exports = {
     getData: async (req, res) => {
         const { spendList } = req.query;
 
         try {
             // Lấy tổng tiền ngày hôm nay
-            var sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND SpendListId = ?';
+            var sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND SpendListId = ? AND Status = 1';
             var params = [`%${myUtils.formatDateForInput(myUtils.formatDate(new Date()))}%`, spendList];
             const todayResult = await db.query(sql, params);
 
             // Lấy tổng tiền ngày trước đó
             var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-            sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND SpendListId = ?';
+            sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND SpendListId = ? AND Status = 1';
             params = [`%${myUtils.formatDateForInput(myUtils.formatDate(yesterday))}%`, spendList];
             const yesterdayResult = await db.query(sql, params);
 
             // Lấy tổng tiền tuần này
-            let startOfThisWeek = getStartOfWeek(new Date()); // Ngày đầu tiên của tuần hiện tại
+            let startOfThisWeek = myUtils.getStartOfWeek(new Date()); // Ngày đầu tiên của tuần hiện tại
             let startOfLastWeek = new Date(startOfThisWeek);
             startOfLastWeek.setDate(startOfLastWeek.getDate() - 7); // Ngày đầu tiên của tuần trước
 
@@ -38,22 +30,22 @@ module.exports = {
             let formattedStartOfLastWeek = myUtils.formatDateForInput(myUtils.formatDate(startOfLastWeek));
 
             // Lấy tổng tiền tuần hiện tại
-            sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND SpendListId = ?';
+            sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND SpendListId = ? AND Status = 1';
             params = [formattedStartOfThisWeek, spendList];
             const thisWeekResult = await db.query(sql, params);
 
             // Lấy tổng tiền tuần trước đó
-            sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND AtUpdate < ? AND SpendListId = ?';
+            sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND AtUpdate < ? AND SpendListId = ? AND Status = 1';
             params = [formattedStartOfLastWeek, formattedStartOfThisWeek, spendList];
             const lastWeekResult = await db.query(sql, params);
 
             // Lấy tổng tiền mỗi ngày
-            sql = 'SELECT DATE(AtCreate) AS Date, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? GROUP BY DATE(AtCreate) ORDER BY Date DESC';
+            sql = 'SELECT DATE(AtCreate) AS Date, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? AND Status = 1 GROUP BY DATE(AtCreate) ORDER BY Date DESC';
             params = [spendList];
             const totalPerDay = await db.query(sql, params);
 
             // Lấy tổng tiền mỗi khoản chi
-            sql = 'SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? GROUP BY NameItem ORDER BY TotalPrice DESC';
+            sql = 'SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? AND Status = 1 GROUP BY NameItem ORDER BY TotalPrice DESC';
             const totalPerSpendItem = await db.query(sql, params);
 
             res.json({
