@@ -56,6 +56,7 @@ ipcMain.on('login-success', () => {
 
 // Bắt sự kiện đăng nhập hết hạn
 ipcMain.on('login-expired', () => {
+    // Khai báo các biến
     const mainWindow = windowManager.getMainWindow();
     const isQuitting = windowManager.getIsQuitting();
 
@@ -64,7 +65,6 @@ ipcMain.on('login-expired', () => {
         mainWindow.close();
 
         // Mở cửa sổ đăng nhập
-        const loginWindow = windowManager.getLoginWindow();
-        loginWindow && windowManager.createLoginWindow();
+        windowManager.createLoginWindow();
     }
 })

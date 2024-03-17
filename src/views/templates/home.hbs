@@ -27,39 +27,64 @@
     </div>
 
     <div class="row">
+        <!-- Charts -->
         <div class="col-8 border-end border-dark p-0">
-            <div id="chart" style="width: 100%; height: 100%; "></div>
+            <div id="chart" style="width: 100%; height: 447.991px;"></div>
         </div>
 
-        <div class="col-4" style="padding-top: 12px">
-            <select id="home_spendList" class="form-select mb-3">
-                {{#if spendingList}}
-                {{#each spendingList}}
-                <option value="{{this.id}}">{{this.namelist}}</option>
-                {{/each}}
-                {{/if}}
-            </select>
+        <!-- Weather -->
+        <div class="col-4" style="padding-top: 12px;padding-bottom: 12px">
+            <div class="weather rounded p-3 h-100">
+                <div class="mt-2 mb-2 position-relative">
+                    <input id="tbl_weatherSearch" type="text" class="form-control text-white  d-block"
+                        placeholder="Tìm kiếm..." style="box-shadow: 0 5px 4px rgba(0,0,0,0.2);">
 
-            <div class="tableScroll" style="height: 372px;">
-                <table class="table table-sm table-hover border">
-                    <thead>
-                        <tr>
-                            <th scope="col">Tên Khoản Chi</th>
-                            <th scope="col">Số Tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tb-totalPerSpendItem"></tbody>
-                    <script type="text/x-handlebars-template" id="template-totalPerSpendItem">
-                        %#if totalPerSpendItem%
-                        %#each totalPerSpendItem%
-                        <tr class="pointer">
-                            <td style="white-space: nowrap;">%this.nameitem%</td>
-                            <td>%this.totalprice%</td>
-                        </tr>
-                        %/each%
-                        %/if%
-                    </script>
-                </table>
+                    <button id="btn_weatherMyAddress" class="btn btn-sm rounded-5">
+                        <i class="fa-solid fa-crosshairs-simple"></i>
+                    </button>
+                </div>
+
+
+                <div class="p-2 text-center text-white overflow-x-hidden">
+                    <strong class="text-center fs-4" style="text-shadow: 2px 2px rgba(0,0,0,0.5);">
+                        <span id="txt_weatherCity">Khanh Hoa</span>
+                        <span>,</span>
+                        <span id="txt_weatherCountry">VN</span>
+                    </strong>
+                    <p class="p-0">
+                        <span id="txt_weatherDate">17/03/2024</span>
+                        <span>,</span>
+                        <span id="txt_weatherTime">10:02:50 PM</span>
+                    </p>
+                </div>
+
+                <div class="temperature ms-4 me-4 rounded text-center text-white">
+                    <strong id="txt_weatherTemperature" class="text-center fs-1 pt-2 pb-2 d-block">
+                        23 <sup>o</sup>C
+                    </strong>
+                </div>
+
+                <div class="m-3">
+                    <strong id="txt_weatherClouds" class="text-center d-block fs-3 text-white font-weight-bold"
+                        style="text-shadow: 3px 3px rgba(0,0,0,0.5);">Clouds</strong>
+                    <span id="txt_weatherCloudsDesc" class="text-center d-block text-white"
+                        style="text-shadow: 3px 3px rgba(0,0,0,0.5);">Mây đen u ám</span>
+                </div>
+
+                <div class="row text-white" style="font-size: 15px;">
+                    <div class="col-4 d-flex flex-column justify-content-center align-items-center">
+                        <i class="fa-sharp fa-regular fa-eye"></i>
+                        <span id="txt_weatherVisibility" class="text-center text-nowrap mt-2">1000 (ms)</span>
+                    </div>
+                    <div class="col-4 d-flex flex-column justify-content-center align-items-center">
+                        <i class="fa-sharp fa-regular fa-cloud-sun"></i>
+                        <span id="txt_weatherHumidity" class="text-center text-nowrap mt-2">89 (%)</span>
+                    </div>
+                    <div class="col-4 d-flex flex-column justify-content-center align-items-center">
+                        <i class="fa-sharp fa-regular fa-wind"></i>
+                        <span id="txt_weatherWind" class="text-center text-nowrap mt-2">2.35 (m/s)</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

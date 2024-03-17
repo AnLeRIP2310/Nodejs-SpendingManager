@@ -43,13 +43,13 @@ function drawChart(data) {
     }
 }
 
-
+// Hàm thống kê lấy tổng các chi tiêu
 function getTotalSpending() {
     $.ajax({
         type: 'GET',
         url: urlapi + '/home/getData',
         data: {
-            spendList: $('#home_spendList').val(),
+            spendList: 1,
         },
         success: function (res) {
             if (res.success) {
@@ -63,22 +63,80 @@ function getTotalSpending() {
                     date: formatDate(item.date),
                     total: item.total
                 }));
+
                 drawChart(formattedData);
-
-                // Tổng tiền mỗi khoản chi
-                res.totalPerSpendItem.forEach((item) => {
-                    item.totalprice = formatCurrency(item.totalprice);
-                });
-                var source = $('#template-totalPerSpendItem').html();
-                var convertSource = convertPlaceHbs(source);
-                var template = Handlebars.compile(convertSource);
-                var data = template({ totalPerSpendItem: res.totalPerSpendItem });
-
-                $('#tb-totalPerSpendItem').html(data);
             }
         },
         error: function (err) {
             console.log(err);
         }
     })
-} getTotalSpending();
+}
+// Gọi hàm để tính tổng
+getTotalSpending();
+
+// Hàm lấy thông tin thời tiết và gán lên giao diện
+function getWeatherData(city, lat, lon) {
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/home/getWeather',
+        data: { city: city, lat: lat, lon: lon },
+        success: function (res) {
+            if (res.data == null || res.data == undefined) {
+                showErrorToast('Không tìm thấy thông tin thành phố')
+                return
+            }
+
+            const weatherData = res.data
+            $('#txt_weatherCity').text(weatherData.name);
+            $('#txt_weatherCountry').text(weatherData.sys.country);
+            $('#txt_weatherDate').text(formatDate(new Date()));
+            $('#txt_weatherTime').text(formatTime(new Date()));
+            $('#txt_weatherTemperature').html(Math.round(weatherData.main.temp) + '&deg;C');
+            $('#txt_weatherClouds').text(weatherData.weather[0] ? weatherData.weather[0].main : '');
+            $('#txt_weatherCloudsDesc').text(weatherData.weather[0] ? weatherData.weather[0].description : '');
+            $('#txt_weatherVisibility').text(weatherData.visibility + ' (ms)');
+            $('#txt_weatherHumidity').text(weatherData.main.humidity + ' (%)');
+            $('#txt_weatherWind').text(weatherData.wind.speed + ' (m/s)');
+
+            if (weatherData.main.temp <= 18) {
+                $('.weather').addClass('cold')
+            } else {
+                $('.weather').removeClass('cold')
+            }
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    })
+}
+
+// Sự kiện lấy thời tiết bằng tên thành phố
+$('#tbl_weatherSearch').on('keyup', function (event) {
+    if (event.keyCode == 13) {
+        event.preventDefault();
+
+        getWeatherData($(this).val().trim())
+    }
+})
+
+// Nút lấy thời tiết bằng toạ độ hiện tại
+$('#btn_weatherMyAddress').click(function () {
+    console.log('đã gọi btn vị trí')
+
+    // Lấy vị trí hiện tại của người dùng
+    navigator.geolocation.getCurrentPosition(
+        function success(position) {
+            let lat = position.coords.latitude;
+            let lon = position.coords.longitude;
+
+            // Gọi hàm lấy ra thông tin thời tiết
+            getWeatherData('', lat, lon)
+        },
+        function error() {
+            console.log('Không thể truy xuất vị trí của bạn')
+        });
+})
+
+// Luôn gọi mặt định khi load trang
+$('#btn_weatherMyAddress').click(); 

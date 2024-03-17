@@ -320,7 +320,9 @@ $('#btnConfirmImport').click(function () {
 
 // Sự kiện chọn thư mục lưu trữ dữ liệu
 $('#btn-dbPath').click(function () {
-    ipcRenderer.send('change-dbPath');
+    if (ipcRenderer != null) {
+        ipcRenderer.send('change-dbPath');
+    }
 });
 
 

@@ -10,11 +10,11 @@ const prettyBytes = require('pretty-bytes');
 
 
 // Khai báo trạng thái đóng gói của ứng dụng (Chỉ sử dụng khi kiểm tra autoUpdater trong môi trường dev)
-Object.defineProperty(app, 'isPackaged', {
-    get() {
-        return true;
-    }
-});
+// Object.defineProperty(app, 'isPackaged', {
+//     get() {
+//         return true;
+//     }
+// });
 
 // Cấu hình autoUpdater
 autoUpdater.autoDownload = false;

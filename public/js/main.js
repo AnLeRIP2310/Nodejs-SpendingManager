@@ -15,6 +15,24 @@ function formatDateForInput(dateStr) {
     return dateStr; // Trả về nguyên bản nếu không thể chuyển đổi
 }
 
+// Hàm định dạng thời gian
+function formatTime(inputTime) {
+    var hours = inputTime.getHours();
+    var minutes = inputTime.getMinutes();
+    var seconds = inputTime.getSeconds();
+    var meridiem = "SA";
+
+    // Chuyển đổi sang định dạng 12 giờ
+    if (hours > 12) { hours -= 12; meridiem = "CH"; }
+
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+    var timeString = hours + ":" + minutes + ":" + seconds + " " + meridiem;
+    return timeString;
+}
+
 // Hàm định dạng số thành định dạng tiền tệ
 function formatCurrency(value) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);

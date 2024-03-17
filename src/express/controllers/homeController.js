@@ -1,6 +1,7 @@
 const db = require('../../configs/db')
 const logger = require('../../configs/logger')
 const myUtils = require('../../configs/myUtils')
+const weather = require('../../configs/openweather');
 
 
 
@@ -60,6 +61,35 @@ module.exports = {
 
         } catch (error) {
             logger.error(error);
+        }
+    },
+
+    getWeather: (req, res) => {
+        try {
+            const { city, lat, lon } = req.query;
+
+            weather.setAPPID(process.env.WEATHER_API);
+            weather.setLang('vi');
+            weather.delCoordinate();
+
+            if (city) {
+                weather.setCity(city);
+            } else if (lat && lon) {
+                weather.setCoordinate(lat, lon);
+            } else {
+                weather.setCity("Nha Trang");
+            }
+
+            weather.getAllWeather(function (err, JSONObj) {
+                if (JSONObj) {
+                    res.json({ success: true, data: JSONObj, message: 'Lấy dữ liệu thời tiết thành công' })
+                } else {
+                    res.json({ success: false, message: 'Lấy dữ liệu thời tiết thất bại' })
+                }
+            })
+        } catch (e) {
+            logger.error(e)
+            res.json({ success: false, message: 'Có lỗi khi lấy dữ liệu thời tiết' })
         }
     },
 }

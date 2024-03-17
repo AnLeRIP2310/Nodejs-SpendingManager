@@ -6,9 +6,7 @@ body {
     position: relative;
     width: 100%;
     height: 500px;
-    background-image: url('http://localhost:3962/images/banner/banner3.png');
-    background-size: cover;
-    background-position: center;
+    background: url('../images/banner/banner3.png') no-repeat center/cover;
 }
 
 .auth-content {
