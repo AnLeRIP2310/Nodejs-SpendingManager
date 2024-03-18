@@ -11,5 +11,6 @@ router.post('/updateSpending', spendingCtrl.updateSpending)
 router.post('/deleteSpending', spendingCtrl.deleteSpending)
 router.get('/calculateTotalPrice', spendingCtrl.calculateTotalPrice)
 router.get('/calculateItemPrice', spendingCtrl.calculateItemPrice)
+router.get('/getSpendViews', spendingCtrl.getSpendViews)
 
 module.exports = router

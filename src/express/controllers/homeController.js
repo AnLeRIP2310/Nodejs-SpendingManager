@@ -7,18 +7,16 @@ const weather = require('../../configs/openweather');
 
 module.exports = {
     getData: async (req, res) => {
-        const { spendList } = req.query;
-
         try {
             // Lấy tổng tiền ngày hôm nay
-            var sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND SpendListId = ? AND Status = 1';
-            var params = [`%${myUtils.formatDateForInput(myUtils.formatDate(new Date()))}%`, spendList];
+            var sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND Status = 1';
+            var params = [`%${myUtils.formatDateForInput(myUtils.formatDate(new Date()))}%`];
             const todayResult = await db.query(sql, params);
 
             // Lấy tổng tiền ngày trước đó
             var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-            sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND SpendListId = ? AND Status = 1';
-            params = [`%${myUtils.formatDateForInput(myUtils.formatDate(yesterday))}%`, spendList];
+            sql = 'SELECT sum(price) as Total FROM SpendingItem WHERE AtUpdate Like ? AND Status = 1';
+            params = [`%${myUtils.formatDateForInput(myUtils.formatDate(yesterday))}%`];
             const yesterdayResult = await db.query(sql, params);
 
             // Lấy tổng tiền tuần này
@@ -31,23 +29,25 @@ module.exports = {
             let formattedStartOfLastWeek = myUtils.formatDateForInput(myUtils.formatDate(startOfLastWeek));
 
             // Lấy tổng tiền tuần hiện tại
-            sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND SpendListId = ? AND Status = 1';
-            params = [formattedStartOfThisWeek, spendList];
-            const thisWeekResult = await db.query(sql, params);
+            sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND Status = 1';
+            const thisWeekResult = await db.query(sql, [formattedStartOfThisWeek]);
 
             // Lấy tổng tiền tuần trước đó
-            sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND AtUpdate < ? AND SpendListId = ? AND Status = 1';
-            params = [formattedStartOfLastWeek, formattedStartOfThisWeek, spendList];
+            sql = 'SELECT SUM(price) AS Total FROM SpendingItem WHERE AtUpdate >= ? AND AtUpdate < ? AND Status = 1';
+            params = [formattedStartOfLastWeek, formattedStartOfThisWeek];
             const lastWeekResult = await db.query(sql, params);
 
             // Lấy tổng tiền mỗi ngày
-            sql = 'SELECT DATE(AtCreate) AS Date, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? AND Status = 1 GROUP BY DATE(AtCreate) ORDER BY Date DESC';
-            params = [spendList];
-            const totalPerDay = await db.query(sql, params);
+            sql = 'SELECT DATE(AtCreate) AS Date, SUM(Price) AS Total FROM SpendingItem WHERE Status = 1 GROUP BY DATE(AtCreate) ORDER BY Date DESC';
+            const totalPerDay = await db.query(sql);
 
             // Lấy tổng tiền mỗi khoản chi
-            sql = 'SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? AND Status = 1 GROUP BY NameItem ORDER BY TotalPrice DESC';
-            const totalPerSpendItem = await db.query(sql, params);
+            sql = 'SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE Status = 1 GROUP BY NameItem ORDER BY TotalPrice DESC';
+            const totalPerSpendItem = await db.query(sql);
+
+            // Lấy tổng tiền mỗi tuần
+            sql = `select strftime(?, atcreate) AS week, SUM(price) AS totalprice FROM spendingitem WHERE status = 1 GROUP BY week ORDER BY week desc`;
+            const totalPerWeek = await db.query(sql, ['%Y-%W']);
 
             res.json({
                 success: true,
@@ -56,9 +56,9 @@ module.exports = {
                 thisWeek: thisWeekResult[0].total, // Tổng tiền tuần hiện tại
                 lastWeek: lastWeekResult[0].total, // Tổng tiền tuần trước
                 totalPerDay: totalPerDay, // Tổng tiền mỗi ngày
+                totalPerWeek: totalPerWeek, // Tổng tiền mỗi tuần
                 totalPerSpendItem: totalPerSpendItem, // Tổng tiền mỗi khoán chi
-            })
-
+            });
         } catch (error) {
             logger.error(error);
         }

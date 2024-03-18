@@ -304,6 +304,38 @@ function spendingSuggest() {
 
 //#endregion
 
+function spendViews(element) {
+    var id = $(element).closest('tr.pointer').find('th').text()
+
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/spending/getSpendViews',
+        data: { id },
+        success: function (res) {
+            if (res.success) {
+                const content = $('#modalSpendViews');
+                content.modal('show') // Mở modal
+
+                // Gán giá trị
+                content.find('.SpendViews_list-title').text(res.data.namelist);
+                content.find('.SpendViews_id-value').text(res.data.id);
+                content.find('.SpendViews_name-value').text(res.data.nameitem);
+                content.find('.SpendViews_price-value').text(formatCurrency(res.data.price));
+                content.find('.SpendViews_date-value').text(formatDateTime(res.data.atcreate));
+                content.find('.SpendViews_update-value').text(formatDateTime(res.data.atupdate));
+                content.find('.SpendViews_info-value').text(res.data.details);
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+}
+
+
+
+
+
 // Hàm kiểm tra xem có chứa phép toán không
 function isOperation(input) {
     // Kiểm tra xem có chứa các toán tử (+, -, *, /) hay không

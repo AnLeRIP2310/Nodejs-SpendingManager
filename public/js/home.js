@@ -1,39 +1,77 @@
+// Hàm vẽ biểu đồ
 function drawChart(data) {
+    function formatMoney(value) {
+        if (value < 1000) {
+            return value + ' k';
+        } else if (value < 1000000) {
+            return (value / 1000) + ' k';
+        } else if (value < 1000000000) {
+            return (value / 1000000) + ' triệu';
+        } else {
+            return (value / 1000000000) + ' tỷ';
+        }
+    }
+
+    function formatWeek(value) {
+        var parts = value.split('-');
+        var weekNumber = parts[1];
+        var year = parts[0];
+        return weekNumber + '-' + year;
+    }
+
     var chartDom = document.getElementById('chart');
 
     // Kiểm tra xem phần tử 'chart' có tồn tại không
     if (chartDom !== null) {
         var myChart = echarts.init(chartDom);
 
-        var xAxisData = data.map(item => item.date);
-        var seriesData = data.map(item => item.total);
+        var xAxisData;
+        var seriesData;
+        var totalDataToShow = 15; // Số dữ liệu hiển thị
+
+        xAxisData = data.map(item => item.week);
+        seriesData = data.map(item => item.totalprice);
+
+        var dataLength = xAxisData.length;
+        var start = 0;
+        var end = Math.min(start + (totalDataToShow - 1) / (dataLength - 1), 1);
 
         var option = {
             xAxis: {
                 type: 'category',
                 data: xAxisData,
-                boundaryGap: false
+                axisLabel: { formatter: function (value) { return formatWeek(value); } }
             },
             yAxis: {
-                type: 'value'
+                type: 'value',
+                axisLabel: { formatter: function (value) { return formatMoney(value); } }
             },
-            dataZoom: [{
-                type: 'slider',
-                orient: 'horizontal',
-                start: 0,
-                end: 4
-            }],
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
                     type: 'shadow'
                 },
+                formatter: function (params) {
+                    var week = params[0].axisValue.split('-')[1]; // Lấy số tuần từ chuỗi week
+                    var year = params[0].axisValue.split('-')[0]; // Lấy năm từ chuỗi week
+                    var totalprice = params[0].value;
+                    return 'Tuần ' + week + ' Năm ' + year + '<br/><span class="tooltip-price"><strong>Tổng: ' + totalprice.toLocaleString() + ' đ</strong></span>';
+                }
             },
+            dataZoom: [{
+                type: 'slider',
+                start: start * 100,
+                end: end * 100,
+            }],
             series: [{
-                name: 'Tổng tiền',
+                type: 'line',
                 data: seriesData,
-                type: 'bar',
-                barWidth: '70%',
+                showSymbol: false,
+                lineStyle: {
+                    width: 2,
+                    shadowColor: 'rgba(0,0,0,0.5)',
+                    shadowBlur: 10,
+                },
             }]
         };
 
@@ -48,9 +86,6 @@ function getTotalSpending() {
     $.ajax({
         type: 'GET',
         url: urlapi + '/home/getData',
-        data: {
-            spendList: 1,
-        },
         success: function (res) {
             if (res.success) {
                 $('#total_today').text(formatCurrency(res.today)) // Tổng hôm nay
@@ -64,7 +99,7 @@ function getTotalSpending() {
                     total: item.total
                 }));
 
-                drawChart(formattedData);
+                drawChart(res.totalPerWeek);
             }
         },
         error: function (err) {
@@ -122,9 +157,6 @@ $('#tbl_weatherSearch').on('keyup', function (event) {
 
 // Nút lấy thời tiết bằng toạ độ hiện tại
 $('#btn_weatherMyAddress').click(function () {
-    console.log('đã gọi btn vị trí')
-
-    // Lấy vị trí hiện tại của người dùng
     navigator.geolocation.getCurrentPosition(
         function success(position) {
             let lat = position.coords.latitude;

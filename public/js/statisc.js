@@ -28,122 +28,156 @@ $('#change_display-pieStatisc').on('change', function () {
     }
 });
 
-
-var totalPerDay;
-var totalPerMonth;
-var totalPerYear;
-
-function calculateTotalMonthYear() {
-    // Tính toán totalPerMonth và totalPerYear từ totalPerDay
-    totalPerMonth = [];
-    totalPerYear = [];
-
-    // Tạo một đối tượng để lưu trữ tổng theo tháng và năm
-    var totalsByMonth = {};
-    var totalsByYear = {};
-
-    totalPerDay.forEach(item => {
-        // Tách ngày thành phần tháng và năm
-        var [year, month] = item.date.split('-');
-
-        // Tổng tiền theo tháng
-        var monthKey = year + '-' + month;
-        if (!totalsByMonth[monthKey]) {
-            totalsByMonth[monthKey] = {
-                month: month,
-                year: year,
-                total: 0
-            };
+// Hàm vẽ biểu đồ thống kê tổng tiền mỗi ngày/tuần/tháng/năm
+function drawChart_totalPerDate() {
+    function formatMoney(value) {
+        if (value < 1000) {
+            return value + ' k';
+        } else if (value < 1000000) {
+            return (value / 1000) + ' k';
+        } else if (value < 1000000000) {
+            return (value / 1000000) + ' triệu';
+        } else {
+            return (value / 1000000000) + ' tỷ';
         }
-        totalsByMonth[monthKey].total += item.total;
-
-        // Tổng tiền theo năm
-        if (!totalsByYear[year]) {
-            totalsByYear[year] = {
-                year: year,
-                total: 0
-            };
-        }
-        totalsByYear[year].total += item.total;
-    });
-
-    // Chuyển dữ liệu từ đối tượng sang mảng
-    totalPerMonth = Object.values(totalsByMonth);
-    totalPerYear = Object.values(totalsByYear);
-
-    // Gộp month và year thành một trường mới là monthYear trong totalPerMonth
-    totalPerMonth.forEach(item => {
-        item.monthYear = item.month + '-' + item.year;
-        delete item.month;
-        delete item.year;
-    });
-}
-
-function drawChart_totalspending() {
-    var chartDom = document.getElementById('chart-totalspending');
-
-    // Kiểm tra xem phần tử 'chart' có tồn tại không
-    if (chartDom !== null) {
-        var myChart = echarts.init(chartDom);
-
-        var xAxisData;
-        var seriesData;
-        var totalColumnsToShow = 13; // Số cột hiển thị
-
-        if ($('#statisc_type').val() == 'date') {
-            xAxisData = totalPerDay.map(item => item.date);
-            seriesData = totalPerDay.map(item => item.total);
-        } else if ($('#statisc_type').val() == 'month') {
-            xAxisData = totalPerMonth.map(item => item.monthYear);
-            seriesData = totalPerMonth.map(item => item.total);
-        } else if ($('#statisc_type').val() == 'year') {
-            xAxisData = totalPerYear.map(item => item.year);
-            seriesData = totalPerYear.map(item => item.total);
-        }
-
-        var dataLength = xAxisData.length;
-        var start = 0;
-        var end = Math.min(start + totalColumnsToShow / dataLength, 1);
-
-        var option = {
-            xAxis: {
-                type: 'category',
-                data: xAxisData,
-                boundaryGap: false
-            },
-            yAxis: {
-                type: 'value'
-            },
-            dataZoom: [{
-                type: 'slider',
-                orient: 'horizontal',
-                start: start * 100,
-                end: end * 100
-            }],
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                },
-                formatter: function (params) {
-                    return `${formatDate(params[0].axisValueLabel)} : ${params[0].value.toLocaleString()} ₫`;
-                },
-            },
-            series: [{
-                name: 'Tổng tiền',
-                data: seriesData,
-                type: 'bar',
-                barWidth: '70%',
-            }]
-        };
-
-        myChart.setOption(option);
     }
+
+    function formatDay(value) {
+        var parts = value.split('-');
+        var day = parts[2];
+        var month = parts[1];
+        var year = parts[0];
+        return `Ngày ${day} tháng ${month} năm ${year}`;
+    }
+
+    function formatWeek(value) {
+        var parts = value.split('-');
+        var week = parts[1];
+        var year = parts[0];
+        return `Tuần ${week} năm ${year}`;
+    }
+
+    function foramtMonth(value) {
+        var parts = value.split('-');
+        var month = parts[0];
+        var year = parts[1];
+        return `Tháng ${month} năm ${year}`;
+    }
+
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/statisc/getDataForChart1',
+        data: { spendListId: $('#statisc_spendList').val() },
+        success: function (res) {
+            if (res.success) {
+                var chartDom = document.getElementById('chart-totalspending');
+
+                // Kiểm tra xem phần tử 'chart' có tồn tại không
+                if (chartDom !== null) {
+                    var myChart = echarts.init(chartDom);
+
+                    var xAxisData;
+                    var seriesData;
+                    var totalColumnsToShow = 13; // Số cột hiển thị
+
+                    // Gán dữ liệu phù hợp dựa trên tuỳ chọn
+                    if ($('#statisc_type').val() == 'date') {
+                        xAxisData = res.totalPerDay.map(item => item.date);
+                        seriesData = res.totalPerDay.map(item => item.total);
+                    } else if ($('#statisc_type').val() == 'week') {
+                        xAxisData = res.totalPerWeek.map(item => item.week);
+                        seriesData = res.totalPerWeek.map(item => item.total);
+                    } else if ($('#statisc_type').val() == 'month') {
+                        xAxisData = res.totalPerMonth.map(item => item.month);
+                        seriesData = res.totalPerMonth.map(item => item.total);
+                    } else if ($('#statisc_type').val() == 'year') {
+                        xAxisData = res.totalPerYear.map(item => item.year);
+                        seriesData = res.totalPerYear.map(item => item.total);
+                    }
+
+                    var dataLength = xAxisData.length;
+                    var start = 0;
+                    var end = Math.min(start + totalColumnsToShow / dataLength, 1);
+
+                    var option = {
+                        xAxis: {
+                            type: 'category',
+                            data: xAxisData,
+                            boundaryGap: false,
+                            axisLabel: {
+                                formatter: function (value) {
+                                    var parts = value.split('-');
+
+                                    if ($('#statisc_type').val() == 'date') {
+                                        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                                    } else if ($('#statisc_type').val() == 'week') {
+                                        return `${parts[1]}/${parts[0]}`;
+                                    } else if ($('#statisc_type').val() == 'month') {
+                                        return `${parts[1]}/${parts[0]}`;
+                                    } else if ($('#statisc_type').val() == 'year') {
+                                        return value;
+                                    }
+                                }
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: { formatter: function (value) { return formatMoney(value); } }
+                        },
+                        dataZoom: [{
+                            type: 'slider',
+                            orient: 'horizontal',
+                            start: start * 100,
+                            end: end * 100
+                        }],
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            },
+                            formatter: function (params) {
+                                let date = params[0].axisValueLabel;
+                                let price = params[0].value.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+
+                                if ($('#statisc_type').val() == 'date') {
+                                    date = formatDay(params[0].axisValueLabel);
+                                } else if ($('#statisc_type').val() == 'week') {
+                                    date = formatWeek(params[0].axisValueLabel);
+                                } else if ($('#statisc_type').val() == 'month') {
+                                    date = foramtMonth(params[0].axisValueLabel);
+                                } else if ($('#statisc_type').val() == 'year') {
+                                    date = 'Năm ' + params[0].axisValueLabel;
+                                }
+
+                                return `${date}<br/><span class="tooltip-price"><strong>Tổng tiền: ${price}</strong></span>`;
+                            },
+                        },
+                        series: [{
+                            name: 'Tổng tiền',
+                            data: seriesData,
+                            type: 'bar',
+                            barWidth: '70%',
+                        }]
+                    };
+
+                    myChart.setOption(option);
+                }
+            }
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    })
 }
+// Gọi hàm lần đầu
+drawChart_totalPerDate();
 
+// Gọi hàm khi có sự thay đổi
+$('#statisc_type').on('change', function () {
+    drawChart_totalPerDate();
+})
 
-
-
+// Hàm lấy tổng các khoản chi và chi tiêu
 function getTotalSpending() {
     $.ajax({
         type: 'GET',
@@ -157,16 +191,6 @@ function getTotalSpending() {
                 $('#total_yesterday').text(formatCurrency(res.yesterday)) // Tổng hôm qua
                 $('#total_thisweek').text(formatCurrency(res.thisWeek)) // Tổng tuần này
                 $('#total_lastweek').text(formatCurrency(res.lastWeek)) // Tổng tuần trước
-
-                totalPerDay = res.totalPerDay;
-                drawChart_totalspending() // Gọi hàm để vẽ biểu đồ
-                calculateTotalMonthYear(); // Gọi hàm tính tháng/năm
-                totalPerDay = res.totalPerDay.map(item => ({
-                    date: formatDate(item.date),
-                    total: item.total
-                }));
-
-                // drawChart_totalperspenditem(res.totalPerSpendItem); // Gọi hàm vẽ biểu đồ
 
                 // Tổng tiền mỗi khoản chi
                 res.totalPerSpendItem.forEach((item) => {
@@ -199,13 +223,11 @@ function getTotalSpending() {
             console.log(err);
         }
     })
-} getTotalSpending();
+}
+// Gọi hàm lần đầu
+getTotalSpending();
 
-$('#statisc_type').on('change', function () {
-    drawChart_totalspending();
-})
-
-
+// Hàm vẽ biểu đồ tròn thống kê mỗi khoản chi
 function drawChart_totalperspenditem(data) {
     const spendItemsData = data.map(item => ({
         name: item.nameitem,
@@ -256,6 +278,7 @@ function drawChart_totalperspenditem(data) {
     chart.setOption(option);
 }
 
+// Hàm lấy dữ liệu từ db cho hàm drawChart_totalperspenditem
 function getDataForTotalPerSpenditem() {
     var value;
     var change_display = $('#change_display-pieStatisc').val();
@@ -283,8 +306,11 @@ function getDataForTotalPerSpenditem() {
             console.log(err);
         }
     })
-} getDataForTotalPerSpenditem();
+}
+// Gọi hàm lần đầu
+getDataForTotalPerSpenditem();
 
+// Gọi hàm khi có sự thay đổi
 $('#panel-input_date, #panel-input_month, #panel-input_year').on('change', function () {
     getDataForTotalPerSpenditem();
 })

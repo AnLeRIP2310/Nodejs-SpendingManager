@@ -53,8 +53,7 @@
                                     <button class="btn-sort" data-sort="1">Ngày</button>
                                 </th>
                                 <th scope="col">
-                                    <button class="btn-sort text-nowrap" data-sort="2">Loại Khoảng
-                                        Chi</button>
+                                    <button class="btn-sort text-nowrap" data-sort="2">Khoảng Chi</button>
                                 </th>
                                 <th scope="col">
                                     <button class="btn-sort" data-sort="3">Số Tiền</button>
@@ -63,6 +62,7 @@
                                     <button class="btn-sort" data-sort="4">Thông Tin
                                         Thêm</button>
                                 </th>
+                                <th class="border"></th>
                             </tr>
                         </thead>
                         <tbody id="tbody"></tbody>
@@ -70,11 +70,16 @@
                                 %#if spendItemByList%
                                 %#each spendItemByList%
                                     <tr class="pointer">
-                                        <th scope="row">%this.id%</th>
-                                        <td>%this.atupdate%</td>
-                                        <td>%this.nameitem%</td>
-                                        <td>%this.price%</td>
-                                        <td style="white-space: nowrap;" >%this.details%</td>
+                                        <th class="overflow-x-hidden" data-id="%this.id%" scope="row">%this.id%</th>
+                                        <td class="overflow-x-hidden">%this.atupdate%</td>
+                                        <td class="overflow-x-hidden">%this.nameitem%</td>
+                                        <td class="overflow-x-hidden">%this.price%</td>
+                                        <td class="overflow-x-hidden">%this.details%</td>
+                                        <td class="border-start">
+                                            <button class="btn-spendView rounded-5" onclick="spendViews(this)">
+                                                <i class="fa-sharp fa-regular fa-eye"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 %/each%
                                 %/if%
@@ -214,6 +219,56 @@
                         data-bs-dismiss="modal">Thoát</button>
                     <button id="btnConfirmDelete" type="button" class="btn btn-primary"
                         style="width: 100px;">Xoá</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal SpendViews -->
+<div class="modal modal-sm fade" id="modalSpendViews" tabindex="-1" aria-labelledby="modalSpendViews" aria-hidden="true"
+    data-bs-backdrop="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="">
+            <div class="modal-header">
+                <h5 class="modal-title SpendViews_list-title">Chi Tiêu Cá Nhân</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-2">
+                    <div class="col-auto">
+                        <strong class="text-nowrap">Id:</strong>
+                        <span class="SpendViews_id-value">1</span>
+                    </div>
+                    <div class="col">
+                        <strong class="text-nowrap">Trạng Thái:</strong>
+                        <i class="fa-sharp fa-regular fa-circle-check text-success"></i>
+                    </div>
+                </div>
+
+                <div class="d-flex mb-2">
+                    <strong class="text-nowrap">Tên khoản chi:</strong>
+                    <span class="SpendViews_name-value">Ăn Sáng</span>
+                </div>
+
+                <div class="d-flex mb-2">
+                    <strong class="text-nowrap">Số tiền:</strong>
+                    <span class="SpendViews_price-value">100.000.000 đ</span>
+                </div>
+
+                <div class="d-flex mb-2">
+                    <strong class="text-nowrap">Ngày Thêm:</strong>
+                    <span class="ps-2 SpendViews_date-value">01/01/2022</span>
+                </div>
+
+                <div class="d-flex mb-2">
+                    <strong class="text-nowrap">Ngày Cập Nhật</strong>
+                    <span class="ps-2 SpendViews_update-value">01/01/2022</span>
+                </div>
+
+                <div class="d-flex mb-2">
+                    <strong class="text-nowrap">Thông tin bổ sung: </strong>
+                    <span class="ps-2 SpendViews_info-value">Không có thông tin</span>
                 </div>
             </div>
         </div>

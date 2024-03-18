@@ -102,5 +102,6 @@ th {
 .tableScroll thead th {
     position: sticky;
     top: 0;
+    background-color: rgba(var(--bs-secondary-bg-rgb), var(--bs-bg-opacity));
     z-index: 1;
 }

@@ -297,6 +297,14 @@
     border: none;
 }
 
+.tooltip-price::before {
+    content: "\2022";
+    color: var(--bs-primary);
+    margin-right: 5px;
+    font-size: 2.5rem;
+    vertical-align: middle;
+}
+
 
 /* ---------SpendingPage---------- */
 
@@ -340,7 +348,22 @@
     --bs-btn-font-size: .75rem;
 }
 
+.btn-spendView {
+    font-size: 12px;
+    border: none;
+    padding: 2px;
+    background-color: transparent;
+    opacity: 0.6;
+    transition: all .5s ease;
+}
 
+.btn-spendView:hover {
+    opacity: 1;
+}
+
+#modalSpendViews.modal-sm {
+    --bs-modal-width: 350px;
+}
 
 /* ------ Noted ---------- */
 
@@ -395,8 +418,9 @@
     --bs-btn-padding-y: .25rem;
     --bs-btn-padding-x: .3rem;
     --bs-btn-font-size: .6rem;
-
 }
+
+
 
 @keyframes slide-right-show {
     0% {

@@ -218,4 +218,25 @@ module.exports = {
             logger.error(err);
         }
     },
+
+    getSpendViews: async (req, res) => {
+        try {
+            const { id } = req.query;
+
+            let sql = 'select * from spendingitem where id = ? and status = 1';
+            const result = await db.query(sql, [id])
+
+            sql = 'select namelist from spendinglist where id = ?';
+            const nameList = await db.query(sql, [result[0].spendlistid]);
+
+            if (result.length > 0) {
+                res.json({ success: true, data: { ...result[0], ...nameList[0] }, message: 'Lấy dữ liệu thành công' })
+            } else {
+                res.json({ success: false, message: 'Lấy dữ liệu thất bại' })
+            }
+        } catch (e) {
+            logger.error(e);
+            res.json({ success: false, message: 'Có lỗi khi lấy dữ liệu' });
+        }
+    }
 }
