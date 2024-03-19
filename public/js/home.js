@@ -93,12 +93,6 @@ function getTotalSpending() {
                 $('#total_thisweek').text(formatCurrency(res.thisWeek)) // Tổng tuần này
                 $('#total_lastweek').text(formatCurrency(res.lastWeek)) // Tổng tuần trước
 
-                // Tổng tiền mỗi ngày
-                const formattedData = res.totalPerDay.map(item => ({
-                    date: formatDate(item.date),
-                    total: item.total
-                }));
-
                 drawChart(res.totalPerWeek);
             }
         },

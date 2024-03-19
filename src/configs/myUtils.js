@@ -2,9 +2,6 @@ const crypto = require('crypto');
 
 
 
-
-
-
 const myUtils = {
     // Hàm định dạng lại thời gian theo dd/mm/yyyy
     formatDate(dateStr) {
@@ -23,13 +20,6 @@ const myUtils = {
             return `${year}-${day}-${month}`;
         }
         return dateStr; // Trả về nguyên bản nếu không thể chuyển đổi
-    },
-
-    // Lấy ngày đầu tiên của tuần
-    getStartOfWeek(date) {
-        let day = date.getDay();
-        let diff = date.getDate() - day + (day === 0 ? -6 : 1);
-        return new Date(date.setDate(diff));
     },
 
     // Hàm định dạng giá trị số thành giá trị tiền tệ
