@@ -15,6 +15,8 @@ const defaultConfigs = {
     App: {
         version: [''],
         darkMode: ['light', 'dark', 'auto'],
+        windowPositionX: ['0.65', '0.5', '0.35'], // 0.65: căn phải - 0.35: căn trái - 0.5: căn giữa
+        windowPositionY: ['1', '0.8', '1.2'], //0.8: căn trên - 1: căn giữa - 1.2: căn dưới
         defaultPage: ['home', 'spending', 'statisc', 'noted'],
         defaultAction: ['add', 'del', 'edit'],
         language: ['vi', 'en'],
@@ -306,7 +308,8 @@ if (!fs.existsSync(iniFilePath)) {
 }
 
 // Gọi hàm để kiểm tra tệp .ini
-validateConfigs(['fileGGDriveId', 'emailGGDrive', 'syncDate', 'version', 'dbPath']);
+const excep = ['fileGGDriveId', 'emailGGDrive', 'syncDate', 'version', 'dbPath']
+validateConfigs(excep);
 
 // Kiểm tra giá trị của biến dbPath tránh trường hợp giá trị bị rỗng
 if (getIniConfigs('dbPath') == '') { updateIniConfigs('Data', 'dbPath', 'default'); }

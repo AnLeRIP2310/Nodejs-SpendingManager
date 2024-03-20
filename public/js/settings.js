@@ -21,6 +21,8 @@ function loadSettings() {
                 startWithWindowSetting();
                 autoUpdateSetting();
                 downloadPromptSetting();
+                windowPositionXSetting();
+                windowPositionYSetting();
             } else {
                 showErrorToast('Tải cài đặt ứng dụng thất bại')
             }
@@ -75,7 +77,7 @@ function applyAutoTheme() {
 // xử lý cài đặt darkMode
 function darkModeSetting() {
     if (settingsObj.darkMode == 'auto') {
-        $('#st_darkMode').val('auto');
+        $('#st_darkMode').val(settingsObj.darkMode);
         applyAutoTheme();
     } else {
         $('#st_darkMode').val(settingsObj.darkMode);
@@ -88,6 +90,28 @@ $('#st_darkMode').on('change', function () {
     settingsObj.darkMode = this.value;
     editSettings('darkMode', this.value, 'App', darkModeSetting)
 });
+
+// Xử lý cài đặt windowPositionX
+function windowPositionXSetting() {
+    $('#st_windowPositionX').val(settingsObj.windowPositionX);
+}
+
+// Sự kiện chọn cài đặt windowPositionX
+$('#st_windowPositionX').on('change', function () {
+    settingsObj.windowPositionX = this.value;
+    editSettings('windowPositionX', this.value, 'App', windowPositionXSetting)
+})
+
+// Xử lý cài đặt windowPositionY
+function windowPositionYSetting() {
+    $('#st_windowPositionY').val(settingsObj.windowPositionY);
+}
+
+// Sự kiện chọn cài đặt windowPositionY
+$('#st_windowPositionY').on('change', function () {
+    settingsObj.windowPositionY = this.value;
+    editSettings('windowPositionY', this.value, 'App', windowPositionYSetting)
+})
 
 // xử lý cài đặt defaultPage
 function defaultPageSetting() {
@@ -103,17 +127,7 @@ $('#st_defaultPage').on('change', function () {
 
 // xử lý cài đặt defaultAction
 function defaultActionSetting() {
-    switch (settingsObj.defaultAction) {
-        case 'add':
-            $('#st_defaultAction').val('add');
-            break;
-        case 'edit':
-            $('#st_defaultAction').val('edit');
-            break;
-        case 'del':
-            $('#st_defaultAction').val('del');
-            break;
-    }
+    $('#st_defaultAction').val(settingsObj.defaultAction);
 }
 
 // Sự kiện chọn hành động mặt định
@@ -124,14 +138,7 @@ $('#st_defaultAction').on('change', function () {
 
 // xử lý cài đặt language
 function languageSetting() {
-    switch (settingsObj.language) {
-        case 'vi':
-            $('#st_language').val('vi');
-            break;
-        case 'en':
-            $('#st_language').val('en');
-            break;
-    }
+    $('#st_language').val(settingsObj.language);
 }
 
 // Sự kiện chọn ngôn ngữ mặt định
@@ -186,17 +193,7 @@ $('#st_tooltip').on('change', function () {
 
 // Xử lý cài đặt defaultClose
 function closeDefaultSetting() {
-    switch (settingsObj.closeDefault) {
-        case 'ask':
-            $('#st_closeDefault').val('ask');
-            break;
-        case 'quit':
-            $('#st_closeDefault').val('quit');
-            break;
-        case 'tray':
-            $('#st_closeDefault').val('tray');
-            break;
-    }
+    $('#st_closeDefault').val(settingsObj.closeDefault);
 }
 
 // Sự kiện chọn hành động khi thoát

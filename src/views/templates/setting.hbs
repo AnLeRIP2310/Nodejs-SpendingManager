@@ -16,6 +16,26 @@
             <option value="auto">Tự động</option>
         </select>
     </div>
+    <!-- Window Position X-->
+    <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between" data-bs-toggle="popover"
+        data-bs-trigger="hover" data-bs-content="Chọn vị trí cửa sổ sẽ hiển thị theo chiều ngang">
+        <strong class="text-nowrap" style="flex: 2;">Vị trí cửa sổ ngang:</strong>
+        <select id="st_windowPositionX" class="form-select form-select-sm pointer" style="flex: 1;">
+            <option value="0.35">Căn trái</option>
+            <option value="0.5">Căn giữa</option>
+            <option value="0.65">Căn phải</option>
+        </select>
+    </div>
+    <!-- Window Position Y-->
+    <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between" data-bs-toggle="popover"
+        data-bs-trigger="hover" data-bs-content="Chọn vị trí cửa sổ sẽ hiển thị theo chiều dọc">
+        <strong class="text-nowrap" style="flex: 2;">Vị trí cửa sổ dọc:</strong>
+        <select id="st_windowPositionY" class="form-select form-select-sm pointer" style="flex: 1;">
+            <option value="0.8">Căn Trên</option>
+            <option value="1">Căn giữa</option>
+            <option value="1.2">Căn Dưới</option>
+        </select>
+    </div>
     <!-- Default Page -->
     <div id="ctst_defaultPage" style="margin-bottom: 12px" class="d-flex align-items-center" data-bs-toggle="popover"
         data-bs-trigger="hover" data-bs-content="Chọn trang mặt định sẽ mở khi ứng dụng được khởi động">
@@ -99,7 +119,6 @@
             <label for="st_startWithWindow" class="form-check-label pointer text-nowrap">Đang Bật</label>
         </div>
     </div>
-
     <!-- AutoUpdate -->
     <div style="margin-bottom: 12px;" class="d-flex align-items-center justify-content-center" data-bs-trigger="hover"
         data-bs-toggle="popover"
@@ -110,7 +129,6 @@
             <label for="st_autoUpdate" class="form-check-label pointer text-nowrap">Đang Bật</label>
         </div>
     </div>
-
     <!-- Download Prompt -->
     <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center" data-bs-trigger="hover"
         data-bs-toggle="popover" data-bs-content="Bật cái này sẽ hiển thị thông báo trước khi tải xuống bản cập nhật">
@@ -120,7 +138,6 @@
             <label for="st_downloadPrompt" class="form-check-label pointer text-nowrap">Đang Bật</label>
         </div>
     </div>
-
     <!-- SyncData -->
     <div style="margin-bottom: 12px" class="d-flex flex-column align-items-center justify-content-center">
         <button id="btn-syncData-Login" class="btn btn-sm btn-outline-success" data-bs-trigger="hover"
@@ -177,7 +194,6 @@
 
         </div>
     </div>
-
     <!-- DbPath -->
     <div id="ctst_dbPath" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
         data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="Chọn đường dẫn đến thư mục lưu trữ dữ liệu">
@@ -189,7 +205,6 @@
         </div>
     </div>
     <hr>
-
     <!-- Import/Export -->
     <div style="margin-bottom: 12px" class="row">
         <div class="col-6" style="padding-right: 6px;">
@@ -210,7 +225,6 @@
         </div>
     </div>
     <hr>
-
     <!-- Reset Settings / Update Apps -->
     <div style="margin-bottom: 12px">
         <div class="d-flex align-items-center justify-content-between">
@@ -255,8 +269,6 @@
             </div>
         </div>
     </div>
-
-
     <!-- Version And Auth -->
     <div style="" class="d-flex align-items-center justify-content-between">
         <p class="m-0">Phiên bản: <span id="app_version">1.0.0</span></p>
@@ -265,9 +277,6 @@
     </div>
 </div>
 </div>
-
-
-
 
 
 
