@@ -1,10 +1,12 @@
 const appIniConfigs = require('../../configs/appIniConfigs');
 const fs = require('fs');
 const path = require('path');
+const WebSocket = require('ws');
 const db = require('../../configs/db');
 const logger = require('../../configs/logger');
 const ggDrive = require('../../configs/ggDrive');
 const myUtils = require('../../configs/myUtils');
+const _ = require('lodash');
 ggDrive.setAuthen();
 
 
@@ -94,10 +96,8 @@ module.exports = {
             // Kiểm tra xem fileId có tồn tại trong tệp cấu hình không
             var fileId = appIniConfigs.getIniConfigs('fileGGDriveId');
 
-            if (fileId != '') {
-                // Nếu fileId tồn tại trong tệp ini thì tiến hành lấy ra id đó để xoá tệp trên ggdrive
-                await ggDrive.deleteFile(fileId);
-            }
+            // Nếu fileId tồn tại trong tệp ini thì tiến hành lấy ra id đó để xoá tệp trên ggdrive
+            if (fileId != '') { await ggDrive.deleteFile(fileId); }
 
             // Lấy ra id người dùng
             const userId = await db.table.users.getId(token);
@@ -128,7 +128,7 @@ module.exports = {
             }
 
             // Lưu ngày sao lưu vào settings ini
-            appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDate(new Date()));
+            appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
 
             res.json({ success: true });
         } catch (e) {
@@ -147,26 +147,20 @@ module.exports = {
             if (fileId == '' || fileId == null || fileId == undefined) {
                 const getFileId = await ggDrive.getListFile()
 
-                // Nếu có tệp
-                if (getFileId.files) {
-                    // Kiểm tra xem có tệp tin nào không
-                    if (getFileId.files.length > 0) {
-                        // Lấy ra giá trị cuối cùng của mảng
-                        const lastFileId = getFileId.files.length - 1
-                        fileId = getFileId.files[lastFileId].id
+                // Kiểm tra xem có tệp tin nào không
+                if (getFileId.files && getFileId.files.length > 0) {
+                    // Lấy ra giá trị cuối cùng của mảng
+                    const lastFileId = getFileId.files.length - 1
+                    fileId = getFileId.files[lastFileId].id
 
-                        // Lưu fileId vào setting ini để sử dụng sau này
-                        appIniConfigs.updateIniConfigs('Data', 'fileGGDriveId', fileId);
-                        appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDate(new Date()));
-                    } else {
-                        // Trường hợp chưa có bất kì file nào thì trả về kết quả
-                        res.json({ success: false, message: 'Không tìm thấy tệp sao lưu' })
-                    }
+                    // Lưu fileId vào setting ini để sử dụng sau này
+                    appIniConfigs.updateIniConfigs('Data', 'fileGGDriveId', fileId);
+                    appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
+                } else {
+                    // Trường hợp chưa có bất kì file nào thì trả về kết quả
+                    res.json({ success: false, status: 404, message: 'Không tìm thấy tệp sao lưu' })
+                    return;
                 }
-            }
-
-            if (fileId == '') {
-                return;
             }
 
             // Sau khi đã có fileId, tiến hành tải về máy
@@ -175,74 +169,99 @@ module.exports = {
             // Sau khi đã tải về, đọc nội dung của tệp
             const spendData = JSON.parse(fs.readFileSync(downloadResult.pathSave, 'utf8'))
 
-            // Khởi tạo một biến để lưu các giá trị chưa có trong database
-            var dataNotExist = {
-                spendingList: [],
-                spendingItem: []
-            };
-
-            // Lấy dữ liệu spendingList từ database để tiến hành so sánh
-            for (const spendList of spendData.spendingList) {
-                var sql = 'select * from spendinglist where id = ? and namelist = ? and atcreate = ?';
-                var params = [spendList.id, spendList.namelist, spendList.atcreate];
-                const result = await db.query(sql, params);
-
-                // Nếu không tồn tại thì thêm vào biến dataNotExist
-                if (result.length == 0) {
-                    dataNotExist.spendingList.push(spendList);
-                }
+            if (spendData) {
+                res.json({ success: true, message: 'Lấy dữ liệu thành công', data: spendData });
+            } else {
+                res.json({ success: false, message: 'Lấy dữ liệu thất bại', });
             }
-
-            // Lấy dữ liệu spendingItem từ database để tiến hành so sánh
-            for (const spendItem of spendData.spendingItem) {
-                var sql = `select * from spendingitem where id = ? and spendlistid = ? and nameitem = ? 
-                    and price = ? and details = ? and atcreate = ?`;
-                var params = [spendItem.id, spendItem.spendlistid, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate];
-
-                const result = await db.query(sql, params);
-
-                // Nếu không tồn tại thì thêm vào biến dataNotExist
-                if (result.length == 0) {
-                    dataNotExist.spendingItem.push(spendItem);
-                }
-            }
-
-            // Sau khi chạy xong vòng lặp và lấy được các dữ liệu cần đồng bộ thì trả về client
-            res.json({
-                success: true,
-                message: 'Đã lấy ra danh sách cần đóng bộ',
-                data: dataNotExist
-            });
         } catch (e) {
             logger.error(e)
-        }
-    },
-
-    handleSyncSpendList: async (req, res) => {
-        const { token, namelist, atcreate, status, lastentry } = req.body;
-
-        try {
-            const userId = await db.table.users.getId(token);
-
-            var sql = 'insert into spendinglist (usersid, namelist, atcreate, status, lastentry) values (?, ?, ?, ?, ?)';
-            var params = [userId, namelist, atcreate, status, lastentry];
-            const result = await db.query(sql, params);
-            res.json({ success: true })
-        } catch (e) {
-            logger.error(e)
-        }
-    },
-
-    handleSyncSpendItem: async (req, res) => {
-        const { spendlistid, nameitem, price, details, atcreate, atupdate, status } = req.body;
-
-        try {
-            var sql = 'insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)';
-            var params = [spendlistid, nameitem, price, details, atcreate, atupdate, status];
-            const result = await db.query(sql, params);
-            res.json({ success: true })
-        } catch (e) {
-            logger.error(e)
+            res.json({ success: false, message: 'Có lỗi khi lấy dữ liệu', });
         }
     },
 }
+
+// Cấu hình websocket
+const wss = new WebSocket.Server({ port: 8080 });
+
+wss.on('connection', function connection(ws) {
+    // Hàm độ trễ
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    console.log('Đã kết nối đến client')
+    ws.on('close', function close() {
+        console.log('Đã ngắt kết nối đến client');
+    });
+
+    // Nhận sự kiện đồng bộ dữ lệu từ client
+    ws.on('message', async function (data) {
+        const dataObj = JSON.parse(data)
+
+        // Lấy tổng số tiến trình dữ liệu
+        const totalProcess = dataObj.spendingItem.length + dataObj.spendingList.length;
+        let currentProcess = 0;
+        let successProcess = 0;
+
+        // Kiểm tra danh sách
+        for (const spendingList of dataObj.spendingList) {
+            let sql = 'select * from spendinglist where id =? and namelist = ?';
+            const checkList = await db.query(sql, [spendingList.id, spendingList.namelist]);
+
+            // Nếu danh sách tồn tại
+            if (checkList.length > 0) {
+                // Lọc ra các chi tiêu của danh sách này từ dữ liệu sao lưu
+                const filSpendItem = _.filter(dataObj.spendingItem, { 'spendlistid': spendingList.id });
+
+                // Kiểm tra chi tiêu
+                for (const spendingItem of filSpendItem) {
+                    sql = 'select * from spendingitem where id =? and spendlistid = ? and nameitem = ?';
+                    let params = [spendingItem.id, spendingItem.spendlistid, spendingItem.nameitem];
+                    const checkItem = await db.query(sql, params)
+
+                    // Nếu chi tiêu chưa tồn tại thì thêm mới
+                    if (checkItem.length == 0) {
+                        sql = `insert into spendingitem (id, spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?, ?)`;
+                        params = [spendingItem.id, spendingItem.spendlistid, spendingItem.nameitem, spendingItem.price, spendingItem.details, spendingItem.atcreate, spendingItem.atupdate, spendingItem.status];
+                        await db.query(sql, params);
+
+                        // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
+                        currentProcess++
+                        successProcess = Math.floor((currentProcess / totalProcess) * 100);
+                        ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
+                        await delay(100);
+                    }
+                }
+            } else {
+                // Nếu danh sách chưa tồn tại, tạo mới
+                sql = 'insert into spendinglist (id, usersid, namelist, atcreate, atupdate, lastentry, status) values (?, ?, ?, ?, ?, ?, ?)';
+                let params = [spendingList.id, spendingList.usersid, spendingList.namelist, spendingList.atcreate, spendingList.atupdate, spendingList.lastentry, spendingList.status];
+                await db.query(sql, params);
+
+                // Lấy ra Id của danh sách vừa thêm
+                const spendListId = await db.lastInsertId();
+
+                // Sau khi tạo xong, lọc ra item của danh sách từ dữ liệu sao lưu
+                const filSpendItem = _.filter(dataObj.spendingItem, { 'spendlistid': spendingList.id });
+
+                // Thêm các item vào danh sách
+                for (const spendingItem of filSpendItem) {
+                    sql = `insert into spendingitem (id, spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?, ?)`;
+                    params = [spendingItem.id, spendListId, spendingItem.nameitem, spendingItem.price, spendingItem.details, spendingItem.atcreate, spendingItem.atupdate, spendingItem.status];
+                    await db.query(sql, params);
+
+                    // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
+                    currentProcess++
+                    successProcess = Math.floor((currentProcess / totalProcess) * 100);
+                    ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
+                    await delay(100);
+                }
+            }
+        }
+        // Lưu thời gian đồng bộ vào tệp setting ini
+        appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
+        ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess: 100 }));
+    });
+})
+

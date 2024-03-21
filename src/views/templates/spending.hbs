@@ -70,11 +70,11 @@
                                 %#if spendItemByList%
                                 %#each spendItemByList%
                                     <tr class="pointer">
-                                        <th class="overflow-x-hidden" data-id="%this.id%" scope="row">%this.id%</th>
-                                        <td class="overflow-x-hidden">%this.atupdate%</td>
-                                        <td class="overflow-x-hidden">%this.nameitem%</td>
-                                        <td class="overflow-x-hidden">%this.price%</td>
-                                        <td class="overflow-x-hidden">%this.details%</td>
+                                        <th data-id="%this.id%" scope="row">%this.id%</th>
+                                        <td>%this.atupdate%</td>
+                                        <td>%this.nameitem%</td>
+                                        <td>%this.price%</td>
+                                        <td>%this.details%</td>
                                         <td class="border-start">
                                             <button class="btn-spendView rounded-5" onclick="spendViews(this)">
                                                 <i class="fa-sharp fa-regular fa-eye"></i>
@@ -195,9 +195,10 @@
                 <input id="newSpendingList" type="text" class="form-control" placeholder="Tên Danh Sách Mới">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
-                <button id="btnSaveSpendingList" type="button" class="btn btn-primary"
-                    data-bs-dismiss="modal">Lưu</button>
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"
+                    style="width: 100px;">Thoát</button>
+                <button id="btnSaveSpendingList" type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal"
+                    style="width: 100px;">Lưu</button>
             </div>
         </div>
     </div>
@@ -215,9 +216,9 @@
                     <label for="reminderDelete" class="form-check-label pointer">Không hiển thị lại lời nhắc</label>
                 </div>
                 <div class="mt-3 d-flex justify-content-between">
-                    <button type="button" class="btn btn-secondary" style="width: 100px;"
+                    <button type="button" class="btn btn-sm btn-secondary" style="width: 100px;"
                         data-bs-dismiss="modal">Thoát</button>
-                    <button id="btnConfirmDelete" type="button" class="btn btn-primary"
+                    <button id="btnConfirmDelete" type="button" class="btn btn-sm btn-primary"
                         style="width: 100px;">Xoá</button>
                 </div>
             </div>

@@ -364,80 +364,30 @@ $('#btn-syncData-Logout').click(function () {
     })
 });
 
+const ws = new WebSocket('ws://localhost:8080');
+ws.onopen = function () {
+    console.log('Đã kết nối đến server');
+};
 
-// Hàm xử lý chức năng đồng bộ
-async function handleSyncData(dataObj) {
-    // Tổng số mục cần thực hiện
-    const totalProcess = dataObj.spendingItem.length + dataObj.spendingList.length;
-    let currentProcess = 0;
-
-    // Hiển thị thanh tiến trình
-    $('#syncData-Progress').removeClass('d-none');
-
-    function updateProgress() {
-        currentProcess++;
-        const successProcess = Math.floor((currentProcess / totalProcess) * 100);
-        $('#syncData-Progress .progress-bar').css('width', successProcess + '%');
-        $('#syncData-Progress .progress-bar').text(`${successProcess}%`);
-        $('#syncStatus').html(`Đang đồng bộ ${currentProcess}/${totalProcess} <i class="fa-solid fa-loader fa-spin"></i>`)
+ws.onmessage = function (event) {
+    console.log(JSON.parse(event.data));
+    const data = JSON.parse(event.data)
+    if ($('#syncData-Progress').hasClass('d-none')) {
+        $('#syncData-Progress').removeClass('d-none')
     }
 
-    async function handleSyncDataItem(apiEndpoint, data) {
-        try {
-            const res = await $.ajax({
-                type: 'POST',
-                url: urlapi + apiEndpoint,
-                data: JSON.stringify(data),
-                dataType: 'json',
-                contentType: 'application/json',
-            });
+    $('#syncData-Progress .progress-bar').css('width', data.successProcess + '%');
+    $('#syncData-Progress .progress-bar').text(data.successProcess + '%');
+    $('#syncStatus').html(`Đang đồng bộ ${data.currentProcess}/${data.totalProcess} <i class="fa-solid fa-loader fa-spin"></i>`)
 
-            // Tính % hoàn thành trên thanh tiến trình
-            updateProgress();
-
-            return res;
-        } catch (err) {
-            console.log(err);
-        }
+    if (data.successProcess == 100) {
+        // Nếu đồng bộ hoàn tất, hiển thị thông báo
+        showSuccessToast('Đồng bộ dữ liệu hoàn tất');
+        // Ẩn thanh tiến trình
+        $('#syncData-Progress').addClass('d-none');
+        $('#syncStatus').html('Đã đồng bộ <i class="fa-sharp fa-regular fa-circle-check"></i>');
+        $('#syncStatus').removeClass('text-warning');
     }
-
-    const delay = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
-    var delayTicks = 10;
-
-    // Xử lý dữ liệu của spendingList
-    for (const spendList of dataObj.spendingList) {
-        const data = {
-            token: JSON.parse(localStorage.getItem('AuthToken')).token,
-            namelist: spendList.namelist,
-            atcreate: spendList.atcreate,
-            status: spendList.status,
-            lastentry: spendList.lastentry
-        };
-        await handleSyncDataItem('/setting/handleSyncSpendList', data);
-        await delay(delayTicks); // Add a delay of 1000 milliseconds (1 second)
-    }
-
-    // Xử lý dữ liệu của spendingItem
-    for (const spendItem of dataObj.spendingItem) {
-        const data = {
-            spendlistid: spendItem.spendlistid,
-            nameitem: spendItem.nameitem,
-            price: spendItem.price,
-            details: spendItem.details,
-            atcreate: spendItem.atcreate,
-            atupdate: spendItem.atupdate,
-            status: spendItem.status
-        };
-        await handleSyncDataItem('/setting/handleSyncSpendItem', data);
-        await delay(delayTicks); // Add a delay of 1000 milliseconds (1 second)
-    }
-
-    // Nếu đồng bộ hoàn tất, hiển thị thông báo
-    showSuccessToast('Đồng bộ dữ liệu hoàn tất');
-    // Ẩn thanh tiến trình
-    $('#syncData-Progress').addClass('d-none');
-    $('#syncStatus').html('Đã đồng bộ <i class="fa-sharp fa-regular fa-circle-check"></i>');
-    $('#syncStatus').removeClass('text-warning');
 }
 
 
@@ -450,11 +400,11 @@ $('#btn-syncData').click(function () {
         type: 'GET',
         url: urlapi + '/setting/syncData',
         success: function (res) {
-            if (res.success == false && res.message == 'Không tìm thấy tệp sao lưu') {
+            if (res.success == false && res.status == 404) {
                 // Gọi hàm để sao lưu dữ liệu
                 $('#btn-backupData').click();
             } else if (res.success && res.data != null) {
-                handleSyncData(res.data)
+                ws.send(JSON.stringify(res.data));
             }
         },
         error: function (err) {
@@ -477,21 +427,17 @@ $('#btn-backupData').click(function () {
     $('#syncStatus').html('Đang sao lưu <i class="fa-solid fa-loader fa-spin"></i>');
     $('#syncStatus').addClass('text-warning');
 
-    const AuthToken = JSON.parse(localStorage.getItem('AuthToken'));
-
     $.ajax({
         type: 'GET',
         url: urlapi + '/setting/backupData',
         data: {
-            token: AuthToken.token
+            token: JSON.parse(localStorage.getItem('AuthToken')).token
         },
         success: function (res) {
             if (res.success) {
                 checkSyncStatus();
-
                 $('#syncStatus').removeClass('text-warning');
                 $('#syncStatus').html('Đã sao lưu <i class="fa-sharp fa-regular fa-circle-check"></i>');
-
             }
         },
         error: function (err) {
@@ -499,6 +445,16 @@ $('#btn-backupData').click(function () {
         }
     })
 });
+
+// Đặt một khoản trễ để sao lưu dữ liệu mỗi khi ứng dụng khởi động
+setTimeout(() => {
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/setting/checkSyncStatus',
+        success: function (res) { if (res.status) { $('#btn-backupData').click() } },
+        error: function (err) { console.log(err) }
+    })
+}, 15000);
 
 
 // Xử lý thông điệp nhận được từ GGDriveCallback
@@ -539,6 +495,8 @@ function checkSyncStatus() {
     })
 } checkSyncStatus();
 
+
+// -------------------------- Các đoạn code liên quan đến cập nhật ứng dụng --------------------------
 
 
 // nút kiểm tra và cập nhật ứng dụng

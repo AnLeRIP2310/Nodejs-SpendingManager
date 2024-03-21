@@ -395,11 +395,16 @@ $('#btnCreate').on('click', function () {
 
                 // Tạo HTML cho hàng mới
                 var newRow = `<tr class ="pointer">
-                                <th scope="row">${dataRes.id}</th>
+                                <th data-id="${dataRes.id}" scope="row">${dataRes.id}</th>
                                 <td>${dataRes.atupdate}</td>
                                 <td>${dataRes.nameitem}</td>
                                 <td>${formatCurrency(dataRes.price)}</td>
                                 <td>${dataRes.details}</td>
+                                <td class="border-start">
+                                <button class="btn-spendView rounded-5" onclick="spendViews(this)">
+                                    <i class="fa-sharp fa-regular fa-eye"></i>
+                                </button>
+                            </td>
                             </tr>`;
                 // Thêm hàng mới vào bảng
                 $('#tbdata tbody').append(newRow);

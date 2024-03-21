@@ -2,7 +2,7 @@
 function drawChart(data) {
     function formatMoney(value) {
         if (value < 1000) {
-            return value + ' k';
+            return value + ' ₫';
         } else if (value < 1000000) {
             return (value / 1000) + ' k';
         } else if (value < 1000000000) {

@@ -22,6 +22,17 @@ const myUtils = {
         return dateStr; // Trả về nguyên bản nếu không thể chuyển đổi
     },
 
+    // Hàm định dạng thời gian theo kiểu dd/mm/yyyy - hh:mm:ss
+    formatDateTime(value) {
+        const date = new Date(value);
+        const options = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+        const timeString = date.toLocaleTimeString('vi-VN', options);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year} - ${timeString}`;
+    },
+
     // Hàm định dạng giá trị số thành giá trị tiền tệ
     formatCurrency(value) {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
