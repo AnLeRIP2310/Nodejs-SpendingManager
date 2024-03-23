@@ -314,3 +314,10 @@ getDataForTotalPerSpenditem();
 $('#panel-input_date, #panel-input_month, #panel-input_year').on('change', function () {
     getDataForTotalPerSpenditem();
 })
+
+// Gọi hàm tính toán khi có sự thay đổi danh sách
+$('#statisc_spendList').on('change', function () {
+    getTotalSpending(); // Hàm tính tổng, danh sách và các thống kê cơ bản
+    drawChart_totalPerDate(); // Hàm vẽ biểu đồ cột tính tổng chi tiêu theo thời gian
+    getDataForTotalPerSpenditem(); // Hàm vẽ biểu đồ tròn tính tổng từng chi tiêu
+})
