@@ -8,6 +8,7 @@ router.get('/login', authCtrl.login);
 
 router.get('/checkToken', authCtrl.checkToken);
 router.get('/urlPage', authCtrl.urlPage);
+router.get('/CUToken', authCtrl.CUToken);
 
 router.get('/loginGoogle', passport.authenticate('google'));
 router.get('/loginGoogle/callback', passport.authenticate('google', { failureRedirect: '/' }), authCtrl.loginGoogle);

@@ -82,7 +82,7 @@ sidebarItems.forEach(item => {
     });
 });
 
-// Hàm kiểm tra trạng thái đăng nhập
+// Hàm xử lý khi đăng nhập hết hạn
 function handleLoginExpired() {
     localStorage.removeItem('AuthToken');
 
@@ -93,6 +93,8 @@ function handleLoginExpired() {
         window.location.href = 'http://127.0.0.1:5500/src/views/login.html';
     }
 }
+
+// Hàm kiểm tra trạng thái đăng nhập
 function checkIsLogin() {
     // Kiểm tra xem người dùng đã đăng nhập chưa
     if (localStorage.getItem('AuthToken') != null) {

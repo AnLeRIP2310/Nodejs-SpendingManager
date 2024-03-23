@@ -1,7 +1,31 @@
 const { ipcMain, app, nativeTheme } = require('electron')
 const windowManager = require('../windowManager');
 const appIniConfigs = require('../../configs/appIniConfigs');
+const logger = require('../../configs/logger');
+const axios = require('axios');
 
+
+
+let appQuit = false;
+app.on('before-quit', async (event) => {
+    try {
+        if (!appQuit) {
+            event.preventDefault();
+
+            const mainWindow = windowManager.getMainWindow();
+            mainWindow.isVisible() && mainWindow.hide();
+
+            const tokenResult = await axios.get(`http://${process.env.HOST}:${process.env.PORT}/auth/CUToken`);
+
+            if (tokenResult.data.success) {
+                const backupResult = await axios.get(`http://${process.env.HOST}:${process.env.PORT}/setting/backupData?token=${tokenResult.data.token}`);
+                backupResult.data.success && (appQuit = true, app.quit(), windowManager.setIsQuitting(true));
+            }
+        }
+    } catch (e) {
+        logger.error(e);
+    }
+});
 
 // Bắt sự kiện thoát ứng dụng
 ipcMain.on('quit-app', (event, data) => {

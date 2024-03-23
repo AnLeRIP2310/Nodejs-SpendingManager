@@ -182,12 +182,12 @@ module.exports = {
 }
 
 // Cấu hình websocket
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server({ port: 3963 });
 
 wss.on('connection', function connection(ws) {
     // Hàm độ trễ
-    function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+    function delay() {
+        return new Promise(resolve => setTimeout(resolve, 10));
     }
 
     console.log('Đã kết nối đến client')
@@ -199,66 +199,77 @@ wss.on('connection', function connection(ws) {
     ws.on('message', async function (data) {
         const dataObj = JSON.parse(data)
 
-        // Lấy tổng số tiến trình dữ liệu
-        const totalProcess = dataObj.spendingItem.length + dataObj.spendingList.length;
-        let currentProcess = 0;
-        let successProcess = 0;
+        // Khởi tạo một mảng để lưu các giá trị chưa có trong database
+        var dataNotExist = { spendingList: [], spendingItem: [] };
 
-        // Kiểm tra danh sách
+        // Kiểm tra spendingList
         for (const spendingList of dataObj.spendingList) {
             let sql = 'select * from spendinglist where id =? and namelist = ?';
             const checkList = await db.query(sql, [spendingList.id, spendingList.namelist]);
 
-            // Nếu danh sách tồn tại
-            if (checkList.length > 0) {
-                // Lọc ra các chi tiêu của danh sách này từ dữ liệu sao lưu
-                const filSpendItem = _.filter(dataObj.spendingItem, { 'spendlistid': spendingList.id });
+            // Thêm danh sách vào mảng nếu nó chưa tồn tại
+            if (checkList.length == 0) { dataNotExist.spendingList.push(spendingList); }
 
-                // Kiểm tra chi tiêu
-                for (const spendingItem of filSpendItem) {
-                    sql = 'select * from spendingitem where id =? and spendlistid = ? and nameitem = ?';
-                    let params = [spendingItem.id, spendingItem.spendlistid, spendingItem.nameitem];
-                    const checkItem = await db.query(sql, params)
+            // Kiểm tra spendingItem
+            for (const spendingItem of dataObj.spendingItem) {
+                sql = 'select * from spendingitem where id =? and spendlistid = ? and nameitem = ?';
+                const checkItem = await db.query(sql, [spendingItem.id, spendingList.id, spendingItem.nameitem]);
 
-                    // Nếu chi tiêu chưa tồn tại thì thêm mới
-                    if (checkItem.length == 0) {
-                        sql = `insert into spendingitem (id, spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?, ?)`;
-                        params = [spendingItem.id, spendingItem.spendlistid, spendingItem.nameitem, spendingItem.price, spendingItem.details, spendingItem.atcreate, spendingItem.atupdate, spendingItem.status];
-                        await db.query(sql, params);
+                // Nếu Item vào mảng nếu nó chưa tồn tại
+                if (checkItem.length == 0) { dataNotExist.spendingItem.push(spendingItem); }
+            }
+        }
 
-                        // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
-                        currentProcess++
-                        successProcess = Math.floor((currentProcess / totalProcess) * 100);
-                        ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
-                        await delay(100);
-                    }
-                }
-            } else {
-                // Nếu danh sách chưa tồn tại, tạo mới
-                sql = 'insert into spendinglist (id, usersid, namelist, atcreate, atupdate, lastentry, status) values (?, ?, ?, ?, ?, ?, ?)';
-                let params = [spendingList.id, spendingList.usersid, spendingList.namelist, spendingList.atcreate, spendingList.atupdate, spendingList.lastentry, spendingList.status];
+        // Lấy tổng số tiến trình dữ liệu
+        const totalProcess = dataNotExist.spendingItem.length + dataObj.spendingList.length;
+        let currentProcess = 0;
+        let successProcess = 0;
+
+        // Lấy ra người dùng hiện tại
+        const userId = await db.table.users.getId(dataObj.token)
+
+        // Sau khi đã kiểm tra xong, tiến hành lặp qua dữ liệu và thêm vào database
+        if (dataNotExist.spendingList.length > 0) {
+            // Thêm spendingList
+            for (const spendList of dataNotExist.spendingList) {
+                let sql = 'insert into spendinglist (usersid, namelist, atcreate, atupdate, lastentry, status) values (?, ?, ?, ?, ?, ?)';
+                let params = [userId, spendList.namelist, spendList.atcreate, spendList.atupdate, spendList.lastentry, spendList.status];
                 await db.query(sql, params);
 
                 // Lấy ra Id của danh sách vừa thêm
                 const spendListId = await db.lastInsertId();
 
-                // Sau khi tạo xong, lọc ra item của danh sách từ dữ liệu sao lưu
-                const filSpendItem = _.filter(dataObj.spendingItem, { 'spendlistid': spendingList.id });
+                // Lọc ra các item của danh sách
+                const filSpendItem = _.filter(dataNotExist.spendingItem, { 'spendlistid': spendList.id });
 
-                // Thêm các item vào danh sách
-                for (const spendingItem of filSpendItem) {
-                    sql = `insert into spendingitem (id, spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?, ?)`;
-                    params = [spendingItem.id, spendListId, spendingItem.nameitem, spendingItem.price, spendingItem.details, spendingItem.atcreate, spendingItem.atupdate, spendingItem.status];
+                // Thêm spendingItem
+                for (const spendItem of filSpendItem) {
+                    sql = `insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)`;
+                    params = [spendListId, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate, spendItem.atupdate, spendItem.status];
                     await db.query(sql, params);
 
                     // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
                     currentProcess++
                     successProcess = Math.floor((currentProcess / totalProcess) * 100);
                     ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
-                    await delay(100);
+                    await delay(); // Độ trễ trước khi thực hiện tiếp
                 }
             }
+        } else {
+            // Nếu không có spendingList, thêm các spendingItem
+            for (const spendItem of dataNotExist.spendingItem) {
+                sql = `insert into spendingitem (id, spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?, ?)`;
+                params = [spendItem.id, spendItem.spendlistid, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate, spendItem.atupdate, spendItem.status];
+                await db.query(sql, params);
+
+                // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
+                currentProcess++
+                successProcess = Math.floor((currentProcess / totalProcess) * 100);
+                ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
+                await delay(); // Độ trễ trước khi thực hiện tiếp
+            }
         }
+
         // Lưu thời gian đồng bộ vào tệp setting ini
         appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
         ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess: 100 }));

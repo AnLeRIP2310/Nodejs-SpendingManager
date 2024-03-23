@@ -18,6 +18,7 @@ ipc.config.silent = true;
 
 
 let urlpage = ''; // Biến global để lưu trữ urlpage
+let currentUserToken; // Biến để lưu trữ token người dùng
 
 
 var pathSettingFolder;
@@ -103,6 +104,8 @@ module.exports = {
             var params = [token];
             const checkToken = await db.query(sql, params);
 
+            currentUserToken = token;
+
             if (checkToken.length > 0) {
                 res.json({ success: true });
             } else {
@@ -110,6 +113,14 @@ module.exports = {
             }
         } catch (err) {
             logger.error(err);
+        }
+    },
+
+    CUToken: (req, res) => {
+        if (currentUserToken) {
+            res.json({ success: true, token: currentUserToken });
+        } else {
+            res.json({ success: false })
         }
     },
 

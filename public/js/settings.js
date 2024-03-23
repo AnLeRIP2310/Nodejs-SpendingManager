@@ -364,7 +364,7 @@ $('#btn-syncData-Logout').click(function () {
     })
 });
 
-const ws = new WebSocket('ws://localhost:8080');
+const ws = new WebSocket('ws://localhost:3963');
 ws.onopen = function () {
     console.log('Đã kết nối đến server');
 };
@@ -404,7 +404,13 @@ $('#btn-syncData').click(function () {
                 // Gọi hàm để sao lưu dữ liệu
                 $('#btn-backupData').click();
             } else if (res.success && res.data != null) {
-                ws.send(JSON.stringify(res.data));
+                console.log(res.data)
+                const dataObj = {
+                    spendingList: res.data.spendingList,
+                    spendingItem: res.data.spendingItem,
+                    token: JSON.parse(localStorage.getItem('AuthToken')).token,
+                }
+                ws.send(JSON.stringify(dataObj));
             }
         },
         error: function (err) {
@@ -445,17 +451,6 @@ $('#btn-backupData').click(function () {
         }
     })
 });
-
-// Đặt một khoản trễ để sao lưu dữ liệu mỗi khi ứng dụng khởi động
-setTimeout(() => {
-    $.ajax({
-        type: 'GET',
-        url: urlapi + '/setting/checkSyncStatus',
-        success: function (res) { if (res.status) { $('#btn-backupData').click() } },
-        error: function (err) { console.log(err) }
-    })
-}, 15000);
-
 
 // Xử lý thông điệp nhận được từ GGDriveCallback
 window.addEventListener('message', function (event) {
