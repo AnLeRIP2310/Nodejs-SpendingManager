@@ -27,62 +27,128 @@
     </div>
 
     <div class="row">
-        <!-- Charts -->
         <div class="col-8 border-end border-dark p-0">
+            <!-- Charts -->
             <div id="chart" style="width: 100%; height: 447.991px;"></div>
         </div>
 
-        <!-- Weather -->
         <div class="col-4" style="padding-top: 12px;padding-bottom: 12px">
-            <div class="weather rounded p-3 h-100">
-                <div class="mt-2 mb-2 position-relative">
-                    <input id="tbl_weatherSearch" type="text" class="form-control text-white  d-block"
-                        placeholder="Tìm kiếm..." style="box-shadow: 0 5px 4px rgba(0,0,0,0.2);">
+            <!-- Button Change -->
+            <button id="btn-flipCards" class="btn btn-sm btn-outline-secondary w-100"
+                style="margin-bottom: 12px;--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                <i class="fa-solid fa-arrow-left"></i>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
 
-                    <button id="btn_weatherMyAddress" class="btn btn-sm rounded-5">
-                        <i class="fa-solid fa-crosshairs-simple"></i>
-                    </button>
-                </div>
-
-
-                <div class="p-2 text-center text-white overflow-x-hidden">
-                    <strong class="text-center fs-4" style="text-shadow: 2px 2px rgba(0,0,0,0.5);">
-                        <span id="txt_weatherCity">Khanh Hoa</span>
-                        <span>,</span>
-                        <span id="txt_weatherCountry">VN</span>
-                    </strong>
-                    <p class="p-0">
-                        <span id="txt_weatherDate">17/03/2024</span>
-                        <span>,</span>
-                        <span id="txt_weatherTime">10:02:50 PM</span>
-                    </p>
-                </div>
-
-                <div class="temperature ms-4 me-4 rounded text-center text-white">
-                    <strong id="txt_weatherTemperature" class="text-center fs-1 pt-2 pb-2 d-block">
-                        23 <sup>o</sup>C
-                    </strong>
-                </div>
-
-                <div class="m-3">
-                    <strong id="txt_weatherClouds" class="text-center d-block fs-3 text-white font-weight-bold"
-                        style="text-shadow: 3px 3px rgba(0,0,0,0.5);">Clouds</strong>
-                    <span id="txt_weatherCloudsDesc" class="text-center d-block text-white"
-                        style="text-shadow: 3px 3px rgba(0,0,0,0.5);">Mây đen u ám</span>
-                </div>
-
-                <div class="row text-white" style="font-size: 15px;">
-                    <div class="col-4 d-flex flex-column justify-content-center align-items-center">
-                        <i class="fa-sharp fa-regular fa-eye"></i>
-                        <span id="txt_weatherVisibility" class="text-center text-nowrap mt-2">1000 (ms)</span>
+            <!-- Cards -->
+            <div class="cardContainer">
+                <div class="theCard">
+                    <!-- Crypto -->
+                    <div class="crypto rounded border border-dark overflow-y-scroll overflow-x-hidden">
+                        {{#if fakeData}}
+                        {{#each fakeData}}
+                        <div class="crypto-item row p-2 placeholder-glow">
+                            <div class="col-auto pe-0">
+                                <div class="placeholder rounded-circle" style="width: 35px; height: 35px;"></div>
+                            </div>
+                            <div class="col-4">
+                                <span class="placeholder h-25 col-9"></span>
+                                <span class="placeholder h-25 col-12"><span />
+                            </div>
+                            <div class="col ps-0">
+                                <span class="placeholder h-25 col-12" title="Giá cả"></span>
+                                <span class="placeholder h-25 col-5" title="Giá cả"></span>
+                                <span class="placeholder h-25 col-5" title="Giá cả"></span>
+                            </div>
+                        </div>
+                        {{/each}}
+                        {{/if}}
                     </div>
-                    <div class="col-4 d-flex flex-column justify-content-center align-items-center">
-                        <i class="fa-sharp fa-regular fa-cloud-sun"></i>
-                        <span id="txt_weatherHumidity" class="text-center text-nowrap mt-2">89 (%)</span>
-                    </div>
-                    <div class="col-4 d-flex flex-column justify-content-center align-items-center">
-                        <i class="fa-sharp fa-regular fa-wind"></i>
-                        <span id="txt_weatherWind" class="text-center text-nowrap mt-2">2.35 (m/s)</span>
+
+                    <script type="text/x-handlebars-template" id="template_crypto-item">
+                    %#if cryptoData%
+                        %#each cryptoData%
+                        <div class="crypto-item row p-2">
+                            <div class="col-auto pe-0">
+                                <a class="poiner d-block" href="https://coinmarketcap.com/vi/currencies/%this.slug%/"
+                                    target="_blank" title="Xem chi tiết">
+                                    <img src="https://s2.coinmarketcap.com/static/img/coins/64x64/%this.id%.png" alt="%this.name%">
+                                </a>
+                            </div>
+                            <div class="col-3 col-custom overflow-hidden">
+                                <strong title="%this.symbol%">%this.symbol%</strong>
+                                <p class="text-nowrap" title="%this.name%">%this.name%</p>
+                            </div>
+                            <div class="col">
+                                <p title="Giá cả" class="%addPercentageClass this.quote.VND.percent_change_1h%">%this.quote.VND.price%</p>
+                                <div class="d-flex justify-content-between">
+                                    <p title="Biến động 24 giờ" class="%addPercentageClass this.quote.VND.percent_change_24h%">
+                                        <span>%this.quote.VND.percent_change_24h%</span>
+                                    </p>
+                                    <p title="Khối lượng 24 giờ" class="%addPercentageClass this.quote.VND.volume_change_24h%">
+                                        <span>%this.quote.VND.volume_change_24h%</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        %/each%
+                    %else%
+                        <p class="text-center w-100 d-block">Không có thông tin</p>
+                    %/if%
+                    </script>
+
+                    <!-- Weather -->
+                    <div class="weather rounded p-3 h-100">
+                        <div class="mt-2 mb-2 position-relative">
+                            <input id="tbl_weatherSearch" type="text" class="form-control text-white  d-block"
+                                placeholder="Tìm kiếm..." style="box-shadow: 0 5px 4px rgba(0,0,0,0.2);">
+
+                            <button id="btn_weatherMyAddress" class="btn btn-sm rounded-5">
+                                <i class="fa-solid fa-crosshairs-simple"></i>
+                            </button>
+                        </div>
+
+
+                        <div class="p-2 text-center text-white overflow-x-hidden">
+                            <strong class="text-center fs-4" style="text-shadow: 2px 2px rgba(0,0,0,0.5);">
+                                <span id="txt_weatherCity">Khanh Hoa</span>
+                                <span>,</span>
+                                <span id="txt_weatherCountry">VN</span>
+                            </strong>
+                            <p class="p-0">
+                                <span id="txt_weatherDate">17/03/2024</span>
+                                <span>,</span>
+                                <span id="txt_weatherTime">10:02:50 PM</span>
+                            </p>
+                        </div>
+
+                        <div class="temperature ms-4 me-4 rounded text-center text-white">
+                            <strong id="txt_weatherTemperature" class="text-center fs-1 pt-2 pb-2 d-block">
+                                23 <sup>o</sup>C
+                            </strong>
+                        </div>
+
+                        <div class="m-3">
+                            <strong id="txt_weatherClouds" class="text-center d-block fs-3 text-white font-weight-bold"
+                                style="text-shadow: 3px 3px rgba(0,0,0,0.5);">Clouds</strong>
+                            <span id="txt_weatherCloudsDesc" class="text-center d-block text-white"
+                                style="text-shadow: 3px 3px rgba(0,0,0,0.5);">Mây đen u ám</span>
+                        </div>
+
+                        <div class="row text-white" style="font-size: 15px;">
+                            <div class="col-4 d-flex flex-column justify-content-center align-items-center">
+                                <i class="fa-sharp fa-regular fa-eye"></i>
+                                <span id="txt_weatherVisibility" class="text-center text-nowrap mt-2">1000 (ms)</span>
+                            </div>
+                            <div class="col-4 d-flex flex-column justify-content-center align-items-center">
+                                <i class="fa-sharp fa-regular fa-cloud-sun"></i>
+                                <span id="txt_weatherHumidity" class="text-center text-nowrap mt-2">89 (%)</span>
+                            </div>
+                            <div class="col-4 d-flex flex-column justify-content-center align-items-center">
+                                <i class="fa-sharp fa-regular fa-wind"></i>
+                                <span id="txt_weatherWind" class="text-center text-nowrap mt-2">2.35 (m/s)</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

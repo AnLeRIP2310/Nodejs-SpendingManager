@@ -1,7 +1,7 @@
 const db = require('../../configs/db')
 const logger = require('../../configs/logger')
-const myUtils = require('../../configs/myUtils')
 const weather = require('../../configs/openweather');
+const axios = require('axios');
 
 
 
@@ -43,6 +43,26 @@ module.exports = {
             });
         } catch (error) {
             logger.error(error);
+        }
+    },
+
+    getCryptoData: async (req, res) => {
+        try {
+            const symbols = ['BTC', 'ETH', 'BNB', 'USDT', 'SOL', 'XRP', 'DOGE', 'SHIB', 'TON', 'AVAX', 'TRX', 'LTC', 'NEAR', 'DYDX'].join(',');
+            const response = await axios.get('https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest', {
+                params: {
+                    symbol: symbols,
+                    convert: 'VND'
+                },
+                headers: {
+                    'X-CMC_PRO_API_KEY': process.env.COINMARKET_API
+                }
+            });
+
+            res.json({ success: true, data: response.data.data, message: 'Lấy dữ liệu thành công' })
+        } catch (e) {
+            logger.error(e)
+            res.json({ success: false, message: 'Có lỗi khi lấy dữ liệu' })
         }
     },
 

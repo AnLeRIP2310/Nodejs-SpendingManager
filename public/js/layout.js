@@ -150,28 +150,18 @@ $('#page-logout').click(() => {
 
 // Page Home
 $('#page-home').click(function () {
-    $.ajax({
-        type: 'GET',
-        url: urlapi + '/spending/getData',
-        data: {
-            token: JSON.parse(localStorage.getItem('AuthToken')).token
-        },
-        success: function (res) {
-            fetch('templates/home.hbs')
-                .then(response => response.text())
-                .then(template => {
-                    const compiledTemplate = Handlebars.compile(template);
-                    const html = compiledTemplate({
-                        spendingList: res.spendingList
-                    });
-                    $('#page-content').html(html);
-                })
-                .catch(error => console.error('Error:', error));
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    })
+    const fakeData = [{}, {}, {}, {}, {}, {}]
+
+    fetch('templates/home.hbs')
+        .then(response => response.text())
+        .then(template => {
+            const compiledTemplate = Handlebars.compile(template);
+            const html = compiledTemplate({
+                fakeData: fakeData
+            });
+            $('#page-content').html(html);
+        })
+        .catch(error => console.error('Error:', error));
 })
 
 // Page Spending

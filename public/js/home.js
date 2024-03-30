@@ -67,8 +67,9 @@ function drawChart(data) {
                 type: 'line',
                 data: seriesData,
                 showSymbol: false,
+                smooth: false,
                 lineStyle: {
-                    width: 2,
+                    width: 5,
                     shadowColor: 'rgba(0,0,0,0.5)',
                     shadowBlur: 10,
                 },
@@ -151,18 +152,76 @@ $('#tbl_weatherSearch').on('keyup', function (event) {
 
 // Nút lấy thời tiết bằng toạ độ hiện tại
 $('#btn_weatherMyAddress').click(function () {
-    navigator.geolocation.getCurrentPosition(
-        function success(position) {
-            let lat = position.coords.latitude;
-            let lon = position.coords.longitude;
-
+    if (ipcRenderer != null) {
+        $.ajax({
+            type: 'GET',
+            url: 'https://freegeoip.app/json/',
+            success: function (res) { getWeatherData('', res.latitude, res.longitude) },
+            error: function (err) { console.log(err) }
+        })
+    } else {
+        navigator.geolocation.getCurrentPosition(function success(position) {
             // Gọi hàm lấy ra thông tin thời tiết
-            getWeatherData('', lat, lon)
-        },
-        function error() {
-            console.log('Không thể truy xuất vị trí của bạn')
-        });
+            getWeatherData('', position.coords.latitude, position.coords.longitude)
+        }, function error(err) { console.log(err) });
+    }
 })
 
 // Luôn gọi mặt định khi load trang
-$('#btn_weatherMyAddress').click(); 
+$('#btn_weatherMyAddress').click();
+
+
+// btn change flip cards weather and crypto
+$('#btn-flipCards').click(function () {
+    $('.theCard').toggleClass('active');
+})
+
+
+// Ajax lấy dữ liệu cho crypto
+function getCryptoData() {
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/home/getCryptoData',
+        success: function (res) {
+            var formatData = []; // Format lại dữ liệu
+            for (const key in res.data) {
+                if (res.data.hasOwnProperty(key)) {
+                    // Thêm mỗi mục vào mảng mới
+                    formatData.push(res.data[key]);
+                }
+            }
+
+            formatData.forEach((item) => {
+                item.date_added = formatDateTime(item.date_added)
+                item.max_supply = formatCurrency(item.max_supply)
+                item.total_supply = formatCurrency(item.total_supply)
+                item.circulating_supply = formatCurrency(item.circulating_supply)
+                item.last_updated = formatDateTime(item.last_updated)
+                item.quote.VND.price = formatCurrency(item.quote.VND.price)
+                item.quote.VND.volume_24h = formatCurrency(item.quote.VND.volume_24h)
+                item.quote.VND.volume_change_24h = formatPercent(item.quote.VND.volume_change_24h)
+                item.quote.VND.percent_change_1h = formatPercent(item.quote.VND.percent_change_1h)
+                item.quote.VND.percent_change_24h = formatPercent(item.quote.VND.percent_change_24h)
+                item.quote.VND.percent_change_7d = formatPercent(item.quote.VND.percent_change_7d)
+                item.quote.VND.percent_change_30d = formatPercent(item.quote.VND.percent_change_30d)
+                item.quote.VND.percent_change_60d = formatPercent(item.quote.VND.percent_change_60d)
+                item.quote.VND.percent_change_90d = formatPercent(item.quote.VND.percent_change_90d)
+                item.quote.VND.market_cap = formatCurrency(item.quote.VND.market_cap)
+                item.quote.VND.fully_diluted_market_cap = formatCurrency(item.quote.VND.fully_diluted_market_cap)
+                item.quote.VND.last_updated = formatDateTime(item.quote.VND.last_updated)
+            });
+
+            formatData = _.sortBy(formatData, 'cmc_rank');
+
+            const source = convertPlaceHbs($('#template_crypto-item').html())
+            const template = Handlebars.compile(source)
+            const html = template({ cryptoData: formatData })
+            $('.crypto').html(html)
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    })
+}
+
+getCryptoData();

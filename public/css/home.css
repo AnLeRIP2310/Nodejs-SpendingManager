@@ -245,7 +245,55 @@
     opacity: 0 !important;
 } */
 
+.cardContainer {
+    position: relative;
+    width: 100%;
+    height: 385px;
+}
+
+.theCard {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: all 0.5s ease;
+}
+
+.theCard.active {
+    transform: rotateY(180deg);
+}
+
+.crypto {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+}
+
+.crypto::-webkit-scrollbar {
+    display: none;
+}
+
+.crypto-item .col-custom {
+    width: 28%;
+}
+
+.crypto-item p {
+    margin-bottom: 0;
+}
+
+.crypto-item img {
+    width: 35px;
+    height: 35px;
+    background: no-repeat center/cover;
+}
+
 .weather {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
     background: url('../images/weather/hot.png') no-repeat center/cover;
     transition: all 0.5s ease;
 }

@@ -1,6 +1,6 @@
 {
     "name": "spendingmanager",
-    "version": "2.1.1",
+    "version": "2.2.0",
     "description": "Application for taking notes and managing personal expenses",
     "main": "./src/electronApp.js",
     "scripts": {
