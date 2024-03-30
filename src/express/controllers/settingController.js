@@ -93,11 +93,13 @@ module.exports = {
         const { token } = req.query;
 
         try {
-            // Kiểm tra xem fileId có tồn tại trong tệp cấu hình không
-            var fileId = appIniConfigs.getIniConfigs('fileGGDriveId');
+            // Xoá các file sao lưu trên ggdrive
+            const listFiles = await ggDrive.getListFile()
 
-            // Nếu fileId tồn tại trong tệp ini thì tiến hành lấy ra id đó để xoá tệp trên ggdrive
-            if (fileId != '') { await ggDrive.deleteFile(fileId); }
+            for (const files of listFiles.files) {
+                console.log(files.id)
+                await ggDrive.deleteFile(files.id)
+            }
 
             // Lấy ra id người dùng
             const userId = await db.table.users.getId(token);
@@ -190,11 +192,6 @@ wss.on('connection', function connection(ws) {
         return new Promise(resolve => setTimeout(resolve, 10));
     }
 
-    console.log('Đã kết nối đến client')
-    ws.on('close', function close() {
-        console.log('Đã ngắt kết nối đến client');
-    });
-
     // Nhận sự kiện đồng bộ dữ lệu từ client
     ws.on('message', async function (data) {
         const dataObj = JSON.parse(data)
@@ -275,4 +272,3 @@ wss.on('connection', function connection(ws) {
         ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess: 100 }));
     });
 })
-

@@ -365,9 +365,6 @@ $('#btn-syncData-Logout').click(function () {
 });
 
 const ws = new WebSocket('ws://localhost:3963');
-ws.onopen = function () {
-    console.log('Đã kết nối đến server');
-};
 
 ws.onmessage = function (event) {
     console.log(JSON.parse(event.data));
