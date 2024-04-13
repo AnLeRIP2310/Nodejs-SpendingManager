@@ -224,7 +224,7 @@ function calculateTotalPrice() {
         type: "GET",
         url: urlapi + "/spending/calculateTotalPrice",
         success: function (res) {
-            $('#spendListTotal').text('Tổng Danh Sách: ' + formatCurrency(res.data));
+            $('#spendListTotal').text(formatCurrency(res.data));
         }
     })
 }
@@ -237,8 +237,8 @@ function calculateItemPrice(SpendName) {
             SpendName: SpendName
         },
         success: function (res) {
-            $('#spendItemCount').text("SL: " + res.count);
-            $('#spendItemTotal').text("Tổng Mục: " + formatCurrency(res.price));
+            $('#spendItemCount').text(res.count);
+            $('#spendItemTotal').text(formatCurrency(res.price));
         }
     })
 }

@@ -40,12 +40,12 @@
                                 <i class="fa-solid fa-angle-left"></i>
                             </button>
                             <div class="noted-content_action" data-id="{{this.id}}">
-                                <button class="btn-notedEdit btn btn-primary text-nowrap">
+                                <button name="edit" class="btn-notedEdit btn btn-primary text-nowrap">
                                     Chỉnh sửa
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
 
-                                <button class="btn-notedDelete btn btn-danger text-nowrap">
+                                <button name="delete" class="btn-notedDelete btn btn-danger text-nowrap">
                                     Xoá bỏ
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -55,7 +55,7 @@
                 </a>
                 {{/each}}
                 {{else}}
-                <p class="p-0">Chưa có danh sách nào được tạo! <br>Hãy tạo một cái để tiếp tục.</p>
+                <p name="notify" class="p-0">Chưa có danh sách nào được tạo! <br>Hãy tạo một cái để tiếp tục.</p>
                 {{/if}}
             </div>
             <script type="text/x-handlebars-template" id="template-list-noted">
@@ -89,7 +89,7 @@
                 </a>
                 %/each%
                 %else%
-                <p class="p-0">Chưa có danh sách nào được tạo! <br>Hãy tạo một cái để tiếp tục.</p>
+                <p class="p-0">Chưa có danh sách nào được tạo, Hãy tạo một cái để tiếp tục.</p>
                 %/if%
             </script>
         </div>

@@ -1,10 +1,10 @@
 var settingsObj;
 // Tải cấu hình ứng dụng và gán vào biến
-function loadSettings() {
+ function loadSettings() {
     $.ajax({
         type: 'GET',
         url: urlapi + '/setting/getData',
-        success: function (res) {
+        success: async function (res) {
             if (res != null) {
                 settingsObj = res.iniObject.App;
                 $('#st_dbPath').val(res.dbPath); // gán đường dẫn đến db
@@ -13,9 +13,8 @@ function loadSettings() {
                 darkModeSetting();
                 defaultPageSetting();
                 defaultActionSetting();
-                languageSetting();
+                await languageSetting();
                 reminderDelete();
-                tooltipSetting();
                 closeDefaultSetting();
                 allowNotifySetting();
                 startWithWindowSetting();
@@ -137,7 +136,8 @@ $('#st_defaultAction').on('change', function () {
 });
 
 // xử lý cài đặt language
-function languageSetting() {
+async function languageSetting() {
+   await applyLanguage(settingsObj.language);
     $('#st_language').val(settingsObj.language);
 }
 
@@ -151,10 +151,10 @@ $('#st_language').on('change', function () {
 function reminderDelete() {
     if (settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
         $('#st_reminder').prop('checked', true);
-        $('label[for="st_reminder"]').text('Đang bật')
+        $('label[for="st_reminder"]').text(langObj.settingPage.checked.on)
     } else {
         $('#st_reminder').prop('checked', false);
-        $('label[for="st_reminder"]').text('Đã tắt')
+        $('label[for="st_reminder"]').text(langObj.settingPage.checked.off)
     }
 }
 
@@ -169,14 +169,14 @@ function tooltipSetting() {
     var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
     if (settingsObj.tooltip == true || settingsObj.tooltip == 'true') {
         $('#st_tooltip').prop('checked', true);
-        $('label[for="st_tooltip"]').text('Đang bật')
-        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        $('label[for="st_tooltip"]').text(langObj.settingPage.checked.on) // text đang bật
+        popoverTriggerList.map(function (popoverTriggerEl) {
             return new bootstrap.Popover(popoverTriggerEl);
         });
     } else {
         $('#st_tooltip').prop('checked', false);
-        $('label[for="st_tooltip"]').text('Đã tắt')
-        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        $('label[for="st_tooltip"]').text(langObj.settingPage.checked.off)
+        popoverTriggerList.map(function (popoverTriggerEl) {
             var popover = bootstrap.Popover.getInstance(popoverTriggerEl);
             if (popover) {
                 popover.dispose(); // Loại bỏ các popovers đã khởi tạo
@@ -206,10 +206,10 @@ $('#st_closeDefault').on('change', function () {
 function allowNotifySetting() {
     if (settingsObj.notifySpend == true || settingsObj.notifySpend == 'true') {
         $('#st_notifySpend').prop('checked', true);
-        $('label[for="st_notifySpend"]').text('Đang bật')
+        $('label[for="st_notifySpend"]').text(langObj.settingPage.checked.on)
     } else {
         $('#st_notifySpend').prop('checked', false);
-        $('label[for="st_notifySpend"]').text('Đã tắt')
+        $('label[for="st_notifySpend"]').text(langObj.settingPage.checked.off)
     }
 }
 
@@ -223,10 +223,10 @@ $('#st_notifySpend').on('change', function () {
 function startWithWindowSetting() {
     if (settingsObj.startWithWindow == true || settingsObj.startWithWindow == 'true') {
         $('#st_startWithWindow').prop('checked', true);
-        $('label[for="st_startWithWindow"]').text('Đang bật')
+        $('label[for="st_startWithWindow"]').text(langObj.settingPage.checked.on)
     } else {
         $('#st_startWithWindow').prop('checked', false);
-        $('label[for="st_startWithWindow"]').text('Đã tắt')
+        $('label[for="st_startWithWindow"]').text(langObj.settingPage.checked.off)
     }
 }
 
@@ -243,10 +243,10 @@ $('#st_startWithWindow').on('change', function () {
 function autoUpdateSetting() {
     if (settingsObj.autoUpdate == true || settingsObj.autoUpdate == 'true') {
         $('#st_autoUpdate').prop('checked', true);
-        $('label[for="st_autoUpdate"]').text('Đang bật')
+        $('label[for="st_autoUpdate"]').text(langObj.settingPage.checked.on)
     } else {
         $('#st_autoUpdate').prop('checked', false);
-        $('label[for="st_autoUpdate"]').text('Đã tắt')
+        $('label[for="st_autoUpdate"]').text(langObj.settingPage.checked.off)
     }
 }
 
@@ -260,10 +260,10 @@ $('#st_autoUpdate').on('change', function () {
 function downloadPromptSetting() {
     if (settingsObj.downloadPrompt == true || settingsObj.downloadPrompt == 'true') {
         $('#st_downloadPrompt').prop('checked', true);
-        $('label[for="st_downloadPrompt"]').text('Đang bật')
+        $('label[for="st_downloadPrompt"]').text(langObj.settingPage.checked.on)
     } else {
         $('#st_downloadPrompt').prop('checked', false);
-        $('label[for="st_downloadPrompt"]').text('Đã tắt')
+        $('label[for="st_downloadPrompt"]').text(langObj.settingPage.checked.off)
     }
 }
 
@@ -375,14 +375,14 @@ ws.onmessage = function (event) {
 
     $('#syncData-Progress .progress-bar').css('width', data.successProcess + '%');
     $('#syncData-Progress .progress-bar').text(data.successProcess + '%');
-    $('#syncStatus').html(`Đang đồng bộ ${data.currentProcess}/${data.totalProcess} <i class="fa-solid fa-loader fa-spin"></i>`)
+    $('#syncStatus').html(`${langObj.settingPage.formSyncData.status.desc4} ${data.currentProcess}/${data.totalProcess} <i class="fa-solid fa-loader fa-spin"></i>`)
 
     if (data.successProcess == 100) {
         // Nếu đồng bộ hoàn tất, hiển thị thông báo
         showSuccessToast('Đồng bộ dữ liệu hoàn tất');
         // Ẩn thanh tiến trình
         $('#syncData-Progress').addClass('d-none');
-        $('#syncStatus').html('Đã đồng bộ <i class="fa-sharp fa-regular fa-circle-check"></i>');
+        $('#syncStatus').html(`${langObj.settingPage.formSyncData.status.desc3} <i class="fa-sharp fa-regular fa-circle-check"></i>`);
         $('#syncStatus').removeClass('text-warning');
     }
 }
@@ -390,7 +390,7 @@ ws.onmessage = function (event) {
 
 // btn đồng bộ dữ liệu
 $('#btn-syncData').click(function () {
-    $('#syncStatus').html('Đang đồng bộ <i class="fa-solid fa-loader fa-spin"></i>');
+    $('#syncStatus').html(`${langObj.settingPage.formSyncData.status.desc4} <i class="fa-solid fa-loader fa-spin"></i>`);
     $('#syncStatus').addClass('text-warning');
 
     $.ajax({
@@ -427,7 +427,7 @@ $('#btn-backupData').click(function () {
         $('#btn-syncData-Login').addClass('d-none');
     }
 
-    $('#syncStatus').html('Đang sao lưu <i class="fa-solid fa-loader fa-spin"></i>');
+    $('#syncStatus').html(`${langObj.settingPage.formSyncData.status.desc2} <i class="fa-solid fa-loader fa-spin"></i>`);
     $('#syncStatus').addClass('text-warning');
 
     $.ajax({
@@ -440,7 +440,7 @@ $('#btn-backupData').click(function () {
             if (res.success) {
                 checkSyncStatus();
                 $('#syncStatus').removeClass('text-warning');
-                $('#syncStatus').html('Đã sao lưu <i class="fa-sharp fa-regular fa-circle-check"></i>');
+                $('#syncStatus').html(`${langObj.settingPage.formSyncData.status.desc1} <i class="fa-sharp fa-regular fa-circle-check"></i>`);
             }
         },
         error: function (err) {
@@ -534,19 +534,19 @@ if (ipcRenderer != null) {
         $('#updateApp-releaseNote').html(releaseNote)
 
         updateStatus.css('color', 'var(--bs-info)');
-        updateStatus.html('Có bản cập nhật mới <i class="fa-solid fa-sparkles fa-fade"></i>');
+        updateStatus.html(`${langObj.settingPage.formUpdate.status.desc2} <i class="fa-solid fa-sparkles fa-fade"></i>`);
     });
 
     // Nhận event không có bản cập nhật
     ipcRenderer.on('update-not-available', () => {
         updateStatus.css('color', 'var(--bs-success)');
-        updateStatus.html('Không cần cập nhật <i class="fa-solid fa-circle-check"></i>');
+        updateStatus.html(`${langObj.settingPage.formUpdate.status.desc3} <i class="fa-solid fa-circle-check"></i>`);
     })
 
     // Nhận event phát sinh lỗi
     ipcRenderer.on('update-error', (event, err) => {
         updateStatus.css('color', 'var(--bs-danger)');
-        updateStatus.html('Lỗi khi cập nhật <i class="fa-solid fa-circle-exclamation"></i>');
+        updateStatus.html(`${langObj.settingPage.formUpdate.status.desc4} <i class="fa-solid fa-circle-exclamation"></i>`);
         console.error(err);
     });
 
@@ -554,14 +554,14 @@ if (ipcRenderer != null) {
     ipcRenderer.on('update-downloaded', () => {
         // Gán text vào status
         updateStatus.css('color', 'var(--bs-success)');
-        updateStatus.html('Tải về hoàn tất <i class="fa-solid fa-circle-check"></i>');
+        updateStatus.html(`${langObj.settingPage.formUpdate.status.desc5} <i class="fa-solid fa-circle-check"></i>`);
     })
 
     // Nhận event tiếng trình tải về
     ipcRenderer.on('download-progress', (event, progressObj) => {
         // Gán text vào status
         updateStatus.css('color', 'var(--bs-info)');
-        updateStatus.html('Đang tải về bản cập nhật <i class="fa-solid fa-file-arrow-down fa-fade"></i>');
+        updateStatus.html(`${langObj.settingPage.formUpdate.status.desc6} <i class="fa-solid fa-file-arrow-down fa-fade"></i>`);
 
         // Gán tiến trình vào thanh tiến trình
         $('#updateApp-Progress').removeClass('d-none');

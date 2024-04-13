@@ -19,14 +19,14 @@
                 </div>
 
                 <div class="col-7">
-                    <div class="input-group">
+                    <div class="input-group spend-search">
+                        <!-- Search -->
                         <button id="btn-openDateSearch" class="btn btn-secondary">
                             <i class="fa-solid fa-calendar"></i>
-
                             <div class="searchDate input-group bg-body-tertiary rounded p-1">
                                 <select id="typeDateSearch" class="form-select" style="flex: 0.7;">
-                                    <option value="date">Ngày</option>
-                                    <option value="month">Tháng</option>
+                                    <option name="day" value="date">Ngày</option>
+                                    <option name="month" value="month">Tháng</option>
                                 </select>
                                 <input id="txtSearchDate" type="date" class="form-control" style="flex: 2;">
                             </div>
@@ -43,23 +43,23 @@
             <!-- Table  -->
             <div class="row pt-2" style="padding: 0 12px;">
                 <div id="tbContainer" class="tableScroll overflow-auto" style="height: 455px;">
-                    <table id="tbdata" class="table table-sm table-hover border">
+                    <table id="tbdata" class="table table-sm table-hover border spend-table">
                         <thead>
                             <tr>
                                 <th scope="col">
-                                    <button class="btn-sort" data-sort="0">#</button>
+                                    <button class="btn-sort" data-sort="0">Id</button>
                                 </th>
                                 <th scope="col">
-                                    <button class="btn-sort" data-sort="1">Ngày</button>
+                                    <button name="day" class="btn-sort" data-sort="1">Ngày</button>
                                 </th>
                                 <th scope="col">
-                                    <button class="btn-sort text-nowrap" data-sort="2">Khoảng Chi</button>
+                                    <button name="name" class="btn-sort text-nowrap" data-sort="2">Khoảng Chi</button>
                                 </th>
                                 <th scope="col">
-                                    <button class="btn-sort" data-sort="3">Số Tiền</button>
+                                    <button name="price" class="btn-sort" data-sort="3">Số Tiền</button>
                                 </th>
                                 <th scope="col">
-                                    <button class="btn-sort" data-sort="4">Thông Tin
+                                    <button name="details" class="btn-sort" data-sort="4">Thông Tin
                                         Thêm</button>
                                 </th>
                                 <th class="border"></th>
@@ -90,24 +90,15 @@
         </div>
 
         <div class="col-4 pe-0 ps-0">
-            <style>
-                #btnCreate,
-                #btnUpdate,
-                #btnDelete {
-                    width: 28%;
-                }
-            </style>
             <!-- {{! Button CURD }} -->
             <div class="d-flex justify-content-evenly pb-2 pt-2 border-bottom border-dark">
                 <button id="btnCreate" class="btn btn-success">Thêm</button>
-
                 <button id="btnUpdate" class="btn btn-primary ">Sửa</button>
-
                 <button id="btnDelete" class="btn btn-danger ">Xóa</button>
             </div>
 
             <!-- {{! Field }} -->
-            <div class="container mb-3 mt-3">
+            <div id="spend-field" class="container mb-3 mt-3">
                 <div class="row">
                     <div class="col-3">
                         <div class="form__group field mb-1">
@@ -141,40 +132,43 @@
                 </div>
 
                 <button id="btnClearData" class="btn w-100 mt-3 text-black" style="background-color: #a3d1ff;">
-                    Dọn Dữ Liệu
+                    <span>Dọn Dữ Liệu</span>
                     <i class="fa-sharp fa-solid fa-trash"></i>
                 </button>
             </div>
 
             <div class="container border-top border-dark">
                 <div id="spendTotal" class="text-black mt-3 mb-3 rounded" style="background-color: #E0EEE0;">
-                    <div class="row">
-                        <div class="col-4 pe-0">
-                            <p id="spendItemCount" class="mb-0 p-2">SL: 0</p>
+                    <div class="d-flex justify-content-center overflow-hidden">
+                        <div class="p-2 text-nowrap">
+                            <span name="quantity">SL: </span>
+                            <span id="spendItemCount">0</span>
                         </div>
-                        <div class="col-auto ps-0">
-                            <p id="spendItemTotal" class="mb-0 p-2">Tổng Mục: 0 ₫</p>
+
+                        <div class="p-2 text-nowrap">
+                            <span name="total">Tổng Mục: </span>
+                            <span id="spendItemTotal">0 ₫</span>
                         </div>
                     </div>
-                    <div class="col">
-                        <p id="spendListTotal" class="mb-0 p-2 pt-0">Tổng Danh Sách:
-                            100.000.000 ₫</p>
+
+                    <div class="p-2 pt-0 d-flex justify-content-center text-nowrap overflow-hidden">
+                        <span name="totalList" class="pe-1">Tổng Danh Sách:</span>
+                        <span id="spendListTotal">0 ₫</span>
                     </div>
                 </div>
             </div>
 
             <div class="container  border-top border-dark">
-                <div class="row mt-3 mb-3">
-                    <div class="col-6">
-                        <button id="btn-excel_export" class="btn btn-outline-success w-100">Xuất File
-                            <i class="fa-sharp fa-solid fa-file-excel"></i>
-                        </button>
-                    </div>
-                    <div class="col-6">
-                        <button id="btn-pdf_export" class="btn btn-outline-danger w-100">Xuất File
-                            <i class="fa-sharp fa-solid fa-file-pdf"></i>
-                        </button>
-                    </div>
+                <div class="d-flex mt-3 justify-content-around align-items-center">
+                    <button id="btn-excel_export" class="btn btn-outline-success">
+                        <span name="output">Xuất File</span>
+                        <i class="fa-sharp fa-solid fa-file-excel"></i>
+                    </button>
+
+                    <button id="btn-pdf_export" class="btn btn-outline-danger">
+                        <span name="output">Xuất File</span>
+                        <i class="fa-sharp fa-solid fa-file-pdf"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -183,7 +177,7 @@
 
 
 <!-- Modal New SpendingList -->
-<div class="modal fade" id="modalNewSpendingList" tabindex="-1" aria-labelledby="modalNewSpendingList"
+<div class="modal fade spend-modal_list" id="modalNewSpendingList" tabindex="-1" aria-labelledby="modalNewSpendingList"
     aria-hidden="true" data-bs-backdrop="false">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -195,30 +189,30 @@
                 <input id="newSpendingList" type="text" class="form-control" placeholder="Tên Danh Sách Mới">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"
+                <button name="close" type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"
                     style="width: 100px;">Thoát</button>
-                <button id="btnSaveSpendingList" type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal"
-                    style="width: 100px;">Lưu</button>
+                <button name="save" id="btnSaveSpendingList" type="button" class="btn btn-sm btn-primary"
+                    data-bs-dismiss="modal" style="width: 100px;">Lưu</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Modal Confirm Delete -->
-<div class="modal modal-sm fade" id="modalConfirmDelete" tabindex="-1" aria-labelledby="modalConfirmDelete"
-    aria-hidden="true" data-bs-backdrop="false">
+<div class="modal modal-sm fade spend-modal_delete" id="modalConfirmDelete" tabindex="-1"
+    aria-labelledby="modalConfirmDelete" aria-hidden="true" data-bs-backdrop="false">
     <div class="modal-dialog">
-        <div class="modal-content" style="">
+        <div class="modal-content">
             <div class="modal-body">
                 <strong class="text-danger">Bạn có chắc muốn xoá dữ liệu này không?</strong>
                 <div class="mt-3">
                     <input id="reminderDelete" type="checkbox" class="form-check-input">
                     <label for="reminderDelete" class="form-check-label pointer">Không hiển thị lại lời nhắc</label>
                 </div>
-                <div class="mt-3 d-flex justify-content-between">
-                    <button type="button" class="btn btn-sm btn-secondary" style="width: 100px;"
+                <div class="mt-3 d-flex justify-content-end">
+                    <button name="close" type="button" class="btn btn-sm btn-outline-secondary" style="width: 100px;"
                         data-bs-dismiss="modal">Thoát</button>
-                    <button id="btnConfirmDelete" type="button" class="btn btn-sm btn-primary"
+                    <button name="delete" id="btnConfirmDelete" type="button" class="btn btn-sm btn-primary ms-2"
                         style="width: 100px;">Xoá</button>
                 </div>
             </div>
@@ -227,8 +221,8 @@
 </div>
 
 <!-- Modal SpendViews -->
-<div class="modal modal-sm fade" id="modalSpendViews" tabindex="-1" aria-labelledby="modalSpendViews" aria-hidden="true"
-    data-bs-backdrop="true">
+<div class="modal modal-sm fade spend-modal_details" id="modalSpendViews" tabindex="-1"
+    aria-labelledby="modalSpendViews" aria-hidden="true" data-bs-backdrop="true">
     <div class="modal-dialog">
         <div class="modal-content" style="">
             <div class="modal-header">
@@ -242,33 +236,33 @@
                         <span class="SpendViews_id-value">1</span>
                     </div>
                     <div class="col">
-                        <strong class="text-nowrap">Trạng Thái:</strong>
+                        <strong name="status" class="text-nowrap">Trạng Thái:</strong>
                         <i class="fa-sharp fa-regular fa-circle-check text-success"></i>
                     </div>
                 </div>
 
                 <div class="d-flex mb-2">
-                    <strong class="text-nowrap">Tên khoản chi:</strong>
+                    <strong name="name" class="text-nowrap">Tên khoản chi:</strong>
                     <span class="SpendViews_name-value">Ăn Sáng</span>
                 </div>
 
                 <div class="d-flex mb-2">
-                    <strong class="text-nowrap">Số tiền:</strong>
+                    <strong name="price" class="text-nowrap">Số tiền:</strong>
                     <span class="SpendViews_price-value">100.000.000 đ</span>
                 </div>
 
                 <div class="d-flex mb-2">
-                    <strong class="text-nowrap">Ngày Thêm:</strong>
+                    <strong name="dateAdd" class="text-nowrap">Ngày Thêm:</strong>
                     <span class="ps-2 SpendViews_date-value">01/01/2022</span>
                 </div>
 
                 <div class="d-flex mb-2">
-                    <strong class="text-nowrap">Ngày Cập Nhật</strong>
+                    <strong name="dateUpdate" class="text-nowrap">Ngày Cập Nhật</strong>
                     <span class="ps-2 SpendViews_update-value">01/01/2022</span>
                 </div>
 
                 <div class="d-flex mb-2">
-                    <strong class="text-nowrap">Thông tin bổ sung: </strong>
+                    <strong name="moreInfor" class="text-nowrap">Thông tin bổ sung: </strong>
                     <span class="ps-2 SpendViews_info-value">Không có thông tin</span>
                 </div>
             </div>

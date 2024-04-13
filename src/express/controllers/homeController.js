@@ -68,10 +68,10 @@ module.exports = {
 
     getWeather: (req, res) => {
         try {
-            const { city, lat, lon } = req.query;
+            const { city, lat, lon, lang } = req.query;
 
             weather.setAPPID(process.env.WEATHER_API);
-            weather.setLang('vi');
+            weather.setLang(lang);
             weather.delCoordinate();
 
             if (city) {

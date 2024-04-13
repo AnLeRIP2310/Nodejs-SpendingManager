@@ -1,0 +1,289 @@
+{
+    "sideBar": {
+        "pageHome": "Home",
+        "pageSpending": "Spending",
+        "pageStatics": "statistical",
+        "pageNoted": "Note",
+        "pageList": "List",
+        "pageProfile": "Profile",
+        "pageSettings": "Settings",
+        "pageLogout": "Logout"
+    },
+    "homePage": {
+        "statics": {
+            "today": "Today",
+            "yesterday": "Yesterday",
+            "thisWeek": "This week",
+            "lastWeek": "Last week"
+        },
+        "crypto": {
+            "details": "View details",
+            "change": "Change 24h",
+            "volume": "volume 24h",
+            "price": "price",
+            "more": "VIEW MORE"
+        },
+        "weather": {
+            "search": "Search..."
+        }
+    },
+    "spendingPage": {
+        "modal": {
+            "list": {
+                "title": "Add New List",
+                "name": "New list name"
+            },
+            "details": {
+                "status": "Status",
+                "expenseName": "Expense name",
+                "amount": "Amount",
+                "dateAdd": "Date added",
+                "dateUpdate": "Date updated",
+                "moreInfor": "More information"
+            },
+            "delete": {
+                "title": "Are you sure you want to delete this data?",
+                "reminder": "Don't show the reminder again"
+            }
+        },
+        "button": {
+            "close": "Close",
+            "save": "Save",
+            "add": "Add",
+            "edit": "Edit",
+            "delete": "Delete",
+            "clear": "Clear Data",
+            "output": "Output File"
+        },
+        "search": {
+            "title": "Enter search keywords...",
+            "filter": {
+                "day": "Day",
+                "month": "Month"
+            }
+        },
+        "field": {
+            "date": "Date time",
+            "name": "Expense name",
+            "price": "Amount",
+            "details": "Details"
+        },
+        "total": {
+            "quantity": "Qty:",
+            "total": "Total Item:",
+            "totalList": "Total List:"
+        },
+        "table": {
+            "day": "Date",
+            "name": "Expense name",
+            "price": "Amount",
+            "details": "More information"
+        }
+    },
+    "staticsPage": {
+        "statics": {
+            "totalItem": "Total Item",
+            "totalDay": "Total Days Spent",
+            "totalList": "Total List",
+            "today": "Today",
+            "yesterday": "Yesterday",
+            "thisWeek": "This week",
+            "lastWeek": "Last week"
+        },
+        "chart": {
+            "title": "Total spending per",
+            "title2": "Total ratio spending",
+            "day": "Day",
+            "week": "Week",
+            "month": "Month",
+            "year": "Year",
+            "options": "Display options",
+            "view": "View by",
+            "default": "Default"
+        },
+        "table": {
+            "name": "Expense name",
+            "price": "Amount"
+        }
+    },
+    "notePage": {
+        "search": "Search...",
+        "new": "Enter note name",
+        "notify": "No listings have been created yet, Let's create one to continue.",
+        "button": {
+            "edit": "Edit",
+            "delete": "Delete",
+            "close": "Close",
+            "save": "Save"
+        }
+    },
+    "listPage": {
+        "title": "Spending List",
+        "add": {
+            "name": "Add New List",
+            "input": "Enter list name..."
+        },
+        "table": {
+            "name": "List Name",
+            "date": "Date added",
+            "total": "Total amount"
+        }
+    },
+    "profilePage": {
+        "title": "User Profile",
+        "password": {
+            "old": "Old password",
+            "new": "New password",
+            "confirm": "Confirm new password"
+        },
+        "button": {
+            "save": "Change the password"
+        }
+    },
+    "settingPage": {
+        "title": "Settings",
+        "theme": {
+            "name": "App theme:",
+            "value": {
+                "light": "Light",
+                "dark": "Dark",
+                "auto": "Auto"
+            },
+            "desc": "Choose the theme type for the application"
+        },
+        "defPage": {
+            "name": "Default page:",
+            "value": {
+                "home": "Home",
+                "spending": "Spending",
+                "statics": "Statisc",
+                "noted": "Note"
+            },
+            "desc": "Choose the default page to open when the application is started"
+        },
+        "winPosX": {
+            "name": "window position X:",
+            "value": {
+                "left": "Left",
+                "center": "Center",
+                "right": "Right"
+            },
+            "desc": "Choose where the window will display horizontally"
+        },
+        "winPosY": {
+            "name": "window position Y:",
+            "value": {
+                "top": "Top",
+                "center": "Center",
+                "bottop": "Bottom"
+            },
+            "desc": "Choose where the window will display vertically"
+        },
+        "defAction": {
+            "name": "Default operation:",
+            "value": {
+                "add": "Add",
+                "edit": "Edit",
+                "delete": "Delete"
+            },
+            "desc": "Choose the default action to take when the user presses Enter on the input box in the spending page"
+        },
+        "language": {
+            "name": "Language:",
+            "value": {
+                "en": "English",
+                "vi": "Vietnamese"
+            },
+            "desc": "Choose the default language to display in the application"
+        },
+        "optionExit": {
+            "name": "Options on exit:",
+            "value": {
+                "quit": "Quit",
+                "tray": "hiden tray",
+                "ask": "always ask"
+            },
+            "desc": "Choose the type of action to take when the application exits"
+        },
+        "notifyDel": {
+            "name": "Notify When Delete:",
+            "desc": "Enabling this will display a confirmation message before deleting important data such as spending, lists, etc."
+        },
+        "tooltip": {
+            "name": "Tooltip:",
+            "desc": "Enabling this will display legends on the options in the settings page"
+        },
+        "notification": {
+            "name": "Notification:",
+            "desc": "Enabling the app to send reminders to add spending if no spending has been added for the day"
+        },
+        "startWithWindow": {
+            "name": "Start with window:",
+            "desc": "Enabling this will allow the application to be started with window"
+        },
+        "autoUpdate": {
+            "name": "Auto update:",
+            "desc": "Enabling this will automatically check and update apps every time it starts"
+        },
+        "notifyDownload": {
+            "name": "Download notify:",
+            "desc": "Enabling this will display a notification before the update downloads"
+        },
+        "checked": {
+            "on": "Enable",
+            "off": "Disable"
+        },
+        "dbPath": "Change the path to the data directory",
+        "formSyncData": {
+            "button": {
+                "login": "Sign in to Google Drive",
+                "login_desc": "Link to your Google Drive to save and sync app data",
+                "logout": "Sign out of Google Drive",
+                "syncData": "Sync now",
+                "syncData_desc": "Click this button to proceed with data synchronization",
+                "backupData": "Backup now",
+                "backupData_desc": "Click this button to proceed with data backup"
+            },
+            "email": "Email address associated with Google Drive",
+            "status": {
+                "name": "Status:",
+                "desc1": "Backed up",
+                "desc2": "Backing up",
+                "desc3": "Synced",
+                "desc4": "Synchronizing"
+            },
+            "day": "Date",
+            "desc": "The current sync/backup function is still 'EXPERIMENTAL' so errors may occur. Please use the manual data export method below to backup/restore data if necessary."
+        },
+        "formUpdate": {
+            "status": {
+                "name": "Status:",
+                "desc1": "Checking",
+                "desc2": "There is a new update",
+                "desc3": "No update required",
+                "desc4": "Error while updating",
+                "desc5": "Download completed",
+                "desc6": "Downloading the update"
+            }
+        },
+        "button": {
+            "export": {
+                "name": "Export data files",
+                "desc": "Click this button to export the application's data to an external file"
+            },
+            "import": {
+                "name": "Import data file",
+                "desc": "Click this button to import data from the backup file into the application"
+            },
+            "reset": {
+                "name": "Restore settings",
+                "desc": "Click this button will reset all the app's settings to default"
+            },
+            "update": {
+                "name": "Check for updates",
+                "desc": "Click this button to check and update the application to the latest version if available"
+            }
+        },
+        "version": "version:"
+    }
+}

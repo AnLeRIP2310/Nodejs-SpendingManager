@@ -160,6 +160,7 @@ $('#page-home').click(function () {
                 fakeData: fakeData
             });
             $('#page-content').html(html);
+            applyLanguage(settingsObj.language);
         })
         .catch(error => console.error('Error:', error));
 })
@@ -181,6 +182,7 @@ $('#page-spending').click(function () {
                         spendingList: res.spendingList
                     });
                     $('#page-content').html(html);
+                    applyLanguage(settingsObj.language);
                 })
                 .catch(error => console.error('Error:', error));
         },
@@ -190,8 +192,8 @@ $('#page-spending').click(function () {
     })
 })
 
-// Page Statisc
-$('#page-statisc').click(function () {
+// Page statics
+$('#page-statics').click(function () {
     $.ajax({
         type: 'GET',
         url: urlapi + '/spending/getData',
@@ -199,7 +201,7 @@ $('#page-statisc').click(function () {
             token: JSON.parse(localStorage.getItem('AuthToken')).token
         },
         success: function (res) {
-            fetch('templates/statisc.hbs')
+            fetch('templates/statics.hbs')
                 .then(response => response.text())
                 .then(template => {
                     const compiledTemplate = Handlebars.compile(template);
@@ -207,6 +209,7 @@ $('#page-statisc').click(function () {
                         spendingList: res.spendingList
                     });
                     $('#page-content').html(html);
+                    applyLanguage(settingsObj.language);
                 })
                 .catch(error => console.error('Error:', error));
         },
@@ -248,6 +251,7 @@ $('#page-profile').click(function () {
                                 userInfor: res.data
                             });
                             $('#offcanvasProfile').html(html);
+                            applyLanguage(settingsObj.language);
                         })
                         .catch(error => console.error('Error:', error));
                 } else {
@@ -283,6 +287,7 @@ $('#page-spendlist').click(function () {
                         spendList: res.data
                     });
                     $('#offcanvasSpendlist').html(html);
+                    applyLanguage(settingsObj.language);
                 })
         },
         error: function (err) {
@@ -329,6 +334,7 @@ $('#page-noted').click(function () {
                         notedList: res.notedlist
                     });
                     $('#page-content').html(html);
+                    applyLanguage(settingsObj.language);
                 })
         },
         error: function (err) {

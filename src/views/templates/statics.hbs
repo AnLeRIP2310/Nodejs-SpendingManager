@@ -1,60 +1,60 @@
 <div class="container-fluid overflow-y-scroll h-100">
 
-    <div class="row border-bottom border-dark" style="padding: 12px 0;">
+    <div id="statistical" class="row border-bottom border-dark" style="padding: 12px 0;">
         <div class="col-4 mb-2">
             <div class="d-flex align-items-center p-1 border border-dark rounded-2">
-                <strong class="text-center pe-2">Tổng Khoản Chi:</strong>
+                <strong name="totalItem" class="text-center pe-2">Tổng Khoản Chi:</strong>
                 <small id="total_spenditem" class="text-center text-success fs-6 fw-bold">67 khoản chi</small>
             </div>
         </div>
         <div class="col-4 mb-2">
             <div class="d-flex align-items-center p-1 border border-dark rounded-2">
-                <strong class="text-center pe-2">Tổng Số Ngày Chi:</strong>
+                <strong name="totalDay" class="text-center pe-2">Tổng Số Ngày Chi:</strong>
                 <small id="total_date" class="text-center text-success fs-6 fw-bold">319 ngày</small>
             </div>
         </div>
         <div class="col-4 mb-2">
             <div class="d-flex align-items-center p-1 border border-dark rounded-2">
-                <strong class="text-center pe-2">Tổng Danh Sách:</strong>
+                <strong name="totalList" class="text-center pe-2">Tổng Danh Sách:</strong>
                 <small id="total_spendlist" class="text-center text-success fs-6 fw-bold">30.000.000 đ</small>
             </div>
         </div>
 
         <div class="col-3">
             <div class="d-flex align-items-center p-1 border border-dark rounded-2">
-                <strong class="text-center pe-2">Hôm Nay:</strong>
+                <strong name="today" class="text-center pe-2">Hôm Nay:</strong>
                 <small id="total_today" class="text-center text-success fs-6 fw-bold">0 đ</small>
             </div>
         </div>
         <div class="col-3">
             <div class="d-flex align-items-center p-1 border border-dark rounded-2">
-                <strong class="text-center pe-2">Hôm Qua:</strong>
+                <strong name="yesterday" class="text-center pe-2">Hôm Qua:</strong>
                 <small id="total_yesterday" class="text-center text-success fs-6 fw-bold">0 đ</small>
             </div>
         </div>
         <div class="col-3">
             <div class="d-flex align-items-center p-1 border border-dark rounded-2">
-                <strong class="text-center pe-2">Tuần Này:</strong>
-                <small id="total_thisweek" class="text-center text-success fs-6 fw-bold">0 đ</small>
+                <strong name="thisWeek" class="text-center pe-2">Tuần Này:</strong>
+                <small id="total_thisWeek" class="text-center text-success fs-6 fw-bold">0 đ</small>
             </div>
         </div>
         <div class="col-3">
             <div class="d-flex align-items-center p-1 border border-dark rounded-2">
-                <strong class="text-center pe-2">Tuần Trước:</strong>
-                <small id="total_lastweek" class="text-center text-success fs-6 fw-bold">0 đ</small>
+                <strong name="lastWeek" class="text-center pe-2">Tuần Trước:</strong>
+                <small id="total_lastWeek" class="text-center text-success fs-6 fw-bold">0 đ</small>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-8 border-end border-dark p-0 position-relative">
+        <div class="statics_chart col-8 border-end border-dark p-0 position-relative">
             <div class="d-flex align-items-center position-absolute" style="margin: 12px;right: 90px; z-index: 1">
-                <strong class="text-nowrap me-2 fs-5">Biểu đồ tổng tiền mỗi</strong>
+                <strong name="title" class="text-nowrap me-2 fs-5">Tổng Chi Tiêu Mỗi</strong>
                 <select id="statisc_type" class="form-select">
-                    <option value="date">Ngày</option>
-                    <option value="week">Tuần</option>
-                    <option value="month">Tháng</option>
-                    <option value="year">Năm</option>
+                    <option name="day" value="date">Ngày</option>
+                    <option name="week" value="week">Tuần</option>
+                    <option name="month" value="month">Tháng</option>
+                    <option name="year" value="year">Năm</option>
                 </select>
             </div>
             <div id="chart-totalspending" style="width: 100%; height: 100%;"></div>
@@ -69,11 +69,11 @@
                 {{/if}}
             </select>
             <div class="tableScroll" style="height: 351px;">
-                <table class="table table-sm table-hover border">
+                <table id="chart_table" class="table table-sm table-hover border">
                     <thead>
                         <tr>
-                            <th scope="col">Tên Khoản Chi</th>
-                            <th scope="col">Số Tiền</th>
+                            <th name="name" scope="col">Tên Khoản Chi</th>
+                            <th name="price" scope="col">Số Tiền</th>
                         </tr>
                     </thead>
                     <tbody id="tb-totalPerSpendItem"></tbody>
@@ -92,8 +92,8 @@
         </div>
     </div>
 
-    <div class="row border-top border-dark position-relative">
-        <strong class="text-nowrap text-center mt-2 fs-5">Biểu đồ tỉ lệ khoản chi</strong>
+    <div class="statics_chart row border-top border-dark position-relative">
+        <strong name="title1" class="text-nowrap text-center mt-2 fs-5">Biểu đồ tỉ lệ khoản chi</strong>
 
         <div class="mb-0 position-absolute w-auto h-auto" style="top: 40px; z-index: 1">
             <button id="togglePanel" class="btn btn-outline-secondary">
@@ -101,15 +101,15 @@
             </button>
 
             <div class="panel-content panel-collapsed bg-body-tertiary border-dark ">
-                <strong class="text-center d-block">Tuỳ chọn hiển thị</strong>
+                <strong name="options" class="text-center d-block">Tuỳ chọn hiển thị</strong>
 
                 <div class="mt-2 d-flex align-items-center justify-content-between">
-                    <label for="change_display-pieStatisc" class="text-nowrap">Xem theo:</label>
+                    <label name="view" for="change_display-pieStatisc" class="text-nowrap">Xem theo:</label>
                     <select id="change_display-pieStatisc" class="form-select pointer" style="width: auto;">
-                        <option value="all">Mặt định</option>
-                        <option value="date">Ngày</option>
-                        <option value="month">Tháng</option>
-                        <option value="year">Năm</option>
+                        <option name="default" value="all">Mặt định</option>
+                        <option name="day" value="date">Ngày</option>
+                        <option name="month" value="month">Tháng</option>
+                        <option name="year" value="year">Năm</option>
                     </select>
                 </div>
 

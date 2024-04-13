@@ -106,11 +106,11 @@ function getTotalSpending() {
 getTotalSpending();
 
 // Hàm lấy thông tin thời tiết và gán lên giao diện
-function getWeatherData(city, lat, lon) {
+function getWeatherData(city, lang, lat, lon) {
     $.ajax({
         type: 'GET',
         url: urlapi + '/home/getWeather',
-        data: { city: city, lat: lat, lon: lon },
+        data: { city: city, lang: lang, lat: lat, lon: lon },
         success: function (res) {
             if (res.data == null || res.data == undefined) {
                 showErrorToast('Không tìm thấy thông tin thành phố')
@@ -146,7 +146,7 @@ $('#tbl_weatherSearch').on('keyup', function (event) {
     if (event.keyCode == 13) {
         event.preventDefault();
 
-        getWeatherData($(this).val().trim())
+        getWeatherData($(this).val().trim(), settingsObj.language)
     }
 })
 
@@ -156,13 +156,13 @@ $('#btn_weatherMyAddress').click(function () {
         $.ajax({
             type: 'GET',
             url: 'https://freegeoip.app/json/',
-            success: function (res) { getWeatherData('', res.latitude, res.longitude) },
+            success: function (res) { getWeatherData('',settingsObj.language, res.latitude, res.longitude) },
             error: function (err) { console.log(err) }
         })
     } else {
         navigator.geolocation.getCurrentPosition(function success(position) {
             // Gọi hàm lấy ra thông tin thời tiết
-            getWeatherData('', position.coords.latitude, position.coords.longitude)
+            getWeatherData('',settingsObj.language, position.coords.latitude, position.coords.longitude)
         }, function error(err) { console.log(err) });
     }
 })
@@ -217,6 +217,7 @@ function getCryptoData() {
             const template = Handlebars.compile(source)
             const html = template({ cryptoData: formatData })
             $('.crypto').html(html)
+            applyLanguage(settingsObj.language);
         },
         error: function (err) {
             console.log(err)

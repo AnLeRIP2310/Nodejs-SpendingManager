@@ -413,6 +413,12 @@
     --bs-modal-width: 350px;
 }
 
+#btnCreate,
+#btnUpdate,
+#btnDelete {
+    width: 28%;
+}
+
 /* ------ Noted ---------- */
 
 .list-group-item.active {

@@ -7,7 +7,7 @@
 
 <div class="offcanvas-body" style="padding-left: 12px; padding-right: 12px">
     <!-- Dark Mode -->
-    <div id="ctst_darkMode" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+    <div name="theme" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
         data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="Chọn loại chủ đề cho ứng dụng">
         <strong class="text-nowrap " style="flex: 2;">Chủ đề ứng dụng:</strong>
         <select id="st_darkMode" class="form-select form-select-sm pointer" style="flex: 1;">
@@ -17,19 +17,20 @@
         </select>
     </div>
     <!-- Default Page -->
-    <div id="ctst_defaultPage" style="margin-bottom: 12px" class="d-flex align-items-center" data-bs-toggle="popover"
-        data-bs-trigger="hover" data-bs-content="Chọn trang mặt định sẽ mở khi ứng dụng được khởi động">
-        <strong class="text-nowrap" style="flex: 2">Trang mặt định:</strong>
+    <div name="defPage" style="margin-bottom: 12px" class="d-flex align-items-center" data-bs-toggle="popover"
+        data-bs-trigger="hover" data-bs-content="Chọn trang mặc định sẽ mở khi ứng dụng được khởi động">
+        <strong class="text-nowrap" style="flex: 2">Trang mặc định:</strong>
         <select class="form-select form-select-sm pointer" id="st_defaultPage" style="flex: 1;">
             <option value="home">Trang chủ</option>
             <option value="spending">Chi tiêu</option>
-            <option value="statisc">Thống kê</option>
+            <option value="statics">Thống kê</option>
             <option value="noted">Ghi chú</option>
         </select>
     </div>
     <!-- Window Position X-->
-    <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between" data-bs-toggle="popover"
-        data-bs-trigger="hover" data-bs-content="Chọn vị trí cửa sổ sẽ hiển thị theo chiều ngang">
+    <div name="winPosX" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+        data-bs-toggle="popover" data-bs-trigger="hover"
+        data-bs-content="Chọn vị trí cửa sổ sẽ hiển thị theo chiều ngang">
         <strong class="text-nowrap" style="flex: 2;">Vị trí cửa sổ ngang:</strong>
         <select id="st_windowPositionX" class="form-select form-select-sm pointer" style="flex: 1;">
             <option value="0.35">Căn trái</option>
@@ -38,8 +39,9 @@
         </select>
     </div>
     <!-- Window Position Y-->
-    <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between" data-bs-toggle="popover"
-        data-bs-trigger="hover" data-bs-content="Chọn vị trí cửa sổ sẽ hiển thị theo chiều dọc">
+    <div name="winPosY" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+        data-bs-toggle="popover" data-bs-trigger="hover"
+        data-bs-content="Chọn vị trí cửa sổ sẽ hiển thị theo chiều dọc">
         <strong class="text-nowrap" style="flex: 2;">Vị trí cửa sổ dọc:</strong>
         <select id="st_windowPositionY" class="form-select form-select-sm pointer" style="flex: 1;">
             <option value="0.8">Căn Trên</option>
@@ -48,10 +50,10 @@
         </select>
     </div>
     <!-- Default Action -->
-    <div id="ctst_defaultAction" style="margin-bottom: 12px" class="d-flex align-items-center" data-bs-toggle="popover"
+    <div name="defAction" style="margin-bottom: 12px" class="d-flex align-items-center" data-bs-toggle="popover"
         data-bs-trigger="hover"
-        data-bs-content="Chọn hành động mặt định sẽ thực hiện khi người dùng bấm Enter trên ô nhập liệu trong trang chi tiêu">
-        <strong class="text-nowrap" style="flex: 2;">Thao tác mặt định:</strong>
+        data-bs-content="Chọn hành động mặc định sẽ thực hiện khi người dùng bấm Enter trên ô nhập liệu trong trang chi tiêu">
+        <strong class="text-nowrap" style="flex: 2;">Thao tác mặc định:</strong>
         <select class="form-select form-select-sm pointer" id="st_defaultAction" style="flex: 1;">
             <option value="add">Thêm</option>
             <option value="edit">Sửa</option>
@@ -59,27 +61,38 @@
         </select>
     </div>
     <!-- Language -->
-    <div id="ctst_language" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+    <div name="language" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
         data-bs-toggle="popover" data-bs-trigger="hover"
-        data-bs-content="Chọn ngôn ngữ mặt định sẽ hiển thị trong ứng dụng">
+        data-bs-content="Chọn ngôn ngữ mặc định sẽ hiển thị trong ứng dụng">
         <strong class="text-nowrap" style="flex: 2;">Ngôn ngữ:</strong>
         <select class="form-select form-select-sm pointer" style="flex: 1;" id="st_language">
             <option value="vi">Tiếng Việt</option>
             <option value="en">Tiếng Anh</option>
         </select>
     </div>
-    <!-- reminderDelete -->
-    <div id="ctst_reminder" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+    <!-- Options Exit -->
+    <div name="optionExit" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+        data-bs-toggle="popover" data-bs-trigger="hover"
+        data-bs-content="Chọn loại hành động sẽ thực hiện khi thoát ứng dụng">
+        <strong class="text-nowrap" style="flex: 2;">Tuỳ chọn khi thoát:</strong>
+        <select id="st_closeDefault" style="flex: 1;" class="form-select form-select-sm pointer">
+            <option value="ask">Luôn hỏi</option>
+            <option value="tray">Ẩn</option>
+            <option value="quit">Thoát</option>
+        </select>
+    </div>
+    <!-- Notify When Delete -->
+    <div name="notifyDel" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
         data-bs-toggle="popover" data-bs-trigger="hover"
         data-bs-content="Bật cái này sẽ hiển thị thông báo xác nhận trước khi xoá những dữ liệu quan trọng như chi tiêu, danh sách,...">
-        <strong class="text-nowrap" style="flex: 2;">Hỏi trước khi xoá:</strong>
+        <strong class="text-nowrap" style="flex: 2;">Thông báo khi xoá:</strong>
         <div class="form-check form-switch" style="flex: 1;">
             <input class="form-check-input pointer" type="checkbox" id="st_reminder">
             <label class="form-check-label pointer text-nowrap" for="st_reminder">Bật xác nhận</label>
         </div>
     </div>
     <!-- Tooltip -->
-    <div id="ctst_tooltip" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+    <div name="tooltip" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
         data-bs-toggle="popover" data-bs-trigger="hover"
         data-bs-content="Bật cái này sẽ hiển thị chú giải trên các tuỳ chọn trong trang cài đặt">
         <strong class="text-nowrap" style="flex: 2;">Chú giải:</strong>
@@ -88,29 +101,18 @@
             <label class="form-check-label pointer text-nowrap" for="st_tooltip">Bật chú giải</label>
         </div>
     </div>
-    <!-- BeforeQuit -->
-    <div id="ctst_closeDefault" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-between"
+    <!-- Notification -->
+    <div name="notification" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
         data-bs-toggle="popover" data-bs-trigger="hover"
-        data-bs-content="Chọn loại hành động sẽ thực hiện khi người dùng thoát ứng dụng">
-        <strong class="text-nowrap" style="flex: 2;">Hành động khi đóng:</strong>
-        <select id="st_closeDefault" style="flex: 1;" class="form-select form-select-sm pointer">
-            <option value="ask">Luôn hỏi</option>
-            <option value="tray">Ẩn</option>
-            <option value="quit">Thoát</option>
-        </select>
-    </div>
-    <!-- AllowNotify -->
-    <div id="ctst_notifySpend" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
-        data-bs-toggle="popover" data-bs-trigger="hover"
-        data-bs-content="Cho phép ứng dụng gửi thông báo nhắc người dùng thêm chi tiêu nếu chưa có chi tiêu nào được thêm trong ngày">
+        data-bs-content="Cho phép ứng dụng gửi thông báo nhắc nhở thêm chi tiêu nếu chưa có chi tiêu nào được thêm trong ngày">
         <strong class="text-nowrap" style="flex: 2;">Thông báo:</strong>
         <div class="form-check form-switch" style="flex: 1">
             <input class="form-check-input pointer" type="checkbox" id="st_notifySpend">
             <label class="form-check-label pointer text-nowrap" for="st_notifySpend">Bật thông báo</label>
         </div>
     </div>
-    <!-- StartWithWindow -->
-    <div id="ctst_startWithWindow" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
+    <!-- Start With Window -->
+    <div name="startWithWindow" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
         data-bs-trigger="hover" data-bs-toggle="popover"
         data-bs-content="Bật cái này sẽ cho phép ứng dụng được khởi động cùng với window">
         <strong class="text-nowrap" style="flex: 2">Chạy cùng Window:</strong>
@@ -119,9 +121,9 @@
             <label for="st_startWithWindow" class="form-check-label pointer text-nowrap">Đang Bật</label>
         </div>
     </div>
-    <!-- AutoUpdate -->
-    <div style="margin-bottom: 12px;" class="d-flex align-items-center justify-content-center" data-bs-trigger="hover"
-        data-bs-toggle="popover"
+    <!-- Auto Update -->
+    <div name="autoUpdate" style="margin-bottom: 12px;" class="d-flex align-items-center justify-content-center"
+        data-bs-trigger="hover" data-bs-toggle="popover"
         data-bs-content="Bật cái này sẽ tự động kiểm tra và cập nhật ứng dụng mỗi khi khởi động">
         <strong class="text-nowrap" style="flex: 2">Tự động cập nhật:</strong>
         <div class="form-check form-switch" style="flex: 1">
@@ -129,9 +131,10 @@
             <label for="st_autoUpdate" class="form-check-label pointer text-nowrap">Đang Bật</label>
         </div>
     </div>
-    <!-- Download Prompt -->
-    <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center" data-bs-trigger="hover"
-        data-bs-toggle="popover" data-bs-content="Bật cái này sẽ hiển thị thông báo trước khi tải xuống bản cập nhật">
+    <!-- Download Notify -->
+    <div name="notifyDownload" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
+        data-bs-trigger="hover" data-bs-toggle="popover"
+        data-bs-content="Bật cái này sẽ hiển thị thông báo trước khi tải xuống bản cập nhật">
         <strong class="text-nowrap" style="flex: 2">Thông báo tải xuống:</strong>
         <div class="form-check form-switch" style="flex: 1">
             <input id="st_downloadPrompt" type="checkbox" class="form-check-input pointer">
@@ -139,31 +142,31 @@
         </div>
     </div>
     <!-- SyncData -->
-    <div style="margin-bottom: 12px" class="d-flex flex-column align-items-center justify-content-center">
-        <button id="btn-syncData-Login" class="btn btn-sm btn-outline-success" data-bs-trigger="hover"
+    <div name="backupSync" style="margin-bottom: 12px" class="d-flex flex-column align-items-center justify-content-center">
+        <button name="login" id="btn-syncData-Login" class="btn btn-sm btn-outline-success" data-bs-trigger="hover"
             data-bs-toggle="popover"
             data-bs-content="Liên kết với Google Drive của bạn để lưu và đồng bộ dữ liệu ứng dụng">
             <i class="fa-brands fa-google-drive"></i>
-            Đăng nhập vào Google Drive
+            <span>Đăng nhập vào Google Drive</span>
         </button>
 
-        <div id="syncDataContent" class="d-none border mt-2 p-2 rounded" data-bs-trigger="hover"
+        <div name="desc" id="syncDataContent" class="d-none border mt-2 p-3 w-100 rounded" data-bs-trigger="hover"
             data-bs-toggle="popover" data-bs-content="Chức năng đồng bộ/sao lưu hiện tại vẫn đang là 'THỬ NGHIỆM' 
             nên sẽ có thể phát sinh lỗi, vui lòng sử dụng cách xuất dữ liệu thủ công bên dưới để 
             sao lưu/khôi phục dữ liệu nếu cần thiết">
             <div class="d-flex mb-2 w-100 align-items-center justify-content-evenly">
-                <button id="btn-syncData" class="btn btn-sm btn-outline-primary" data-bs-trigger="hover"
-                    data-bs-toggle="popover" data-bs-content="Nhấn vào nút này để tiến hành đồng bộ dữ liệu">
+                <button id="btn-syncData" class="btn btn-sm btn-outline-primary me-1" data-bs-trigger="hover"
+                    data-bs-toggle="popover" data-bs-content="Nhấn vào nút này để tiến hành đồng bộ dữ liệu" style="width: 110px">
                     Đồng bộ ngay
                 </button>
 
-                <button id="btn-backupData" class="btn btn-sm btn-outline-info" data-bs-trigger="hover"
-                    data-bs-toggle="popover" data-bs-content="Nhấn vào nút này để tiến hành sao lưu dữ liệu">
+                <button id="btn-backupData" class="btn btn-sm btn-outline-info ms-1" data-bs-trigger="hover"
+                    data-bs-toggle="popover" data-bs-content="Nhấn vào nút này để tiến hành sao lưu dữ liệu" style="width: 110px">
                     Sao lưu ngay
                 </button>
             </div>
 
-            <div class="d-flex justify-content-center align-items-center" data-bs-trigger="hover"
+            <div name="email" class="d-flex justify-content-center align-items-center" data-bs-trigger="hover"
                 data-bs-toggle="popover" data-bs-content="Địa chỉ Email liên kết với Google Drive">
                 <label for="tbl_syncEmail" class="form-check-label pe-2">Email: </label>
                 <input id="tbl_syncEmail" type="email" readonly="true" class="form-control form-control-sm"
@@ -171,8 +174,10 @@
             </div>
 
             <div style="margin-top: 8px">
-                <p class="mb-0">Trạng thái:
-                    <span id="syncStatus" class="text-success ">Đã sao lưu
+                <p class="mb-0">
+                    <span name="status">Trạng thái:</span>
+                    <span id="syncStatus" class="text-success ">
+                        <span name="status_desc">Đã sao lưu</span>
                         <i class="fa-sharp fa-regular fa-circle-check"></i>
                     </span>
                 </p>
@@ -182,7 +187,8 @@
                         style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">0%</div>
                 </div>
 
-                <p class="mb-0">Ngày:
+                <p class="mb-0">
+                    <span name="day">Ngày:</span>
                     <span id="txt_syncDate">14/02/2024</span>
                 </p>
             </div>
@@ -190,7 +196,7 @@
             <div class="d-flex justify-content-center w-100 mt-2">
                 <button id="btn-syncData-Logout" class="btn btn-sm btn-outline-success">
                     <i class="fa-brands fa-google-drive"></i>
-                    Đăng xuất khỏi Google Drive
+                    <span name="logout">Đăng xuất khỏi Google Drive</span>
                 </button>
             </div>
 
@@ -198,7 +204,7 @@
     </div>
     <!-- DbPath -->
     <div id="ctst_dbPath" style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
-        data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="Chọn đường dẫn đến thư mục lưu trữ dữ liệu">
+        data-bs-toggle="popover" data-bs-trigger="hover" data-bs-content="Thay đổi đường dẫn đến thư mục dữ liệu">
         <div class=" input-group">
             <input type="text" class="form-control form-control-sm" readonly id="st_dbPath">
             <button id="btn-dbPath" class="btn btn-sm btn-secondary">
@@ -213,7 +219,7 @@
             <button id="btn-export_db" class="btn btn-sm btn-outline-info w-100" data-bs-toggle="popover"
                 data-bs-trigger="hover"
                 data-bs-content="Nhấn vào nút này để xuất dữ liệu của ứng dụng ra tệp bên ngoài">
-                Xuất tệp dữ liệu
+                <span>Xuất tệp dữ liệu</span>
                 <i class="fa-regular fa-file-export"></i>
             </button>
         </div>
@@ -221,7 +227,7 @@
         <div class="col-6" style="padding-left: 6px;">
             <button id="btn-import_db" class="btn btn-sm btn-outline-info w-100" data-bs-toggle="popover"
                 data-bs-trigger="hover" data-bs-content="Nhấn vào nút này để nhập dữ liệu từ tệp sao lưu vào ứng dụng">
-                Nhập tệp dữ liệu
+                <span>Nhập tệp dữ liệu</span>
                 <i class="fa-regular fa-file-import"></i>
             </button>
         </div>
@@ -233,8 +239,8 @@
             <!-- Btn Reset Settings -->
             <button id="btn-reset_setting" class="btn btn-sm btn-outline-danger" data-bs-toggle="popover"
                 data-bs-trigger="hover"
-                data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng về mặt định">
-                Khôi phục cài đặt
+                data-bs-content="Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng về mặc định">
+                <span>Khôi phục cài đặt</span>
                 <i class="fa-solid fa-arrows-retweet"></i>
             </button>
 
@@ -242,7 +248,7 @@
             <button id="btn-CheckForUpdate" class="btn btn-sm btn-outline-primary" data-bs-toggle="popover"
                 data-bs-trigger="hover"
                 data-bs-content="Nhấn vào nút này để tiến hành kiểm tra và cập nhật ứng dụng lên phiên bản mới nhất nếu có">
-                Kiểm tra cập nhật
+                <span>Kiểm tra cập nhật</span>
                 <i class="fa-solid fa-arrow-up-from-square"></i>
             </button>
         </div>
@@ -250,9 +256,10 @@
         <!-- Update Content -->
         <div id="updateApp-content" class="border rounded mt-2 p-2 animate__animated d-none">
             <!-- Status -->
-            <p class="m-0">Trạng thái:
+            <p class="m-0">
+                <span name="status">Trạng thái:</span>
                 <span id="updateApp-Status" class="ms-1" style="color: var(--bs-warning);">
-                    Đang kiểm tra
+                    <span>Đang kiểm tra</span>
                     <i class="fa-solid fa-loader fa-spin"></i>
                 </span>
             </p>
@@ -273,7 +280,10 @@
     </div>
     <!-- Version And Auth -->
     <div style="" class="d-flex align-items-center justify-content-between">
-        <p class="m-0">Phiên bản: <span id="app_version">1.0.0</span></p>
+        <p class="m-0">
+            <span name="app_version">Phiên bản:</span>
+            <span id="app_version">1.0.0</span>
+        </p>
 
         <p class="m-0 app_authName">ALR2310</p>
     </div>

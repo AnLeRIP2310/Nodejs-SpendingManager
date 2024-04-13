@@ -1,0 +1,289 @@
+{
+    "sideBar": {
+        "pageHome": "Trang chủ",
+        "pageSpending": "Chi tiêu",
+        "pageStatics": "Thống kê",
+        "pageNoted": "Ghi chú",
+        "pageList": "Danh sách",
+        "pageProfile": "Hồ sơ",
+        "pageSettings": "Cài đặt",
+        "pageLogout": "Đăng xuất"
+    },
+    "homePage": {
+        "statics": {
+            "today": "Hôm Nay",
+            "yesterday": "Hôm Qua",
+            "thisWeek": "Tuần Này",
+            "lastWeek": "Tuần Trước"
+        },
+        "crypto": {
+            "details": "Xem chi tiết",
+            "change": "Biến động 24 giờ",
+            "volume": "Khối lượng 24 giờ",
+            "price": "Giá cả",
+            "more": "XEM THÊM"
+        },
+        "weather": {
+            "search": "Tìm kiếm..."
+        }
+    },
+    "spendingPage": {
+        "modal": {
+            "list": {
+                "title": "Thêm Danh Sách Mới",
+                "name": "Tên Danh Sách Mới"
+            },
+            "details": {
+                "status": "Trạng thái",
+                "name": "Tên khoản chi",
+                "price": "Số tiền",
+                "dateAdd": "Ngày thêm",
+                "dateUpdate": "Ngày cập nhật",
+                "moreInfor": "Thông tin bổ sung"
+            },
+            "delete": {
+                "title": "Bạn có chắc muốn xoá dữ liệu này không?",
+                "reminder": "Không hiển thị lại lời nhắc"
+            }
+        },
+        "button": {
+            "close": "Thoát",
+            "save": "Lưu",
+            "add": "Thêm",
+            "edit": "Sửa",
+            "delete": "Xoá",
+            "clear": "Dọn Dữ Liệu",
+            "output": "Xuất File"
+        },
+        "search": {
+            "title": "Nhập từ khoá tìm kiếm...",
+            "filter": {
+                "day": "Ngày",
+                "month": "Tháng"
+            }
+        },
+        "field": {
+            "date": "Thời gian",
+            "name": "Tên Khoản Chi",
+            "price": "Số tiền",
+            "details": "Thông tin chi tiết"
+        },
+        "total": {
+            "quantity": "SL:",
+            "total": "Tổng Mục:",
+            "totalList": "Tổng Danh Sách:"
+        },
+        "table": {
+            "day": "Ngày",
+            "name": "Tên khoản chi",
+            "price": "Số tiền",
+            "details": "Thông tin thêm"
+        }
+    },
+    "staticsPage": {
+        "statics": {
+            "totalItem": "Tổng Khoản Chi",
+            "totalDay": "Tổng Số Ngày Chi",
+            "totalList": "Tổng Danh Sách",
+            "today": "Hôm Nay",
+            "yesterday": "Hôm Qua",
+            "thisWeek": "Tuần Này",
+            "lastWeek": "Tuần Trước"
+        },
+        "chart": {
+            "title": "Tổng Chi Tiêu Mỗi ",
+            "title2": "Tỉ Lệ Chi Tiêu Mỗi Khoản Chi",
+            "day": "Ngày",
+            "week": "Tuần",
+            "month": "Tháng",
+            "year": "Năm",
+            "options": "Tuỳ chọn hiển thị",
+            "view": "Xem theo",
+            "default": "Mặt định"
+        },
+        "table": {
+            "name": "Tên khoản chi",
+            "price": "Số tiền"
+        }
+    },
+    "notePage": {
+        "search": "Tìm kiếm...",
+        "new": "Nhập tên ghi chú",
+        "notify": "Chưa có danh sách nào được tạo, hãy tạo một cái để tiếp tục.",
+        "button": {
+            "edit": "Chỉnh sửa",
+            "delete": "Xoá bỏ",
+            "close": "Thoát",
+            "save": "Lưu"
+        }
+    },
+    "listPage": {
+        "title": "Danh Sách Chi Tiêu",
+        "add": {
+            "name": "Thêm Danh Sách",
+            "input": "Nhập tên danh sách..."
+        },
+        "table": {
+            "name": "Tên danh sách",
+            "date": "Ngày tạo",
+            "total": "Tổng tiền"
+        }
+    },
+    "profilePage": {
+        "title": "Hồ Sơ",
+        "password": {
+            "old": "Mật khẩu cũ",
+            "new": "Mật khẩu mới",
+            "confirm": "Nhập lại mật khẩu mới"
+        },
+        "button": {
+            "save": "Thay đổi mật khẩu"
+        }
+    },
+    "settingPage": {
+        "title": "Cài Đặt Ứng Dụng:",
+        "theme": {
+            "name": "Chủ đề ứng dụng:",
+            "value": {
+                "light": "Sáng",
+                "dark": "Tối",
+                "auto": "Tự động"
+            },
+            "desc": "Chọn loại chủ đề cho ứng dụng"
+        },
+        "defPage": {
+            "name": "Trang mặt định:",
+            "value": {
+                "home": "Trang chủ",
+                "spending": "Chi tiêu",
+                "statics": "Thống kê",
+                "noted": "Ghi chú"
+            },
+            "desc": "Chọn trang mặc định sẽ mở khi ứng dụng được khởi động"
+        },
+        "winPosX": {
+            "name": "Vị trí cửa sổ ngang:",
+            "value": {
+                "left": "Căn trái",
+                "center": "Căn giữa",
+                "right": "Căn phải"
+            },
+            "desc": "Chọn vị trí cửa sổ sẽ hiển thị theo chiều ngang"
+        },
+        "winPosY": {
+            "name": "window position Y:",
+            "value": {
+                "top": "Căn trên",
+                "center": "Căn giữa",
+                "bottom": "Căn dưới"
+            },
+            "desc": "Chọn vị trí cửa sổ sẽ hiển thị theo chiều dọc"
+        },
+        "defAction": {
+            "name": "Thao tác mặt định:",
+            "value": {
+                "add": "Thêm",
+                "edit": "Sửa",
+                "delete": "Xoá"
+            },
+            "desc": "Chọn hành động mặc định sẽ thực hiện khi người dùng bấm Enter trên ô nhập liệu trong trang chi tiêu"
+        },
+        "language": {
+            "name": "Ngôn ngữ:",
+            "value": {
+                "en": "Tiếng Anh",
+                "vi": "Tiếng Việt"
+            },
+            "desc": "Chọn ngôn ngữ mặc định sẽ hiển thị trong ứng dụng"
+        },
+        "optionExit": {
+            "name": "Tuỳ chọn khi thoát:",
+            "value": {
+                "quit": "Thoát",
+                "tray": "Ẩn xuống khay",
+                "ask": "Luôn hỏi"
+            },
+            "desc": "Chọn loại hành động sẽ thực hiện khi thoát ứng dụng"
+        },
+        "notifyDel": {
+            "name": "Thông báo khi xoá:",
+            "desc": "Bật cái này sẽ hiển thị thông báo xác nhận trước khi xoá những dữ liệu quan trọng như chi tiêu, danh sách,..."
+        },
+        "tooltip": {
+            "name": "Chú giải:",
+            "desc": "Bật cái này sẽ hiển thị chú giải trên các tuỳ chọn trong trang cài đặt"
+        },
+        "notification": {
+            "name": "Thông báo:",
+            "desc": "Cho phép ứng dụng gửi thông báo nhắc nhở thêm chi tiêu nếu chưa có chi tiêu nào được thêm trong ngày"
+        },
+        "startWithWindow": {
+            "name": "Chạy cùng window:",
+            "desc": "Bật cái này sẽ cho phép ứng dụng được khởi động cùng với window"
+        },
+        "autoUpdate": {
+            "name": "Tự động cập nhật:",
+            "desc": "Bật cái này sẽ tự động kiểm tra và cập nhật ứng dụng mỗi khi khởi động"
+        },
+        "notifyDownload": {
+            "name": "Thông báo tải xuống:",
+            "desc": "Bật cái này sẽ hiển thị thông báo trước khi tải xuống bản cập nhật"
+        },
+        "checked": {
+            "on": "Đang bật",
+            "off": "Đã tắt"
+        },
+        "dbPath": "Thay đổi đường dẫn đến thư mục dữ liệu",
+        "formSyncData": {
+            "button": {
+                "login": "Đăng nhập vào Google Drive",
+                "login_desc": "Liên kết với Google Drive của bạn để lưu và đồng bộ dữ liệu ứng dụng",
+                "logout": "Đăng xuất khỏi Google Drive",
+                "syncData": "Đồng bộ ngay",
+                "syncData_desc": "Nhấn vào nút này để tiến hành đồng bộ dữ liệu",
+                "backupData": "Sao lưu ngay",
+                "backupData_desc": "Nhấn vào nút này để tiến hành sao lưu dữ liệu"
+            },
+            "email": "Địa chỉ Email liên kết với Google Drive",
+            "status":{
+                "name":  "Trạng thái:",
+                "desc1": "Đã sao lưu",
+                "desc2": "Đang sao lưu",
+                "desc3": "Đã đồng bộ",
+                "desc4": "Đang đồng bộ"
+            },
+            "day": "Ngày",
+            "desc": "Chức năng đồng bộ/sao lưu hiện tại vẫn đang là 'THỬ NGHIỆM' nên sẽ có thể phát sinh lỗi, vui lòng sử dụng cách xuất dữ liệu thủ công bên dưới để sao lưu/khôi phục dữ liệu nếu cần thiết"
+        },
+        "formUpdate": {
+            "status": {
+                "name": "Trạng thái:",
+                "desc1": "Đang kiểm tra",
+                "desc2": "Có bản cập nhật mới",
+                "desc3": "Không cần cập nhật",
+                "desc4": "Lỗi khi cập nhật",
+                "desc5": "Tải về hoàn tất",
+                "desc6": "Đang tải về bản cập nhật"
+            }
+        },
+        "button": {
+            "export": {
+                "name": "Xuất tệp dữ liệu",
+                "desc": "Nhấn vào nút này để xuất dữ liệu của ứng dụng ra tệp bên ngoài"
+            },
+            "import": {
+                "name": "Nhập tệp dữ liệu",
+                "desc": "Nhấn vào nút này để nhập dữ liệu từ tệp sao lưu vào ứng dụng"
+            },
+            "reset": {
+                "name": "Khôi phục cài đặt",
+                "desc": "Nhấn vào nút này sẽ đặt lại toàn bộ cài đặt của ứng dụng về mặc định"
+            },
+            "update": {
+                "name": "Kiểm tra cập nhật",
+                "desc": "Nhấn vào nút này để tiến hành kiểm tra và cập nhật ứng dụng lên phiên bản mới nhất nếu có"
+            }
+        },
+        "version": "Phiên bản:"
+    }
+}

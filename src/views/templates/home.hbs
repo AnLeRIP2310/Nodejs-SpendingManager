@@ -1,27 +1,27 @@
 <div class="container-fluid">
-    <div class="row border-bottom border-dark" style="padding: 12px 0;">
+    <div id="home-statics" class="row border-bottom border-dark" style="padding: 12px 0;">
         <div class="col">
             <div class="d-flex flex-column border border-dark rounded-2">
-                <strong class="text-center fs-5">Hôm Nay</strong>
+                <strong name="today" class="text-center fs-5">Hôm Nay</strong>
                 <small id="total_today" class="text-center text-success fs-6 fw-bold">0 đ</small>
             </div>
         </div>
         <div class="col">
             <div class="d-flex flex-column border border-dark rounded-2">
-                <strong class="text-center fs-5">Hôm Qua</strong>
+                <strong name="yesterday" class="text-center fs-5">Hôm Qua</strong>
                 <small id="total_yesterday" class="text-center text-success fs-6 fw-bold">0 đ</small>
             </div>
         </div>
         <div class="col">
             <div class="d-flex flex-column border border-dark rounded-2">
-                <strong class="text-center fs-5">Tuần Này</strong>
+                <strong name="thisWeek" class="text-center fs-5">Tuần Này</strong>
                 <small id="total_thisweek" class="text-center text-success fs-6 fw-bold">0 đ</small>
             </div>
         </div>
         <div class="col">
             <div class="d-flex flex-column border border-dark rounded-2">
-                <strong class="text-center fs-5">Tuần Trước</strong>
-                <small id="total_lastweek" class="text-center text-success fs-6 fw-bold">0 đ</small>
+                <strong name="lastWeek" class="text-center fs-5">Tuần Trước</strong>
+                <small id="total_lastWeek" class="text-center text-success fs-6 fw-bold">0 đ</small>
             </div>
         </div>
     </div>
@@ -59,9 +59,9 @@
                                 <span class="placeholder h-25 col-12"><span />
                             </div>
                             <div class="col ps-0">
-                                <span class="placeholder h-25 col-12" title="Giá cả"></span>
-                                <span class="placeholder h-25 col-5" title="Giá cả"></span>
-                                <span class="placeholder h-25 col-5" title="Giá cả"></span>
+                                <span class="placeholder h-25 col-12"></span>
+                                <span class="placeholder h-25 col-5"></span>
+                                <span class="placeholder h-25 col-5"></span>
                             </div>
                         </div>
                         {{/each}}
@@ -83,12 +83,12 @@
                                 <p class="text-nowrap" title="%this.name%">%this.name%</p>
                             </div>
                             <div class="col">
-                                <p title="Giá cả" class="%addPercentageClass this.quote.VND.percent_change_1h%">%this.quote.VND.price%</p>
+                                <p name="price" title="Giá cả" class="%addPercentageClass this.quote.VND.percent_change_1h%">%this.quote.VND.price%</p>
                                 <div class="d-flex justify-content-between">
-                                    <p title="Biến động 24 giờ" class="%addPercentageClass this.quote.VND.percent_change_24h%">
+                                    <p name="change" title="Biến động 24 giờ" class="%addPercentageClass this.quote.VND.percent_change_24h%">
                                         <span>%this.quote.VND.percent_change_24h%</span>
                                     </p>
-                                    <p title="Khối lượng 24 giờ" class="%addPercentageClass this.quote.VND.volume_change_24h%">
+                                    <p name="volume" title="Khối lượng 24 giờ" class="%addPercentageClass this.quote.VND.volume_change_24h%">
                                         <span>%this.quote.VND.volume_change_24h%</span>
                                     </p>
                                 </div>
@@ -98,11 +98,11 @@
                         <div class="p-2 pt-0">
                             <a href="https://coinmarketcap.com" target="_blank" class="btn btn-sm btn-outline-secondary w-100" 
                             style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                                XEM THÊM <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                <span name="more">XEM THÊM</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
                         </div>
                     %else%
-                        <p class="text-center w-100 d-block">Không có thông tin</p>
+                        <p class="text-center p-2 m-0 w-100 d-block">Lấy thông tin thất bại!</p>
                     %/if%
                     </script>
 
