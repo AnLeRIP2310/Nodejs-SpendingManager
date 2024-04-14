@@ -189,6 +189,21 @@ async function applyLanguage(lang) {
         $('#offcanvasSetting #updateApp-content [name="status"]').text(langObj.settingPage.formUpdate.status.name)
         $('#offcanvasSetting #updateApp-content #updateApp-Status span').text(langObj.settingPage.formUpdate.status.desc1)
         $('#offcanvasSetting [name="app_version"]').text(langObj.settingPage.version)
+
+        //Modal
+        $('#modalConfirmDownloadUpdate strong').text(langObj.modal.confirmUpdate.title)
+        $('#modalConfirmDownloadUpdate label').text(langObj.modal.confirmUpdate.remember)
+        $('#modalConfirmDownloadUpdate [name="close"]').text(langObj.modal.confirmUpdate.button.close)
+        $('#modalConfirmDownloadUpdate [name="download"]').text(langObj.modal.confirmUpdate.button.download)
+        $('#modalConfirmExit [title1]').text(langObj.modal.confirmExit.title1)
+        $('#modalConfirmExit [title2]').text(langObj.modal.confirmExit.title2)
+        $('#modalConfirmExit label').text(langObj.modal.confirmExit.remember)
+        $('#modalConfirmExit #btnExit').text(langObj.modal.confirmExit.button.close)
+        $('#modalConfirmExit #btnTray').text(langObj.modal.confirmExit.button.collapse)
+        $('#modalConfirmImport [name="title1"]').text(langObj.modal.confirmImport.title1)
+        $('#modalConfirmImport [name="title2"]').text(langObj.modal.confirmImport.title2)
+        $('#modalConfirmImport [name="close"]').text(langObj.modal.confirmImport.button.close)
+        $('#modalConfirmImport [name="import"]').text(langObj.modal.confirmImport.button.import)
     } catch(e) {
         console.log(e);
         showErrorToast('Không thể tải được ngôn ngữ');

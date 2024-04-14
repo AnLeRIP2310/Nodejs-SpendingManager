@@ -285,5 +285,32 @@
             }
         },
         "version": "Phiên bản:"
+    },
+    "modal": {
+        "confirmUpdate": {
+            "title": "Phát hiện có bản cập nhật mới, bạn có muốn tải về không?",
+            "remember": "Ghi nhớ lựa chọn của tôi",
+            "button": {
+                "close": "Thoát",
+                "download": "Tải về"
+            }
+        },
+        "confirmExit": {
+            "title1": "Bạn có muốn đóng ứng dụng hoặc thu xuống khay hệ thống?.",
+            "title2": "Thu xuống khay sẽ giữ ứng dụng chạy ngầm để có thể nhận được thông báo.",
+            "remember": "Ghi nhớ lựa chọn của tôi",
+            "button": {
+                "close": "Thoát",
+                "collapse": "Thu xuống"
+            }
+        },
+        "confirmImport": {
+            "title1": "- Bạn có chắc muốn nhập dữ liệu không?, dữ liệu hiện tại trên ứng dụng sẽ bị mất nếu bạn nhập dữ liệu mới.",
+            "title2": "- Ứng dụng sẽ tự khởi động lại sau vài giây để áp dụng các thay đổi khi hoàn tất",
+            "button": {
+                "close": "Thoát",
+                "import": "Nhập Data"
+            }
+        }
     }
 }

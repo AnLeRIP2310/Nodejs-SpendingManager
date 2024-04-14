@@ -132,14 +132,16 @@
                     <div class="modal-content">
                         <div class="modal-body">
                             <strong class="text-danger">
-                                - Bạn có chắc muốn nhập dữ liệu không, dữ liệu hiện tại trên ứng dụng sẽ
-                                bị mất nếu bạn nhập dữ liệu mới.
-                                <br>- Ứng dụng sẽ tự khởi động lại sau vài giây để áp dụng các thay đổi khi hoàn
-                                tất</strong>
+                                <span name="title1">- Bạn có chắc muốn nhập dữ liệu không?, dữ liệu hiện tại trên ứng dụng sẽ
+                                    bị mất nếu bạn nhập dữ liệu mới.</span>
+                                <br>
+                                <span name="title2">- Ứng dụng sẽ tự khởi động lại sau vài giây để áp dụng các thay đổi khi hoàn
+                                    tất</span>
+                            </strong>
                             <div class="mt-3 d-flex justify-content-between">
-                                <button type="button" class="btn btn-sm btn-outline-primary" style="width: 110px;"
+                                <button name="close" type="button" class="btn btn-sm btn-outline-primary" style="width: 110px;"
                                     data-bs-dismiss="modal">Thoát</button>
-                                <button id="btnConfirmImport" type="button" class="btn btn-sm btn-success"
+                                <button name="import" id="btnConfirmImport" type="button" class="btn btn-sm btn-success"
                                     style="width: 110px;">Nhập Data</button>
                             </div>
                         </div>
@@ -153,11 +155,11 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-body">
-                            <span class="ms-3">
+                            <span name="title1" class="ms-3">
                                 Bạn có muốn đóng ứng dụng hoặc thu xuống khay hệ thống?.
                             </span>
                             <br>
-                            <span class="ms-3">
+                            <span name="title2" class="ms-3">
                                 Thu xuống khay sẽ giữ ứng dụng chạy ngầm để có thể nhận được thông báo.
                             </span>
                             <div class="input-group-sm mt-3">
@@ -201,10 +203,11 @@
                             </div>
 
                             <div class="mt-3 d-flex justify-content-between">
-                                <button type="button" class="btn btn-sm btn-outline-primary" style="width: 110px;"
-                                    data-bs-dismiss="modal">Thoát</button>
-                                <button id="btnConfirmDownloadUpdate" type="button" class="btn btn-sm btn-success"
-                                    style="width: 110px;" data-bs-dismiss="modal">Tải Về</button>
+                                <button name="close" type="button" class="btn btn-sm btn-outline-primary"
+                                    style="width: 110px;" data-bs-dismiss="modal">Thoát</button>
+                                <button name="download" id="btnConfirmDownloadUpdate" type="button"
+                                    class="btn btn-sm btn-success" style="width: 110px;" data-bs-dismiss="modal">Tải
+                                    Về</button>
                             </div>
                         </div>
                     </div>

@@ -285,5 +285,32 @@
             }
         },
         "version": "version:"
+    },
+    "modal": {
+        "confirmUpdate": {
+            "title": "Detected a new update, do you want to download it?",
+            "remember": "Remember my choice",
+            "button": {
+                "close": "Close",
+                "download": "Download"
+            }
+        },
+        "confirmExit": {
+            "title1": "Do you want to close the application or minimize it to the system tray?.",
+            "title2": "Minimizing the tray will keep the app running in the background so you can receive notifications.",
+            "remember": "Remember my choice",
+            "button": {
+                "close": "Close",
+                "collapse": "Collapse"
+            }
+        },
+        "confirmImport": {
+            "title1": "- Are you sure you want to enter data?, current data on the application will be lost if you enter new data.",
+            "title2": "- The app will restart automatically after a few seconds to apply the changes when done",
+            "button": {
+                "close": "Close",
+                "import": "Import Data"
+            }
+        }
     }
 }
