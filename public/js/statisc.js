@@ -189,8 +189,8 @@ function getTotalSpending() {
             if (res.success) {
                 $('#total_today').text(formatCurrency(res.today)) // Tổng hôm nay
                 $('#total_yesterday').text(formatCurrency(res.yesterday)) // Tổng hôm qua
-                $('#total_thisweek').text(formatCurrency(res.thisWeek)) // Tổng tuần này
-                $('#total_lastweek').text(formatCurrency(res.lastWeek)) // Tổng tuần trước
+                $('#total_thisWeek').text(formatCurrency(res.thisWeek)) // Tổng tuần này
+                $('#total_lastWeek').text(formatCurrency(res.lastWeek)) // Tổng tuần trước
 
                 // Tổng tiền mỗi khoản chi
                 res.totalPerSpendItem.forEach((item) => {

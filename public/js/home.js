@@ -92,7 +92,7 @@ function getTotalSpending() {
                 $('#total_today').text(formatCurrency(res.today)) // Tổng hôm nay
                 $('#total_yesterday').text(formatCurrency(res.yesterday)) // Tổng hôm qua
                 $('#total_thisweek').text(formatCurrency(res.thisWeek)) // Tổng tuần này
-                $('#total_lastweek').text(formatCurrency(res.lastWeek)) // Tổng tuần trước
+                $('#total_lastWeek').text(formatCurrency(res.yesterday)) // Tổng tuần trước
 
                 drawChart(res.totalPerWeek);
             }

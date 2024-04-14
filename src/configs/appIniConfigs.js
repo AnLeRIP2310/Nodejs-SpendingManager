@@ -17,7 +17,7 @@ const defaultConfigs = {
         darkMode: ['light', 'dark', 'auto'],
         windowPositionX: ['0.65', '0.5', '0.35'], // 0.65: căn phải - 0.35: căn trái - 0.5: căn giữa
         windowPositionY: ['1', '0.8', '1.2'], //0.8: căn trên - 1: căn giữa - 1.2: căn dưới
-        defaultPage: ['home', 'spending', 'statisc', 'noted'],
+        defaultPage: ['home', 'spending', 'statics', 'noted'],
         defaultAction: ['add', 'del', 'edit'],
         language: ['vi', 'en'],
         reminderDelete: [true, false],
