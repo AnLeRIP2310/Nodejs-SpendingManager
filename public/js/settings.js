@@ -367,7 +367,6 @@ $('#btn-syncData-Logout').click(function () {
 const ws = new WebSocket('ws://localhost:3963');
 
 ws.onmessage = function (event) {
-    console.log(JSON.parse(event.data));
     const data = JSON.parse(event.data)
     if ($('#syncData-Progress').hasClass('d-none')) {
         $('#syncData-Progress').removeClass('d-none')
@@ -401,10 +400,10 @@ $('#btn-syncData').click(function () {
                 // Gọi hàm để sao lưu dữ liệu
                 $('#btn-backupData').click();
             } else if (res.success && res.data != null) {
-                console.log(res.data)
                 const dataObj = {
                     spendingList: res.data.spendingList,
                     spendingItem: res.data.spendingItem,
+                    noted: res.data.noted,
                     token: JSON.parse(localStorage.getItem('AuthToken')).token,
                 }
                 ws.send(JSON.stringify(dataObj));

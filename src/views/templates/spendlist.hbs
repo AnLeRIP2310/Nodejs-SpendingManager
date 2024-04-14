@@ -71,5 +71,27 @@
     </div>
 </div>
 
+<!-- Modal Confirm Delete List -->
+<div class="modal modal-sm fade" id="modalConfirmDeleteList" tabindex="-1"
+    aria-labelledby="modalConfirmDeleteList" aria-hidden="true" data-bs-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <strong class="text-danger">Bạn có chắc muốn xoá danh sách này không?, tất cả dữ liệu trên danh sách này cũng sẽ bị xoá.</strong>
+                <div class="mt-3">
+                    <input id="reminderDeleteList" type="checkbox" class="form-check-input">
+                    <label for="reminderDeleteList" class="form-check-label pointer">Không hiển thị lại lời nhắc</label>
+                </div>
+                <div class="mt-3 d-flex justify-content-end">
+                    <button name="close" type="button" class="btn btn-sm btn-outline-secondary" style="width: 100px;"
+                        data-bs-dismiss="modal">Thoát</button>
+                    <button name="delete" id="btnConfirmDeleteList" type="button" class="btn btn-sm btn-primary ms-2"
+                        style="width: 100px;">Xoá</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script src="../../public/js/spendlist.js"></script>

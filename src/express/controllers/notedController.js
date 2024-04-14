@@ -158,25 +158,16 @@ module.exports = {
         try {
             const { IdNoted } = req.body;
 
-            let sql = 'update noted set status = 0 where id = ?';
+            let sql = 'delete from noted where id = ?';
             const result = await db.query(sql, [IdNoted]);
             if (result) {
-                res.json({
-                    success: true,
-                    message: 'Đã xoá danh sách này thành công',
-                })
+                res.json({ success: true, message: 'Đã xoá danh sách này thành công' });
             } else {
-                res.json({
-                    success: false,
-                    message: "Xoá danh sách này thất bại",
-                })
+                res.json({ success: false, message: "Xoá danh sách này thất bại" });
             }
         } catch (e) {
             logger.error(e)
-            res.json({
-                success: false,
-                message: 'Có lỗi khi xoá danh sách này'
-            })
+            res.json({ success: false, message: 'Có lỗi khi xoá danh sách này' });
         }
     },
 }

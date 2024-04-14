@@ -43,11 +43,25 @@ module.exports = {
         const { Id } = req.body
 
         try {
-            var sql = 'update SpendingList set status = 0 where id = ?'
-            const result = await db.query(sql, [Id])
-            res.json({ success: true })
+            // Xoá tất cả item trong list trước khi xoá list
+            let sql = "delete from spendingitem where spendlistid = ?";
+            const itemResult = await db.query(sql, [Id])
+
+            if (itemResult) {
+                sql = 'delete from SpendingList where id = ?'
+                const listResult = await db.query(sql, [Id])
+
+                if (listResult) {
+                    res.json({ success: true, message: "Xoá danh sách thành công" })
+                } else {
+                    res.json({ success: false, message: "Xoá danh sách thất bại" })
+                }
+            } else {
+                res.json({ success: false, message: "Xoá dữ liệu trong danh sách thất bại" })
+            }
         } catch (e) {
             logger.error(e)
+            res.json({ success: false, message: "Có lỗi khi xoá danh sách" })
         }
     },
 }

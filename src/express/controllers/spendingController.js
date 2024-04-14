@@ -170,7 +170,7 @@ module.exports = {
         const { Id } = req.body;
 
         try {
-            var sql = "update spendingitem set status = 0 where id = ?";
+            var sql = "delete from spendingitem where id = ?";
             var params = [Id];
             const result = await db.query(sql, params);
 

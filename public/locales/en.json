@@ -127,6 +127,14 @@
             "name": "List Name",
             "date": "Date added",
             "total": "Total amount"
+        },
+        "modal": {
+            "delete": {
+                "title": "Are you sure you want to delete this list? All data on this list will also be deleted.",
+                "reminder": "Don't show the reminder again",
+                "close": "Close",
+                "delete": "Delete"
+            }
         }
     },
     "profilePage": {

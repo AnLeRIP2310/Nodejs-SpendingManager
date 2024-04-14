@@ -97,7 +97,7 @@ module.exports = {
             const listFiles = await ggDrive.getListFile()
 
             for (const files of listFiles.files) {
-                console.log(files.id)
+                console.log('Đã xoá tệp có Id: ' + files.id)
                 await ggDrive.deleteFile(files.id)
             }
 
@@ -105,17 +105,22 @@ module.exports = {
             const userId = await db.table.users.getId(token);
 
             // Lấy danh sách chi tiêu
-            var sql = 'select * from spendinglist where usersid = ?';
+            let sql = 'select * from spendinglist where usersid = ?';
             const spendList = await db.query(sql, [userId]);
 
             // Lấy ra các mục của danh sách chi tiêu
             sql = 'select * from spendingitem';
             const spendItem = await db.query(sql);
 
+            // Lấy ra danh sách nhật ký
+            sql = 'select * from noted';
+            const noted = await db.query(sql);
+
             // Tạo biến obj chứa dữ liệu
             const dataObj = {
                 spendingList: spendList,
-                spendingItem: spendItem
+                spendingItem: spendItem,
+                noted: noted
             };
 
             // Chuyển obj thành chuỗi JSON với định dạng đẹp
@@ -197,7 +202,7 @@ wss.on('connection', function connection(ws) {
         const dataObj = JSON.parse(data)
 
         // Khởi tạo một mảng để lưu các giá trị chưa có trong database
-        var dataNotExist = { spendingList: [], spendingItem: [] };
+        var dataNotExist = { spendingList: [], spendingItem: [], noted: [] };
 
         // Kiểm tra spendingList
         for (const spendingList of dataObj.spendingList) {
@@ -217,10 +222,26 @@ wss.on('connection', function connection(ws) {
             }
         }
 
+        // Kiểm tra noted
+        for (const noted of dataObj.noted) {
+            let sql = 'select * from noted where id =? and namelist = ?';
+            const checkNoted = await db.query(sql, [noted.id, noted.namelist]);
+
+            // Thêm vào mảng nếu nó chưa tồn tại
+            if (checkNoted.length == 0) { dataNotExist.noted.push(noted); }
+        }
+
         // Lấy tổng số tiến trình dữ liệu
-        const totalProcess = dataNotExist.spendingItem.length + dataObj.spendingList.length;
+        const totalProcess = dataNotExist.spendingItem.length + dataNotExist.spendingList.length + dataNotExist.noted.length;
         let currentProcess = 0;
         let successProcess = 0;
+
+        // hàm tính tổng tiến trình hiện tại
+        async function calculateProcess() {
+            currentProcess++
+            successProcess = Math.floor((currentProcess / totalProcess) * 100);
+            ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
+        }
 
         // Lấy ra người dùng hiện tại
         const userId = await db.table.users.getId(dataObj.token)
@@ -246,23 +267,32 @@ wss.on('connection', function connection(ws) {
                     await db.query(sql, params);
 
                     // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
-                    currentProcess++
-                    successProcess = Math.floor((currentProcess / totalProcess) * 100);
-                    ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
+                    calculateProcess();
                     await delay(); // Độ trễ trước khi thực hiện tiếp
                 }
             }
         } else {
             // Nếu không có spendingList, thêm các spendingItem
             for (const spendItem of dataNotExist.spendingItem) {
-                sql = `insert into spendingitem (id, spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?, ?)`;
-                params = [spendItem.id, spendItem.spendlistid, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate, spendItem.atupdate, spendItem.status];
+                sql = `insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)`;
+                params = [spendItem.spendlistid, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate, spendItem.atupdate, spendItem.status];
                 await db.query(sql, params);
 
                 // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
-                currentProcess++
-                successProcess = Math.floor((currentProcess / totalProcess) * 100);
-                ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
+                calculateProcess();
+                await delay(); // Độ trễ trước khi thực hiện tiếp
+            }
+        }
+
+        // Thêm noted
+        if (dataNotExist.noted.length > 0) {
+            for (const noted of dataNotExist.noted) {
+                sql = 'insert into noted (usersid, namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
+                params = [noted.usersid, noted.namelist, noted.content, noted.atcreate, noted.atupdate, noted.status];
+                await db.query(sql, params);
+
+                // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
+                calculateProcess();
                 await delay(); // Độ trễ trước khi thực hiện tiếp
             }
         }

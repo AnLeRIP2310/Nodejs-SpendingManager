@@ -9,7 +9,7 @@ const axios = require('axios');
 let appQuit = false;
 app.on('before-quit', async (event) => {
     try {
-        if (!appQuit) {
+        if (!appQuit && app.isPackaged) {
             event.preventDefault();
 
             const mainWindow = windowManager.getMainWindow();

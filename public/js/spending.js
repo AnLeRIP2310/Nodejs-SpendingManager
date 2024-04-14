@@ -482,7 +482,7 @@ $('#btnDelete').on('click', function () {
     }
 
     if (settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
-        $('#modalConfirmDelete').modal('show');
+        $('#modalConfirmDeleteItem').modal('show');
     } else {
         deleteSpendingItem()
     }
@@ -497,14 +497,12 @@ $('#btnConfirmDelete').click(function () {
     }
 
     deleteSpendingItem()
-    $('#modalConfirmDelete').modal('hide');
+    $('#modalConfirmDeleteItem').modal('hide');
 })
 
 // hàm xoá dữ liệu trong bảng
 function deleteSpendingItem() {
-    const data = {
-        Id: $('#spendId').val(),
-    }
+    const data = {Id: $('#spendId').val()};
 
     if (data.Id == null) {
         showWarningToast('Vui lòng chọn dữ liệu muốn xoá');

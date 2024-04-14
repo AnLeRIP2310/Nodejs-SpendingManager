@@ -108,6 +108,10 @@ async function applyLanguage(lang) {
         $('#offcanvasSpendlist #spendlistTbl [name="name"]').text(langObj.listPage.table.name)
         $('#offcanvasSpendlist #spendlistTbl [name="date"]').text(langObj.listPage.table.date)
         $('#offcanvasSpendlist #spendlistTbl [name="total"]').text(langObj.listPage.table.total)
+        $('#modalConfirmDeleteList strong').text(langObj.listPage.modal.delete.title)
+        $('#modalConfirmDeleteList label').text(langObj.listPage.modal.delete.reminder)
+        $('#modalConfirmDeleteList [name="close"]').text(langObj.listPage.modal.delete.button.close)
+        $('#modalConfirmDeleteList [name="delete"]').text(langObj.listPage.modal.delete.button.delete)
 
         // Profile Page
         $('#offcanvasProfile .offcanvas-title').text(langObj.profilePage.title)

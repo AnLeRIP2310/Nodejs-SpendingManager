@@ -1,3 +1,6 @@
+let curentListId = 0; // Biến lưu id danh sách muốn xoá
+let curentlistRow; // Biến lưu row danh sách muốn xoá
+
 $(document).ready(function () {
     // Sự kiện click nút edit trên bảng
     $('#spendlistTbl').on('click', '#btn-spendlist-edit', function () {
@@ -44,34 +47,31 @@ $(document).ready(function () {
 
     // Sự kiện click nút del trên bảng
     $('#spendlistTbl').on('click', '#btn-spendlist-delete', function () {
-        $(this).closest('tr').remove();
-        var row = $(this).closest('tr');
-        var Id = row.find('#tbl-spendlist-id').text();
-        delSpendlist(Id);
+        var row = $(this).closest('tr'); curentlistRow = row;
+        curentListId = row.find('#tbl-spendlist-id').text();
+
+        if(settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
+            $('#modalConfirmDeleteList').modal('show')
+        } else {
+            $(this).closest('tr').remove();
+            delSpendlist(curentListId);
+        }
     });
 });
 
+// Nút xác nhận xoá danh sách
+$('#btnConfirmDeleteList').click(function () {
+    // Kiểm tra xem có tick vào ô tắt thông báo không
+    if ($('#reminderDeleteList').prop('checked')) {
+        settingsObj.reminderDelete = false;
+        editSettings('reminderDelete', false, 'App', reminderDelete);
+        $('#reminderDeleteList').prop('checked', false);
+    }
 
-// Hàm cập nhật dữ liệu bảng chi tiêu(spendlist)
-function editSpendlist(data) {
-    $.ajax({
-        type: 'POST',
-        url: urlapi + '/spendlist/editSpendlist',
-        data: JSON.stringify(data),
-        dataType: 'json',
-        contentType: 'application/json',
-        success: function (res) {
-            if (res.success) {
-                showSuccessToast('Cập nhật tên danh sách thành công');
-            } else {
-                showErrorToast('Cập nhật tên danh sách thất bại');
-            }
-        },
-        error: function (err) {
-            console.log(err);
-        }
-    });
-}
+    curentlistRow.remove(); // Xoá danh sách trên giao diện
+    delSpendlist(curentListId);
+    $('#modalConfirmDeleteList').modal('hide')
+});
 
 // Hàm xoá danh sách chi tiêu
 function delSpendlist(id) {
@@ -92,6 +92,27 @@ function delSpendlist(id) {
             console.log(err);
         }
     })
+}
+
+// Hàm cập nhật dữ liệu bảng chi tiêu(spendlist)
+function editSpendlist(data) {
+    $.ajax({
+        type: 'POST',
+        url: urlapi + '/spendlist/editSpendlist',
+        data: JSON.stringify(data),
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function (res) {
+            if (res.success) {
+                showSuccessToast('Cập nhật tên danh sách thành công');
+            } else {
+                showErrorToast('Cập nhật tên danh sách thất bại');
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
 }
 
 var isOpenForm = false;

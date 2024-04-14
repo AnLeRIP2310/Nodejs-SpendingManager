@@ -127,6 +127,16 @@
             "name": "Tên danh sách",
             "date": "Ngày tạo",
             "total": "Tổng tiền"
+        },
+        "modal": {
+            "delete": {
+                "title": "Bạn có chắc muốn xoá danh sách này không?, tất cả dữ liệu trên danh sách này cũng sẽ bị xoá.",
+                "reminder": "Không hiển thị lại lời nhắc",
+                "button": {
+                    "close": "Thoát",
+                    "delete": "Xoá"
+                }
+            }
         }
     },
     "profilePage": {
@@ -245,8 +255,8 @@
                 "backupData_desc": "Nhấn vào nút này để tiến hành sao lưu dữ liệu"
             },
             "email": "Địa chỉ Email liên kết với Google Drive",
-            "status":{
-                "name":  "Trạng thái:",
+            "status": {
+                "name": "Trạng thái:",
                 "desc1": "Đã sao lưu",
                 "desc2": "Đang sao lưu",
                 "desc3": "Đã đồng bộ",
