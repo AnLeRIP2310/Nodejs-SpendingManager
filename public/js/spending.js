@@ -429,11 +429,11 @@ $('#btnUpdate').on('click', function () {
         ListId: $('#SpendingList').val(),
         Name: $('#spendName').val(),
         Price: $('#spendPrice').val(),
-        Details: $('#spendDetails').val(),
+        Details: $('#spendDetails').val() || "Không có thông tin",
         AtUpdate: $('#spendDate').val(),
     }
-
-    if (data.Id == null || data.Id == '' || data.Id == undefined) {
+    
+    if (!data.Id) {
         showWarningToast('Vui lòng chọn dữ liệu muốn sửa');
         return;
     }
