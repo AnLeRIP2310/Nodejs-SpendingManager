@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <img src="https://github.com/ALR2310/SpendingManager/assets/87233160/e71d37fd-5c26-438b-9e8b-a46de90eaf39" width="250">
+  <img src="https://github.com/ALR2310/SpendingManager/assets/87233160/e71d37fd-5c26-438b-9e8b-a46de90eaf39" width="200">
   <br>
   Spending Manager
   <br>
