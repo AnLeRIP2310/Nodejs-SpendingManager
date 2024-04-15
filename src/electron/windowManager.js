@@ -17,6 +17,8 @@ function createLoginWindow() {
     const windowHeight = 500;
     const screenWidth = mainScreen.width;
     const screenHeight = mainScreen.height;
+    const windowPositionX = parseFloat(appIniConfigs.getIniConfigs('windowPositionX'))
+    const windowPositionY = parseFloat(appIniConfigs.getIniConfigs('windowPositionY'));
 
     loginWindow = new BrowserWindow({
         width: windowWidth,
@@ -29,8 +31,8 @@ function createLoginWindow() {
             devTools: false,
             preload: path.join(__dirname, '..', 'configs', 'preload.js')
         },
-        x: Math.floor(screenWidth * 0.65 - windowWidth / 2),
-        y: Math.floor((screenHeight - windowHeight) / 2),
+        x: Math.floor(screenWidth * windowPositionX - windowWidth / 2),
+        y: Math.floor((screenHeight * windowPositionY - windowHeight) / 2),
     });
 
     loginWindow.loadFile(path.join(__dirname, '..', 'views', 'login.html'));

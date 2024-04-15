@@ -1,5 +1,5 @@
-let curentListId = 0; // Biến lưu id danh sách muốn xoá
-let curentlistRow; // Biến lưu row danh sách muốn xoá
+var curentListId = 0; // Biến lưu id danh sách muốn xoá
+var curentlistRow; // Biến lưu row danh sách muốn xoá
 
 $(document).ready(function () {
     // Sự kiện click nút edit trên bảng

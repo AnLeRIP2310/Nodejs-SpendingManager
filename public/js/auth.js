@@ -122,7 +122,10 @@ $('#btn-register').click(() => {
                 // Điền sẵn dữ liệu
                 $('#login_username').val(data.username);
                 $('#login_password').val(data.password);
-                // Xoá dữ liệu cũ
+                // Loại bỏ cảnh báo
+                $('#login_username').removeClass('is-invalid');
+                $('#login_password').removeClass('is-invalid');
+                // Xoá thông tin cũ
                 $('#register_username').val('');
                 $('#register_password').val('');
             } else {

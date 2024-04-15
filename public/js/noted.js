@@ -53,7 +53,6 @@ function handleCreateAndSearch() {
                 success: function (res) {
                     if (res.success) {
                         handleShowListNoted();
-                        showSuccessToast('Đã thêm danh sách thành công');
                     } else {
                         showErrorToast('Có lỗi khi thêm danh sách');
                     }
@@ -228,6 +227,9 @@ function openEditForm(dataId, isOpen) {
     }
 }
 
+// Biến lưu element text và input của noted
+var inputNameList, textNamelist;
+
 // Hàm gán các sự kiện cho element
 function handleAssignEvents() {
     // Nút đóng/mở form sửa-xoá
@@ -262,10 +264,10 @@ function handleAssignEvents() {
         var listItem = event.target.closest('a');
         if (listItem) {
             var notedId = listItem.getAttribute('data-id');
+            inputNameList = $(listItem).find('.tbl-notedname');
+            textNamelist = $(listItem).find('.txt-notedname');
 
             openEditForm(notedId, true);
-
-            console.log(currentOpenId);
         }
     });
 
@@ -284,7 +286,6 @@ function handleAssignEvents() {
                 contentype: 'application/json',
                 success: function (res) {
                     if (res.success) {
-                        showSuccessToast(res.message)
                         handleShowListNoted(); // Gọi hàm để hiển thị lại danh sách
                     } else {
                         showErrorToast(res.message);
@@ -307,7 +308,7 @@ function handleAssignEvents() {
     $('#btn-noted-save').click(function () {
         const data = {
             notedId: currentOpenId,
-            nameList: $('.tbl-notedname').val(),
+            nameList: $(inputNameList).val(),
             content: notedEditor.getData(),
         }
 
@@ -319,9 +320,12 @@ function handleAssignEvents() {
             contentype: 'application/json',
             success: function (res) {
                 if (res.success) {
-                    showSuccessToast(res.message)
                     // cập nhật nội dung mới
                     $('#noted-content').html(notedEditor.getData());
+                    // Cập nhật tên mới nếu có
+                    if ($(textNamelist).text() != data.nameList) {
+                        $(textNamelist).text(data.nameList)
+                    }
 
                     openActionForm(currentOpenId, false) // đóng form sửa/xoá
                     openEditForm(currentOpenId, false) //đóng chế độ sửa

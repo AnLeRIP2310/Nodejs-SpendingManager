@@ -27,7 +27,7 @@
                 <a class="list-group-item pointer p-0" data-id="{{this.id}}" data-bs-toggle="list">
                     <div class="d-flex">
                         <div class="w-100 p-2 overflow-hidden">
-                            <strong title="Ghi chú của tôi"
+                            <strong title="{{this.namelist}}"
                                 class="txt-notedname text-nowrap text-start">{{this.namelist}}</strong>
                             <input class="tbl-notedname form-control form-control-sm d-none" value="{{this.namelist}}"
                                 type="text">
@@ -64,7 +64,10 @@
                 <a class="list-group-item pointer p-0" data-id="%this.id%" data-bs-toggle="list">
                     <div class="d-flex">
                         <div class="w-100 p-2 overflow-hidden">
-                            <strong title="Ghi chú của tôi" class="text-nowrap text-start">%this.namelist%</strong>
+                            <strong title="%this.namelist%"
+                                class="txt-notedname text-nowrap text-start">%this.namelist%</strong>
+                            <input class="tbl-notedname form-control form-control-sm d-none" value="%this.namelist%"
+                                type="text">
                             <p class="m-0 text-nowrap text-end">%this.atupdate%</p>
                         </div>
 
@@ -74,12 +77,12 @@
                                 <i class="fa-solid fa-angle-left"></i>
                             </button>
                             <div class="noted-content_action" data-id="%this.id%">
-                                <button class="btn-notedEdit btn btn-primary text-nowrap">
+                                <button name="edit" class="btn-notedEdit btn btn-primary text-nowrap">
                                     Chỉnh sửa
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
 
-                                <button class="btn-notedDelete btn btn-danger text-nowrap">
+                                <button name="delete" class="btn-notedDelete btn btn-danger text-nowrap">
                                     Xoá bỏ
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
