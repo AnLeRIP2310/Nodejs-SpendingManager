@@ -119,7 +119,6 @@ function getWeatherData(city, lang, lat, lon) {
 
             const weatherData = res.data
             $('#txt_weatherCity').text(weatherData.name);
-            $('#txt_weatherCountry').text(weatherData.sys.country);
             $('#txt_weatherDate').text(formatDate(new Date()));
             $('#txt_weatherTime').text(formatTime(new Date()));
             $('#txt_weatherTemperature').html(Math.round(weatherData.main.temp) + '&deg;C');

@@ -48,10 +48,18 @@ function formatCurrency(value) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
 }
 
+// Hàm định dạng tiền cho thẻ input
+function inputCurrency(element) {
+    var value = element.value.replace(/[^0-9]/g, '');
+    let Currency = parseInt(value, 10);
+    if (isNaN(Currency)) { element.value = '' }
+    else { element.value = Currency.toLocaleString('vi-VN') }
+}
+
 // Hàm định dạng số phần trăm
 function formatPercent(value) { return value.toFixed(2) + '%' }
 
-// Đăng ký helper để chuyển đổi biến handlebars từ %variable% thành {{variable}}
+// Hàm chuyển đổi biến handlebars từ %variable% thành {{variable}}
 function convertPlaceHbs(template, options = { from: { start: "%", end: "%" }, to: { start: "{{", end: "}}" } }) {
     const { from, to } = options;
     const startRegex = new RegExp(from.start.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + '([^]*?)' + from.end.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), 'g');
@@ -64,7 +72,7 @@ function convertPlaceHbs(template, options = { from: { start: "%", end: "%" }, t
     });
 }
 
-// Đăng ký helper thêm hàm cho handlebars
+// Thêm hàm format văn bản thường cho handlebars
 Handlebars.registerHelper('toLowerCase', function (str) {
     return str.toLowerCase();
 });
@@ -76,6 +84,44 @@ Handlebars.registerHelper('addPercentageClass', function (value) {
         return new Handlebars.SafeString('text-danger');
     } else {
         return '';
+    }
+});
+Handlebars.registerHelper('addClassForPercent', function (value) {
+    if (parseFloat(value) > 0) {
+        return new Handlebars.SafeString('text-danger');
+    } else if (parseFloat(value) < 0) {
+        return new Handlebars.SafeString('text-success');
+    } else {
+        return '';
+    }
+})
+Handlebars.registerHelper('formatMonthInput', function (value) {
+    return new Date(value).toISOString().slice(0, 7);
+});
+// Định dạng thời gian thành tháng - năm có văn bản
+Handlebars.registerHelper('formatMonth', function (value) {
+    if (settingsObj.language == "vi") {
+        return new Date(value).toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
+    } else if (settingsObj.language == "en") {
+        return new Date(value).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    }
+});
+// Định dạng tiền tệ trong handlebars
+Handlebars.registerHelper('formatCurrency', function (value) {
+    if (settingsObj.language == "vi") {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+    } else if (settingsObj.language == "en") {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+    }
+});
+// Định dạng phần trăm trong handlebars
+Handlebars.registerHelper('formatPercent', function (value) {
+    if (value < 0) {
+        return `Giảm ${Math.abs(value).toFixed(0) + '%'}`;
+    } else if (value > 0) {
+        return `Tăng ${Math.abs(value).toFixed(0) + '%'}`;
+    } else {
+        return Math.abs(value).toFixed(0) + '%'
     }
 });
 

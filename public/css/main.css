@@ -105,3 +105,9 @@ th {
     background-color: rgba(var(--bs-secondary-bg-rgb), var(--bs-bg-opacity));
     z-index: 1;
 }
+
+.btn-smm {
+    --bs-btn-padding-y: .25rem;
+    --bs-btn-padding-x: .5rem;
+    --bs-btn-font-size: .75rem;
+}

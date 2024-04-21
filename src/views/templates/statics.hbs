@@ -1,6 +1,6 @@
 <div class="container-fluid overflow-y-scroll h-100">
 
-    <div id="statistical" class="row border-bottom border-dark" style="padding: 12px 0;">
+    <div id="statistical" class="row border-bottom border-dark " style="padding: 12px 0;">
         <div class="col-4 mb-2">
             <div class="d-flex align-items-center p-1 border border-dark rounded-2">
                 <strong name="totalItem" class="text-center pe-2">Tổng Khoản Chi:</strong>
@@ -48,46 +48,149 @@
 
     <div class="row">
         <div class="statics_chart col-8 border-end border-dark p-0 position-relative">
+            <!-- Thống kê thu nhập -->
+            <div style="padding: 12px;">
+                <div class="tableScroll"
+                    style="min-height: 143px; height: 32px; max-height: 300px; overflow-y: auto; resize: vertical;">
+                    <table class="table table-sm table-hover border h-100">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center text-nowrap">Tháng/Năm</th>
+                                <th scope="col" class="text-center text-nowrap">Thu nhập</th>
+                                <th scope="col" class="text-center text-nowrap">Phần trăm</th>
+                                <th scope="col" class="text-center text-nowrap">Đã tiết kiệm</th>
+                                <th scope="col" class="text-center">
+                                    <button id="btn-IncomeAdd" class="btn btn-sm btn-smm btn-outline-secondary"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-title="Thêm thu nhập cho tháng nếu chưa có trong danh sách">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="incomeTBody"></tbody>
+                    </table>
+                    <script type="text/x-handlebars-template" id="template-incomeTBody">
+                    %#if incomeData%
+                        %#each incomeData%
+                            <tr name="rowIncome"  data-id="%this.id%">
+                                <td class="text-center">
+                                    <span>%formatMonth this.atcreate%</span>
+                                    <input type="month" class="form-control form-control-sm text-center d-none" value="%formatMonthInput this.atcreate%">
+                                </td>
+                                <td class="text-center">
+                                    <span>%formatCurrency this.price%</span>
+                                    <input type="text" class="form-control form-control-sm text-center d-none" value="%this.price%" onmouseenter="inputCurrency(this)" oninput="inputCurrency(this)">
+                                </td>
+                                <td class="text-center text-nowrap %addClassForPercent this.percent%" data-bs-toggle="tooltip" data-bs-html="true"
+                                    data-bs-title="Số tiền bạn đã chi tháng này <strong class='%addClassForPercent this.percent%'>
+                                        %formatPercent this.percent%</strong> so với tháng trước">%formatPercent this.percent%</td>
+                                <td class="text-center %addPercentageClass this.saved%">%formatCurrency this.saved%</td>
+                                <td class="text-center">
+                                    <button name="edit" class="btn btn-sm btn-outline-secondary btn-smm" onclick="openEditIncome(this)">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+
+                                    <div class="dropdown d-none">
+                                        <button class="btn btn-sm btn-smm btn-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <ul class="dropdown-menu p-2" style="min-width: 80px;">
+                                            <button name="close" class="btn btn-sm btn-outline-danger btn-smm" onclick="closeEditIncome(this, 'delete')">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                            <button name="save" class="btn btn-sm btn-success btn-smm" onclick="closeEditIncome(this, 'save')">
+                                                <i class="fa-solid fa-floppy-disk"></i>
+                                            </button>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        %/each%
+                        %else%
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <span>
+                                        Tháng này bạn có thu nhập là bao nhiêu?, hãy nhập vào số thu nhập của mình để
+                                        xem bạn đã tiếc kiệm được bao nhiêu nào.
+                                    </span>
+                                    <div class="d-flex w-100 justify-content-center mt-2">
+                                        <div name="rowIncome" class="input-group input-group-sm" style="width: 200px;">
+                                            <input type="text" class="form-control form-control-sm" oninput="inputCurrency(this)">
+                                            <button class="btn btn-sm btn-outline-success" onclick="createIncome(this)">
+                                                <i class="fa-solid fa-floppy-disk"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        %/if%
+                    </script>
+                </div>
+
+                <!-- Thống kê nhỏ -->
+                <div class="d-flex justify-content-between">
+                    <div data-bs-toggle="tooltip" data-bs-placement="bottom"
+                        title="Tổng số tiền mà bạn đã tiết kiệm được trong năm nay">
+                        <span>Tổng tiết kiệm: </span>
+                        <span id="total_income" class="text-success">0</span>
+                    </div>
+
+
+                    <div data-bs-toggle="tooltip" data-bs-placement="bottom"
+                        title="Bật cái này sẽ tự động thêm thu nhập cho tháng sau">
+                        <label class="pointer" for="income_reminder">Thu nhập tháng sau</label>
+                        <input id="income_reminder" type="checkbox" checked class="form-check-input">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biểu đồ chi tiêu -->
             <div class="d-flex align-items-center position-absolute" style="margin: 12px;right: 90px; z-index: 1">
                 <strong name="title" class="text-nowrap me-2 fs-5">Tổng Chi Tiêu Mỗi</strong>
-                <select id="statisc_type" class="form-select">
+                <select id="statics_type" class="form-select">
                     <option name="day" value="date">Ngày</option>
                     <option name="week" value="week">Tuần</option>
                     <option name="month" value="month">Tháng</option>
                     <option name="year" value="year">Năm</option>
                 </select>
             </div>
-            <div id="chart-totalspending" style="width: 100%; height: 100%;"></div>
+            <div id="chart-totalspending" style="width: 100%; height: 425px;"></div>
+
+            
         </div>
 
-        <div class="col-4" style="padding-top: 12px">
-            <select id="statisc_spendList" class="form-select mb-3">
-                {{#if spendingList}}
-                {{#each spendingList}}
-                <option value="{{this.id}}">{{this.namelist}}</option>
-                {{/each}}
-                {{/if}}
-            </select>
-            <div class="tableScroll" style="height: 351px;">
-                <table id="chart_table" class="table table-sm table-hover border">
-                    <thead>
-                        <tr>
-                            <th name="name" scope="col">Tên Khoản Chi</th>
-                            <th name="price" scope="col">Số Tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tb-totalPerSpendItem"></tbody>
-                    <script type="text/x-handlebars-template" id="template-totalPerSpendItem">
+        <div class="col-4" style="padding-top: 12px;">
+            <div class="position-sticky mb-2" style="top: 12px;">
+                <select id="statics_spendList" class="form-select mb-3">
+                    {{#if spendingList}}
+                    {{#each spendingList}}
+                    <option value="{{this.id}}">{{this.namelist}}</option>
+                    {{/each}}
+                    {{/if}}
+                </select>
+                <div class="tableScroll mb-0" style="height: 350px;">
+                    <table id="chart_table" class="table table-sm table-hover border">
+                        <thead>
+                            <tr>
+                                <th name="name" scope="col">Tên Khoản Chi</th>
+                                <th name="price" scope="col">Số Tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tb-totalPerSpendItem"></tbody>
+                        <script type="text/x-handlebars-template" id="template-totalPerSpendItem">
                         %#if totalPerSpendItem%
                         %#each totalPerSpendItem%
-                        <tr class="pointer">
+                        <tr>
                             <td style="white-space: nowrap;">%this.nameitem%</td>
                             <td>%this.totalprice%</td>
                         </tr>
                         %/each%
                         %/if%
                     </script>
-                </table>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -104,8 +207,8 @@
                 <strong name="options" class="text-center d-block">Tuỳ chọn hiển thị</strong>
 
                 <div class="mt-2 d-flex align-items-center justify-content-between">
-                    <label name="view" for="change_display-pieStatisc" class="text-nowrap">Xem theo:</label>
-                    <select id="change_display-pieStatisc" class="form-select pointer" style="width: auto;">
+                    <label name="view" for="change_display-pieStatics" class="text-nowrap">Xem theo:</label>
+                    <select id="change_display-pieStatics" class="form-select pointer" style="width: auto;">
                         <option name="default" value="all">Mặt định</option>
                         <option name="day" value="date">Ngày</option>
                         <option name="month" value="month">Tháng</option>
@@ -143,4 +246,4 @@
 </div>
 
 
-<script src="../../public/js/statisc.js"></script>
+<script src="../../public/js/statics.js"></script>

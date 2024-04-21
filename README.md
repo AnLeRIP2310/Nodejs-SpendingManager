@@ -53,7 +53,7 @@ Bạn có thể [tải xuống](https://github.com/ALR2310/SpendingManager/relea
 - [![Font Awesome Badge](https://img.shields.io/badge/Font%20Awesome-528DD7?logo=fontawesome&logoColor=fff&style=for-the-badge)](https://fontawesome.com)
 - [![jQuery Badge](https://img.shields.io/badge/jQuery-0769AD?logo=jquery&logoColor=fff&style=for-the-badge)](https://jquery.com)
 - [![Lodash Badge](https://img.shields.io/badge/Lodash-3492FF?logo=lodash&logoColor=fff&style=for-the-badge)](https://lodash.com)
-- [![Handlebars.js Badge](https://img.shields.io/badge/Handlebars.js-000?logo=handlebarsdotjs&logoColor=fff&style=for-the-badge)](https://handlebarsjs.com)
+- [![Handlebars.js Badge](https://img.shields.io/badge/Handlebars.js-f0772b?logo=handlebarsdotjs&logoColor=fff&style=for-the-badge)](https://handlebarsjs.com)
 
 ## Cách sử dụng
 
@@ -63,7 +63,7 @@ Bạn có thể [tải xuống](https://github.com/ALR2310/SpendingManager/relea
 # Sao chép kho lưu trữ này
 $ git clone https://github.com/ALR2310/SpendingManager
 
-# Đi vào kho lưu trữ
+# Mở kho lưu trữ
 $ cd SpendingManager
 
 # Cài đặt các phần phụ thuộc
@@ -79,7 +79,7 @@ $ npm run watch
 $ npm run package
 ```
 
-_Lưu ý_: bạn sẽ cần phải tạo một tệp `.env` và các biến môi trường, nếu không thì ứng dụng sẽ không hoạt động đúng, một ví dụ mẫu như sau:
+_Lưu ý_: bạn sẽ cần phải tạo một tệp `.env` với các biến môi trường để ứng dụng có thể hoạt động, ví dụ như sau:
 
 ```bash
 #App

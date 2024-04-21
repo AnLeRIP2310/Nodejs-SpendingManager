@@ -365,7 +365,7 @@ $('#btnCreate').on('click', function () {
         ListId: $('#SpendingList').val(),
         Name: $('#spendName').val(),
         Price: $('#spendPrice').val() + '000',
-        Details: ($('#spendDetails').val() === null || $('#spendDetails').val() === "") ? "Không có thông tin" : $('#spendDetails').val(),
+        Details: $('#spendDetails').val() || "Không có thông tin",
         AtCreate: $('#spendDate').val(),
         AtUpdate: $('#spendDate').val(),
         Status: 1,

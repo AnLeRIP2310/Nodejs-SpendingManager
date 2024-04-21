@@ -142,4 +142,152 @@ module.exports = {
             logger.error(err);
         }
     },
+
+    getIncomeData: async (req, res) => {
+        try {
+            const { spendListId } = req.query;
+
+            if (!spendListId) {
+                return res.json({ success: false, status: 400, message: "Invalid request data" })
+            }
+
+            // Lấy ra thông tin từ bảng income
+            let sql = `select * from income where spendlistid = ? order by atcreate`;
+            const incomeResult = await db.query(sql, [spendListId]);
+
+            // Tạo mảng chứa dữ liệu
+            const incomeData = [];
+
+            let previousPrice = 0; // Biến lưu số tiền đã chi trong tháng
+
+            for (const item of incomeResult) {
+                // Tính tổng tiền đã chi trong tháng đó
+                sql = `SELECT SUM(price) AS Total FROM spendingitem WHERE strftime(?, atcreate) = strftime(?, ?) AND SpendListId = ? AND status = 1`;
+                const totalPrice = await db.query(sql, ['%Y-%m', '%Y-%m', item.atcreate, spendListId])
+
+                // Tính số dư còn lại
+                const amountSaved = item.price - totalPrice[0].total;
+
+                // Tính phần trăm tăng/giảm trên các danh sách
+                let percent;
+                if (incomeData?.length > 0) {
+                    percent = ((totalPrice[0].total - previousPrice) / previousPrice) * 100;
+                } else {
+                    percent = 0
+                }
+
+                // Gán số tiền đã chi trong tháng vào biến
+                previousPrice = totalPrice[0].total;
+
+                // Đẩy dữ liệu vào mảng
+                incomeData.push({
+                    id: item.id,
+                    atcreate: item.atcreate,
+                    price: item.price,
+                    percent: percent,
+                    saved: amountSaved
+                })
+            };
+            res.json({ success: true, status: 200, message: 'Data retrieved successfully', data: incomeData });
+        } catch (e) {
+            logger.error(e);
+            res.json({ success: false, status: 500, message: 'Internal server error' });
+        }
+    },
+
+    addIncome: async (req, res) => {
+        try {
+            const { atcreate, price, spendlistId } = req.body;
+
+            // Kiểm tra sự tồn tại nếu được phép
+            let sql = 'SELECT * FROM income WHERE strftime(?, atcreate) = strftime(?, ?) AND spendlistid = ?';
+            const checkResult = await db.query(sql, ['%Y-%m', '%Y-%m', atcreate, spendlistId]);
+
+            if (checkResult?.length > 0) {
+                console.log(checkResult);
+                return res.json({ success: false, status: 400, message: 'Resource already exists' });
+            }
+
+            // Thêm dữ liệu vào bảng
+            sql = 'INSERT INTO income (spendlistid , price, atcreate) VALUES (?, ?, ?)';
+            const result = await db.query(sql, [spendlistId, price, atcreate])
+
+            // Trả về dữ liệu dựa trên kết quả
+            if (result) {
+                res.json({ success: true, status: 201, message: 'Resource created successfully' });
+            } else {
+                res.json({ success: false, status: 400, message: 'Invalid request data' });
+            }
+        } catch (e) {
+            logger.error(e)
+            res.json({ success: false, status: 500, message: "Internal server error" });
+        }
+    },
+
+    editIncome: async (req, res) => {
+        try {
+            const { id, price, atcreate } = req.body;
+
+            let sql = 'UPDATE income SET price = ?, atcreate = ? WHERE id = ?';
+            const result = await db.query(sql, [price, atcreate, id])
+
+            if (result) {
+                res.json({ success: true, status: 200, message: 'Resource updated successfully' });
+            } else {
+                res.json({ success: false, status: 400, message: 'Invalid request data' });
+            }
+        } catch (e) {
+            logger.error(e)
+            res.json({ success: false, status: 500, message: "Internal server error" });
+        }
+    },
+
+    delIncome: async (req, res) => {
+        try {
+            const { id } = req.body;
+
+            let sql = 'DELETE FROM income WHERE id = ?';
+            const result = await db.query(sql, [id])
+
+            if (result) {
+                res.json({ success: true, status: 200, message: 'Resource deleted successfully' });
+            } else {
+                res.json({ success: false, status: 400, message: 'Invalid request data' });
+            }
+
+        } catch (e) {
+            logger.error(e)
+            res.json({ success: false, status: 500, message: "Internal server error" });
+        }
+    },
+
+    autoAddIncome: async (req, res) => {
+        try {
+            const { spendListId } = req.body;
+
+            // Kiểm tra tháng này đã có dữ liệu chưa
+            let sql = 'SELECT * FROM income WHERE strftime(?, atcreate) = strftime(?, ?) AND spendlistid = ?';
+            const isExists = await db.query(sql, ['%Y-%m', '%Y-%m', new Date().toISOString(), spendListId]);
+
+            // Nếu chưa có thì tiến hành thêm vào
+            if(isExists?.length == 0) {
+                // Lấy giá tiền của tháng gần nhất
+                sql = 'SELECT price FROM income ORDER BY atcreate DESC LIMIT 1';
+                const price = await db.query(sql,);
+
+                // Thêm dữ liệu vào bảng
+                sql = 'INSERT INTO income (spendlistid , price, atcreate) VALUES (?, ?, ?)';
+                const result = await db.query(sql, [spendListId, price[0].price, new Date().toISOString()])
+
+                if(result) {
+                    res.json({ success: true, status: 201, message: 'Resource created successfully' });
+                } else {
+                    res.json({ success: false, status: 400, message: 'Invalid request data' });
+                }
+            }
+        } catch (e) {
+            logger.error(e)
+            res.json({ success: false, status: 500, message: "Internal server error" });
+        }
+    },
 }

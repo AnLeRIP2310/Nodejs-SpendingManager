@@ -35,7 +35,7 @@ app.use('/spendlist', require('./express/routers/spendlistRouter'))
 app.use('/auth', require('./express/routers/authRouter'))
 app.use('/home', require('./express/routers/homeRouter'))
 app.use('/profile', require('./express/routers/profileRouter'))
-app.use('/statisc', require('./express/routers/statiscRouter'))
+app.use('/statics', require('./express/routers/staticsRouter'))
 app.use('/setting', require('./express/routers/settingRouter'))
 app.use('/noted', require('./express/routers/notedRouter'))
 

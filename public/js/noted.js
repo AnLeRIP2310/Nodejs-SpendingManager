@@ -228,7 +228,7 @@ function openEditForm(dataId, isOpen) {
 }
 
 // Biến lưu element text và input của noted
-var inputNameList, textNamelist;
+var inputNameList, textNamelist, btnDelete;
 
 // Hàm gán các sự kiện cho element
 function handleAssignEvents() {
@@ -271,32 +271,53 @@ function handleAssignEvents() {
         }
     });
 
-    // Nút xoá dữ liệu trên danh sách
+    // Nút xoá dữ liệu trên ghi chú
     $('.btn-notedDelete').click(function (event) {
         event.stopPropagation();
-        var listItem = event.target.closest('a');
-        if (listItem) {
-            var notedId = listItem.getAttribute('data-id');
-
-            $.ajax({
-                type: 'POST',
-                url: urlapi + '/noted/deleteNoted',
-                data: { IdNoted: notedId },
-                dataType: 'json',
-                contentype: 'application/json',
-                success: function (res) {
-                    if (res.success) {
-                        handleShowListNoted(); // Gọi hàm để hiển thị lại danh sách
-                    } else {
-                        showErrorToast(res.message);
-                    }
-                },
-                error: function (err) {
-                    console.log(err)
-                }
-            })
+        btnDelete = event.currentTarget;
+        if (settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
+            $('#modalConfirmDeleteNoted').modal('show')
+        } else {
+            notedDelete(event.currentTarget);
         }
     });
+
+    // Nút xác nhận xoá dữ liệu trên ghi chú
+    $('#btnConfirmDeleteNoted').click(function () {
+        // Kiểm tra xem có tick vào ô tắt thông báo không
+        if ($('#reminderDeleteNoted').prop('checked')) {
+            settingsObj.reminderDelete = false;
+            editSettings('reminderDelete', false, 'App', reminderDelete);
+            $('#reminderDeleteNoted').prop('checked', false);
+        }
+
+        notedDelete(btnDelete);
+        $('#modalConfirmDeleteNoted').modal('hide')
+    })
+
+    // Hàm xoá dữ liệu trên ghi chú
+    function notedDelete(element) {
+        var listItem = $(element).closest('a');
+        var notedId = listItem.attr('data-id');
+
+        $.ajax({
+            type: 'POST',
+            url: urlapi + '/noted/deleteNoted',
+            data: { IdNoted: notedId },
+            dataType: 'json',
+            contentype: 'application/json',
+            success: function (res) {
+                if (res.success) {
+                    handleShowListNoted(); // Gọi hàm để hiển thị lại danh sách
+                } else {
+                    showErrorToast(res.message);
+                }
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+    }
 
     // Nút huỷ thay đổi
     $('#btn-noted-close').click(function () {

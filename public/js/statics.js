@@ -8,7 +8,7 @@ $('#togglePanel').click(function () {
 });
 
 // Sự kiện tuỳ chọn xem
-$('#change_display-pieStatisc').on('change', function () {
+$('#change_display-pieStatics').on('change', function () {
     if ($(this).val() == 'date') {
         $('#panel-ctn_date').addClass('d-block');
     } else {
@@ -66,8 +66,8 @@ function drawChart_totalPerDate() {
 
     $.ajax({
         type: 'GET',
-        url: urlapi + '/statisc/getDataForChart1',
-        data: { spendListId: $('#statisc_spendList').val() },
+        url: urlapi + '/statics/getDataForChart1',
+        data: { spendListId: $('#statics_spendList').val() },
         success: function (res) {
             if (res.success) {
                 var chartDom = document.getElementById('chart-totalspending');
@@ -81,16 +81,16 @@ function drawChart_totalPerDate() {
                     var totalColumnsToShow = 13; // Số cột hiển thị
 
                     // Gán dữ liệu phù hợp dựa trên tuỳ chọn
-                    if ($('#statisc_type').val() == 'date') {
+                    if ($('#statics_type').val() == 'date') {
                         xAxisData = res.totalPerDay.map(item => item.date);
                         seriesData = res.totalPerDay.map(item => item.total);
-                    } else if ($('#statisc_type').val() == 'week') {
+                    } else if ($('#statics_type').val() == 'week') {
                         xAxisData = res.totalPerWeek.map(item => item.week);
                         seriesData = res.totalPerWeek.map(item => item.total);
-                    } else if ($('#statisc_type').val() == 'month') {
+                    } else if ($('#statics_type').val() == 'month') {
                         xAxisData = res.totalPerMonth.map(item => item.month);
                         seriesData = res.totalPerMonth.map(item => item.total);
-                    } else if ($('#statisc_type').val() == 'year') {
+                    } else if ($('#statics_type').val() == 'year') {
                         xAxisData = res.totalPerYear.map(item => item.year);
                         seriesData = res.totalPerYear.map(item => item.total);
                     }
@@ -108,13 +108,13 @@ function drawChart_totalPerDate() {
                                 formatter: function (value) {
                                     var parts = value.split('-');
 
-                                    if ($('#statisc_type').val() == 'date') {
+                                    if ($('#statics_type').val() == 'date') {
                                         return `${parts[2]}/${parts[1]}/${parts[0]}`;
-                                    } else if ($('#statisc_type').val() == 'week') {
+                                    } else if ($('#statics_type').val() == 'week') {
                                         return `${parts[1]}/${parts[0]}`;
-                                    } else if ($('#statisc_type').val() == 'month') {
+                                    } else if ($('#statics_type').val() == 'month') {
                                         return `${parts[1]}/${parts[0]}`;
-                                    } else if ($('#statisc_type').val() == 'year') {
+                                    } else if ($('#statics_type').val() == 'year') {
                                         return value;
                                     }
                                 }
@@ -139,13 +139,13 @@ function drawChart_totalPerDate() {
                                 let date = params[0].axisValueLabel;
                                 let price = params[0].value.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 
-                                if ($('#statisc_type').val() == 'date') {
+                                if ($('#statics_type').val() == 'date') {
                                     date = formatDay(params[0].axisValueLabel);
-                                } else if ($('#statisc_type').val() == 'week') {
+                                } else if ($('#statics_type').val() == 'week') {
                                     date = formatWeek(params[0].axisValueLabel);
-                                } else if ($('#statisc_type').val() == 'month') {
+                                } else if ($('#statics_type').val() == 'month') {
                                     date = foramtMonth(params[0].axisValueLabel);
-                                } else if ($('#statisc_type').val() == 'year') {
+                                } else if ($('#statics_type').val() == 'year') {
                                     date = 'Năm ' + params[0].axisValueLabel;
                                 }
 
@@ -173,7 +173,7 @@ function drawChart_totalPerDate() {
 drawChart_totalPerDate();
 
 // Gọi hàm khi có sự thay đổi
-$('#statisc_type').on('change', function () {
+$('#statics_type').on('change', function () {
     drawChart_totalPerDate();
 })
 
@@ -181,9 +181,9 @@ $('#statisc_type').on('change', function () {
 function getTotalSpending() {
     $.ajax({
         type: 'GET',
-        url: urlapi + '/statisc/getData',
+        url: urlapi + '/statics/getData',
         data: {
-            spendList: $('#statisc_spendList').val(),
+            spendList: $('#statics_spendList').val(),
         },
         success: function (res) {
             if (res.success) {
@@ -281,7 +281,7 @@ function drawChart_totalperspenditem(data) {
 // Hàm lấy dữ liệu từ db cho hàm drawChart_totalperspenditem
 function getDataForTotalPerSpenditem() {
     var value;
-    var change_display = $('#change_display-pieStatisc').val();
+    var change_display = $('#change_display-pieStatics').val();
 
     if (change_display == 'date') {
         value = $('#panel-input_date').val();
@@ -293,11 +293,11 @@ function getDataForTotalPerSpenditem() {
 
     $.ajax({
         type: 'GET',
-        url: urlapi + '/statisc/getDataForChart2',
+        url: urlapi + '/statics/getDataForChart2',
         data: {
             type: change_display,
             value: value,
-            SpendListId: $('#statisc_spendList').val(),
+            SpendListId: $('#statics_spendList').val(),
         },
         success: function (res) {
             drawChart_totalperspenditem(res.data);
@@ -316,8 +316,216 @@ $('#panel-input_date, #panel-input_month, #panel-input_year').on('change', funct
 })
 
 // Gọi hàm tính toán khi có sự thay đổi danh sách
-$('#statisc_spendList').on('change', function () {
+$('#statics_spendList').on('change', function () {
     getTotalSpending(); // Hàm tính tổng, danh sách và các thống kê cơ bản
     drawChart_totalPerDate(); // Hàm vẽ biểu đồ cột tính tổng chi tiêu theo thời gian
     getDataForTotalPerSpenditem(); // Hàm vẽ biểu đồ tròn tính tổng từng chi tiêu
+    getIncomeData(); // Hàm tính toán danh sách tiền mỗi tháng
 })
+
+
+// ------------Thống kê liên quan đến thu nhập-----------------
+
+var rowAdd = false;
+$('#btn-IncomeAdd').click(function () {
+    if (rowAdd) { return } // Nếu đã có row thì không thêm nữa.
+    rowAdd = true;
+
+    const newRow = `
+        <tr name="rowIncome">
+            <td>
+                <input type="month" class="form-control form-control-sm text-center">
+            </td>
+            <td colspan="2">
+                <input type="text" class="form-control form-control-sm" oninput="inputCurrency(this)">
+            </td>
+            <td colspan="2" style="text-align: right;">
+                <button class="btn btn-sm btn-smm btn-danger" onclick="closeAddIncome()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <button class="btn btn-sm btn-smm btn-success" onclick="createIncome(this)">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                </button>
+            </td>
+        </tr>
+        `;
+    $('#incomeTBody').prepend(newRow);
+})
+
+// Hàm lấy ra dữ liệu trên bảng incomeTBody
+function getIncomeData() {
+    rowAdd = false;
+
+    $.ajax({
+        type: "GET",
+        url: urlapi + "/statics/getIncomeData",
+        data: {
+            spendListId: $('#statics_spendList').val()
+        },
+        success: function (res) {
+            if (res.status) {
+                const source = convertPlaceHbs($('#template-incomeTBody').html());
+                const template = Handlebars.compile(source)
+                const html = template({ incomeData: res.data.reverse() })
+                $('#incomeTBody').html(html)
+
+                // Ẩn nút tạo mới nếu danh sách rỗng
+                if (res.data.length == 0) { $('#btn-IncomeAdd').addClass('d-none') }
+
+                tooltipSetting() // áp dụng cài đặt tooltip cho bảng
+
+                // Tính tổng tiền đã tiết kiệm trong năm
+                const currentYear = new Date().getFullYear();
+                const currentYearData = _.filter(res.data, item => {
+                    return new Date(item.atcreate).getFullYear() === currentYear;
+                });
+                const totalSaved = _.sumBy(currentYearData, 'saved');
+                $('#total_income').text(formatCurrency(totalSaved));
+            }
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    })
+} getIncomeData();
+
+// Hàm xoá rowIncome khỏi bảng
+function closeAddIncome() { rowAdd = false; $('#incomeTBody tr').first().remove() }
+
+// Hàm Thêm vào bảng Income
+function createIncome(element) {
+    const rowIncome = $(element).closest('[name="rowIncome"]');
+    const month = rowIncome.find('input[type="month"]').val() || new Date().toISOString().slice(0, 7);
+    const price = rowIncome.find('input[type="text"]').val()?.replace(/[^0-9]/g, '');
+
+    var data = {
+        spendlistId: $('#statics_spendList').val(),
+        price: price,
+        atcreate: `${month}-01`
+    }
+
+    $.ajax({
+        type: "post",
+        url: urlapi + "/statics/addIncome",
+        data: data,
+        dataType: "json",
+        contentype: 'application/json',
+        success: function (res) {
+            if (res.success) {
+                getIncomeData(); // Gọi hàm để thống kê lại dữ liệu
+                showSuccessToast(res.message);
+            } else if (res.status == 400) {
+                showErrorToast(res.message)
+            }
+        },
+        error: function (err) {
+            console.log(err)
+            showErrorToast(err)
+        }
+    });
+}
+
+// Hàm Sửa trong bảng Income
+function updateIncome(element) {
+    const rowIncome = $(element).closest('[name="rowIncome"]');
+    const month = rowIncome.find('input[type="month"]').val() || new Date().toISOString().slice(0, 7);
+    const price = rowIncome.find('input[type="text"]').val().replace(/[^0-9]/g, '');
+
+    const data = {
+        id: rowIncome.attr('data-id'),
+        price: price,
+        atcreate: `${month}-01`
+    }
+
+    $.ajax({
+        type: "post",
+        url: urlapi + "/statics/editIncome",
+        data: data,
+        dataType: "json",
+        contentype: 'application/json',
+        success: function (res) {
+            if (res.success) {
+                getIncomeData(); // Gọi hàm để thống kê lại dữ liệu
+                showSuccessToast(res.message);
+            } else {
+                showErrorToast(res.message);
+            }
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    });
+}
+
+// Hàm xoá trong bảng Income
+function deleteIncome(element) {
+    const rowIncome = $(element).closest('[name="rowIncome"]');
+    const id = rowIncome.attr('data-id'); console.log(id)
+
+    $.ajax({
+        type: "post",
+        url: urlapi + "/statics/delIncome",
+        data: { id: id },
+        dataType: "json",
+        contentype: 'application/json',
+        success: function (res) {
+            if (res.success) {
+                getIncomeData(); // Gọi hàm để thống kê tự dữ liệu
+                showSuccessToast(res.message);
+            } else {
+                showErrorToast(res.message);
+            }
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    })
+}
+
+// Hàm thêm thu nhập cho tháng nếu được bật
+function autoAddIncomeForMonth() {
+    if ($('#income_reminder').prop('checked')) {
+        $.ajax({
+            type: "post",
+            url: urlapi + "/statics/autoAddIncome",
+            data: { spendListId: $('#statics_spendList').val() },
+            dataType: "json",
+            contentype: 'application/json',
+            success: function (res) {
+                if(res.success) {
+                    getIncomeData();
+                }
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+    }
+} autoAddIncomeForMonth();
+
+// Hàm mở form edit cho bảng Income
+function openEditIncome(element) {
+    const trRow = $(element).closest('tr')
+    // Hiển thị và ẩn các thẻ
+    trRow.find('span').addClass('d-none')
+    trRow.find('input').removeClass('d-none')
+    trRow.find('[name="edit"]').addClass('d-none')
+    trRow.find('.dropdown').removeClass('d-none')
+}
+
+function closeEditIncome(element, event) {
+    const trRow = $(element).closest('tr')
+    // Hiển thị và ẩn các thẻ
+    trRow.find('span').removeClass('d-none')
+    trRow.find('input').addClass('d-none')
+    trRow.find('[name="edit"]').removeClass('d-none')
+    trRow.find('.dropdown').addClass('d-none')
+    // Gọi hàm để thêm dữ liệu
+    if (event == 'save') { updateIncome(element) }
+    else if (event == 'delete') { deleteIncome(element) }
+}
+
+
+
+

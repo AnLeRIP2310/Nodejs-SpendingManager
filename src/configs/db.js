@@ -31,7 +31,7 @@ if (pathToDb == 'default') { pathToDb = defPathToDb; }
  * const result = db.await query('UPDATE users SET active = 1', []);
  */
 function query(sql, params) {
-    sql = sql.toLowerCase();
+    sql = sql.replace(/\s+/g, ' ').trim().toLowerCase();
     if (sql.startsWith('select')) {
         return new Promise((resolve, reject) => {
             database.all(sql, params, (err, rows) => {
@@ -80,7 +80,7 @@ async function initDB() {
                 PassWord    TEXT,
                 Avatar      TEXT,
                 DisplayName TEXT     COLLATE NOCASE,
-                AtCreate    DATETIME COLLATE nocase,
+                AtCreate    DATETIME,
                 Email       TEXT     COLLATE NOCASE,
                 Status      INTEGER  DEFAULT 1
             )
@@ -99,9 +99,9 @@ async function initDB() {
                 Id          INTEGER  PRIMARY KEY,
                 UsersId     INTEGER  REFERENCES Users (Id),
                 NameList    TEXT     COLLATE NOCASE,
-                AtCreate    DATETIME COLLATE nocase,
+                AtCreate    DATETIME,
                 AtUpdate    DATETIME DEFAULT CURRENT_TIMESTAMP,
-                LastEntry   DATETIME COLLATE nocase,
+                LastEntry   DATETIME,
                 Status      INTEGER  DEFAULT 1
             )
         `);
@@ -111,9 +111,9 @@ async function initDB() {
                 Id          INTEGER  PRIMARY KEY,
                 SpendListId INTEGER  REFERENCES SpendingList (Id),
                 NameItem    TEXT     COLLATE NOCASE,
-                Price       REAL     COLLATE NOCASE,
+                Price       REAL     DEFAULT 0,
                 Details     TEXT     COLLATE NOCASE,
-                AtCreate    DATETIME COLLATE NOCASE,
+                AtCreate    DATETIME,
                 AtUpdate    DATETIME DEFAULT CURRENT_TIMESTAMP,
                 Status      INTEGER  DEFAULT 1
             )
@@ -125,10 +125,21 @@ async function initDB() {
                 UsersId     INTEGER  REFERENCES users (id),
                 NameList    TEXT     COLLATE nocase,
                 Content     TEXT     COLLATE nocase,
-                AtCreate    DATETIME COLLATE nocase,
+                AtCreate    DATETIME,
                 AtUpdate    DATETIME DEFAULT CURRENT_TIMESTAMP,
                 Status      INTEGER  DEFAULT 1
             );   
+        `);
+
+        await query(`
+            CREATE TABLE IF NOT EXISTS Income (
+                Id          INTEGER  PRIMARY KEY,
+                SpendListId INTEGER  REFERENCES SpendingList (Id),
+                Price       REAL     DEFAULT 0,
+                AtCreate    DATETIME,
+                AtUpdate    DATETIME DEFAULT CURRENT_TIMESTAMP,
+                Status      INTEGER  DEFAULT 1
+            )
         `);
     } catch (e) {
         logger.error(e, 'Khởi tạo database thất bại');

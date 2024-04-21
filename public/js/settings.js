@@ -1,6 +1,6 @@
 var settingsObj;
 // Tải cấu hình ứng dụng và gán vào biến
- function loadSettings() {
+function loadSettings() {
     $.ajax({
         type: 'GET',
         url: urlapi + '/setting/getData',
@@ -137,7 +137,7 @@ $('#st_defaultAction').on('change', function () {
 
 // xử lý cài đặt language
 async function languageSetting() {
-   await applyLanguage(settingsObj.language);
+    await applyLanguage(settingsObj.language);
     $('#st_language').val(settingsObj.language);
 }
 
@@ -166,22 +166,34 @@ $('#st_reminder').on('change', function () {
 
 // xử ly cài đặt tooltip
 function tooltipSetting() {
-    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    // Lấy và áp dụng popover và tooltip
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+
     if (settingsObj.tooltip == true || settingsObj.tooltip == 'true') {
         $('#st_tooltip').prop('checked', true);
-        $('label[for="st_tooltip"]').text(langObj.settingPage.checked.on) // text đang bật
+        $('label[for="st_tooltip"]').text(langObj.settingPage.checked.on)
+        // Bật popover
         popoverTriggerList.map(function (popoverTriggerEl) {
             return new bootstrap.Popover(popoverTriggerEl);
+        });
+        // Bật tooltip
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     } else {
         $('#st_tooltip').prop('checked', false);
         $('label[for="st_tooltip"]').text(langObj.settingPage.checked.off)
+        // Tắt popover
         popoverTriggerList.map(function (popoverTriggerEl) {
             var popover = bootstrap.Popover.getInstance(popoverTriggerEl);
-            if (popover) {
-                popover.dispose(); // Loại bỏ các popovers đã khởi tạo
-            }
+            if (popover) { popover.dispose() }
         });
+        // Tắt tooltip
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            var tooltip = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
+            if (tooltip) { tooltip.dispose() }
+        })
     }
 }
 
