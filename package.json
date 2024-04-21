@@ -73,6 +73,7 @@
     "devDependencies": {
         "electron": "^27.1.2",
         "electron-builder": "^24.13.3",
-        "nodemon": "^3.0.1"
+        "nodemon": "^3.0.1",
+        "tar": "^7.0.1"
     }
 }
