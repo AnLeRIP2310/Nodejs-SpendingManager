@@ -28,7 +28,7 @@ function addSpendingList() {
         dataType: 'json',
         contentype: 'application/json',
         success: function (data) {
-            if (data.success == true) {
+            if (data.success) {
                 // Thêm danh sách mới vào thẻ select
                 var lastOption = $('#SpendingList option:last');
                 var lastOptionValue = lastOption.length > 0 ? parseInt(lastOption.val()) + 1 : 1;
@@ -224,7 +224,7 @@ function calculateTotalPrice() {
         type: "GET",
         url: urlapi + "/spending/calculateTotalPrice",
         success: function (res) {
-            $('#spendListTotal').text(formatCurrency(res.data));
+            $('#spendListTotal').text(formatCurrency(res.data.totalPrice));
         }
     })
 }
@@ -237,8 +237,8 @@ function calculateItemPrice(SpendName) {
             SpendName: SpendName
         },
         success: function (res) {
-            $('#spendItemCount').text(res.count);
-            $('#spendItemTotal').text(formatCurrency(res.price));
+            $('#spendItemCount').text(res.data.count);
+            $('#spendItemTotal').text(formatCurrency(res.data.price));
         }
     })
 }
@@ -272,9 +272,9 @@ function spendingSuggest() {
             source: function (term, suggest) {
                 term = term.toLowerCase();
                 var suggestions = [];
-                for (var i = 0; i < data.length; i++) {
-                    if (~data[i].toLowerCase().indexOf(term)) {
-                        suggestions.push(data[i]);
+                for (const element of data) {
+                    if (~element.toLowerCase().indexOf(term)) {
+                        suggestions.push(element);
                     }
                 }
                 suggest(suggestions);
@@ -388,7 +388,7 @@ $('#btnCreate').on('click', function () {
         dataType: 'json',
         contentype: 'application/json',
         success: function (res) {
-            if (res.success == true) {
+            if (res.success) {
                 // Dữ liệu trả về từ server
                 const dataRes = res.data[0];
                 dataRes.atupdate = formatDate(dataRes.atupdate);
@@ -445,7 +445,7 @@ $('#btnUpdate').on('click', function () {
         dataType: 'json',
         contentype: 'application/json',
         success: function (res) {
-            if (res.success == true) {
+            if (res.success) {
                 var foundRow;
 
                 $('#tbody tr').each(function () {
@@ -481,7 +481,7 @@ $('#btnDelete').on('click', function () {
         return;
     }
 
-    if (settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
+    if (settingsObj.reminderDelete || settingsObj.reminderDelete == 'true') {
         $('#modalConfirmDeleteItem').modal('show');
     } else {
         deleteSpendingItem()
@@ -516,7 +516,7 @@ function deleteSpendingItem() {
         dataType: 'json',
         contentype: 'application/json',
         success: function (res) {
-            if (res.success == true) {
+            if (res.success) {
                 var foundRow;
 
                 $('#tbody tr').each(function () {

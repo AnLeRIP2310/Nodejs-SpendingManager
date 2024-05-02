@@ -89,7 +89,7 @@ function handleCreateAndSearch() {
                     searchKey: $('#txt-notedSearch').val()
                 },
                 success: function (res) {
-                    res.notedlist.forEach((item) => {
+                    res.data.notedlist.forEach((item) => {
                         item.atcreate = formatDate(item.atcreate)
                         item.atupdate = formatDate(item.atupdate)
                     });
@@ -97,7 +97,7 @@ function handleCreateAndSearch() {
                     const source = $('#template-list-noted').html();
                     const convertSource = convertPlaceHbs(source);
                     const template = Handlebars.compile(convertSource);
-                    const data = template({ notedList: res.notedlist });
+                    const data = template({ notedList: res.data.notedlist });
 
                     $('#list-noted').html(data);
                     // Gọi hàm để gán lại các sự kiện cho các nút
@@ -181,7 +181,7 @@ function handleShowListNoted() {
             token: JSON.parse(localStorage.getItem('AuthToken')).token
         },
         success: function (res) {
-            res.notedlist.forEach((item) => {
+            res.data.notedlist.forEach((item) => {
                 item.atcreate = formatDate(item.atcreate)
                 item.atupdate = formatDate(item.atupdate)
             });
@@ -189,7 +189,7 @@ function handleShowListNoted() {
             const source = $('#template-list-noted').html();
             const convertSource = convertPlaceHbs(source);
             const template = Handlebars.compile(convertSource);
-            const data = template({ notedList: res.notedlist });
+            const data = template({ notedList: res.data.notedlist });
 
             $('#list-noted').html(data);
             // Gọi hàm để gán lại các sự kiện cho các nút

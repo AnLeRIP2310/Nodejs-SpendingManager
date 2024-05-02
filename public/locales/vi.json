@@ -243,7 +243,6 @@
             "on": "Đang bật",
             "off": "Đã tắt"
         },
-        "dbPath": "Thay đổi đường dẫn đến thư mục dữ liệu",
         "formSyncData": {
             "button": {
                 "login": "Đăng nhập vào Google Drive",

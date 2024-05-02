@@ -5,92 +5,79 @@ const logger = require('../../configs/logger');
 
 module.exports = {
     getData: async (req, res) => {
-        const { token } = req.query;
-
         try {
+            const { token } = req.query;
+
+            if (!token)
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
             const userId = await db.table.users.getId(token);
-            var sql = 'select * from spendinglist where usersId = ? and status = 1';
-            var params = [userId];
+
+            let sql = 'select * from spendinglist where usersId = ? and status = 1';
+            let params = [userId];
             const spendingList = await db.query(sql, params);
 
-            res.json({
-                spendingList: spendingList
-            });
+            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: {spendingList: spendingList} });
         } catch (err) {
             logger.error(err);
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
     insertSpendingList: async (req, res) => {
-        const { token, namelist, atcreate, status } = req.body;
-
         try {
+            const { token, namelist, atcreate, status } = req.body;
+
+            if (!token)
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
             const userId = await db.table.users.getId(token);
 
-            sql = 'insert into spendinglist (usersId, namelist, atcreate, status) values (?, ?, ?, ?)';
-            params = [userId, namelist, atcreate, status];
-            const result = await db.query(sql, params);
+            let sql = 'insert into spendinglist (usersId, namelist, atcreate, status) values (?, ?, ?, ?)';
+            let params = [userId, namelist, atcreate, status];
+            await db.query(sql, params);
 
-            if (result) {
-                res.json({ success: true });
-            } else {
-                res.json({ success: false });
-            }
+            return res.json({ success: true, status: 201, message: 'Thêm danh sách thành công' });
         } catch (err) {
             logger.error(err);
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
     getSpendingForSpendList: async (req, res) => {
-        const { IdList, tblOffset, tbLimit, SearchKey, SearchDate, TypeSearchDate } = req.query;
-
         try {
-            var sql = 'SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 ORDER BY Id DESC LIMIT ? OFFSET ?';
-            var params = [IdList, tbLimit, tblOffset];
+            const { IdList, tblOffset, tbLimit, SearchKey, SearchDate, TypeSearchDate } = req.query;
 
-            // Kiểm tra xem có giá trị thời gian không
-            if (SearchDate != '') {
-                sql = `SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 AND 
-                    strftime(?, AtUpdate) = ? ORDER BY Id DESC LIMIT ? OFFSET ?`;
-                if (TypeSearchDate == 'date') {
-                    params = [IdList, '%Y-%m-%d', SearchDate, tbLimit, tblOffset];
-                } else {
-                    params = [IdList, '%Y-%m', SearchDate, tbLimit, tblOffset];
-                }
+            if (!IdList || isNaN(IdList))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
+            let sql = 'SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1';
+            let params = [IdList];
+
+            // Kiểm tra xem có tìm kiếm theo thời gian không
+            if (SearchDate) {
+                sql += ' AND strftime(?, AtUpdate) = ?';
+                params.push(TypeSearchDate === 'date' ? '%Y-%m-%d' : '%Y-%m');
+                params.push(SearchDate);
             }
+
+            // Kiểm tra xem có từ khoá tìm kiếm không
+            if (SearchKey) {
+                const searchQuery = `(NameItem LIKE ? OR Details LIKE ? OR Price Like ?)`;
+                sql += ` AND ${searchQuery}`;
+                params.push(`%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`);
+            }
+
+            // Giới hạn dữ liệu lấy và hiển thị
+            sql += ' ORDER BY Id DESC LIMIT ? OFFSET ?';
+            params.push(tbLimit, tblOffset);
 
             const dataResult = await db.query(sql, params);
 
-            // Nếu có từ khoá tìm kiếm
-            if (SearchKey != '') {
-                // Kiểm tra xem có tìm theo ngày không
-                if (SearchDate != '') {
-                    sql = `SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 AND 
-                        (NameItem LIKE ? OR Details LIKE ? OR Price Like ?) AND strftime(?, AtUpdate) = ?
-                        ORDER BY Id DESC LIMIT ? OFFSET ?`;
-
-                    // Kiểm tra loại thời gian
-                    if (TypeSearchDate == 'date') {
-                        params = [IdList, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, '%Y-%m-%d', SearchDate, tbLimit, tblOffset];
-                    } else {
-                        params = [IdList, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, '%Y-%m', SearchDate, tbLimit, tblOffset];
-                    }
-                } else {
-                    // Nếu không có tìm theo ngày thì tìm theo mặt định
-                    sql = `SELECT * FROM spendingitem WHERE spendlistid = ? AND status = 1 AND 
-                        (NameItem LIKE ? OR Details LIKE ? OR Price Like ?) 
-                        ORDER BY Id DESC LIMIT ? OFFSET ?`;
-                    params = [IdList, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, tbLimit, tblOffset];
-                }
-
-                const dataResultSearch = await db.query(sql, params);
-
-                res.json({ success: true, data: dataResultSearch });
-            } else {
-                res.json({ success: true, data: dataResult });
-            }
+            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: dataResult });
         } catch (err) {
             logger.error(err);
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
@@ -100,88 +87,78 @@ module.exports = {
             const result = await db.query(sql);
             // Xử lý kết quả để lấy danh sách các tên
             const names = result.map(item => item.nameitem);
-            res.json({ success: true, data: names });
+            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: names });
         } catch (err) {
             logger.error(err);
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
     insertSpending: async (req, res) => {
-        const { ListId, Name, Price, Details, AtCreate, AtUpdate, Status } = req.body;
-
         try {
-            var sql = 'insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)';
-            var params = [ListId, Name, Price, Details, AtCreate, AtUpdate, Status];
-            const insertResult = await db.query(sql, params);
+            const { ListId, Name, Price, Details, AtCreate, AtUpdate, Status } = req.body;
 
-            if (insertResult) {
-                const lastId = await db.lastInsertId();
+            if (!ListId || isNaN(ListId))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
 
-                // Cập nhật thời gian của spendlist
-                sql = 'update spendinglist set lastentry = ? where id = ?';
-                await db.query(sql, [AtUpdate, ListId]);
+            // Thêm dữ liệu vào bảng spendingitem
+            let sql = 'insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)';
+            let params = [ListId, Name, Price, Details, AtCreate, AtUpdate, Status];
+            await db.query(sql, params);
 
-                // Lấy ra dữ liệu sau khi insert
-                sql = 'select * from spendingitem where id = ?'
-                const lastDataResult = await db.query(sql, [lastId]);
+            // Lấy ra id của bản ghi vừa thêm
+            const lastId = await db.lastInsertId();
 
-                res.json({
-                    success: true,
-                    data: lastDataResult,
-                    message: 'Thêm dữ liệu thành công'
-                });
+            // Cập nhật thời gian của spendlist
+            sql = 'update spendinglist set lastentry = ? where id = ?';
+            await db.query(sql, [AtUpdate, ListId]);
 
-            } else {
-                res.json({
-                    success: false,
-                    message: 'Thêm dữ liệu thất bại'
-                });
-            }
+            // Lấy ra dữ liệu vừa insert
+            sql = 'select * from spendingitem where id = ?'
+            const lastDataResult = await db.query(sql, [lastId]);
+
+            return res.json({
+                success: true,
+                status: 201,
+                data: lastDataResult,
+                message: 'Thêm chi tiêu thành công'
+            });
         } catch (err) {
             logger.error(err);
-            res.json({
-                success: false,
-                message: 'Có lỗi khi thêm dữ liệu'
-            });
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
     updateSpending: async (req, res) => {
-        const { Id, ListId, Name, Price, Details, AtUpdate } = req.body;
-
         try {
-            var sql = "update spendingitem set spendlistid = ?, nameitem = ?, price = ?, details = ?, atupdate = ? where id = ?";
-            var params = [ListId, Name, Price, Details, AtUpdate, Id];
-            const result = await db.query(sql, params);
+            const { Id, ListId, Name, Price, Details, AtUpdate } = req.body;
 
-            if (result) {
-                res.json({ success: true, message: 'Cập nhật bảng ghi thành công' });
-            } else {
-                res.json({ success: false, message: 'Cập nhật bảng ghi thất bại' });
-            }
+            if (!Id || isNaN(Id) || !ListId || isNaN(ListId))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
 
+            let sql = "update spendingitem set spendlistid = ?, nameitem = ?, price = ?, details = ?, atupdate = ? where id = ?";
+            let params = [ListId, Name, Price, Details, AtUpdate, Id];
+            await db.query(sql, params);
+
+            return res.json({ success: true, status: 200, message: 'Cập nhật chi tiêu thành công' });
         } catch (err) {
             logger.error(err);
-            res.json({ success: false, message: 'Có lỗi khi cập nhật bảng ghi' });
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' })
         }
     },
 
     deleteSpending: async (req, res) => {
-        const { Id } = req.body;
-
         try {
-            var sql = "delete from spendingitem where id = ?";
-            var params = [Id];
-            const result = await db.query(sql, params);
+            const { Id } = req.body;
 
-            if (result) {
-                res.json({ success: true, message: 'Xoá bảng ghi thành công' });
-            } else {
-                res.json({ success: false, message: 'Xoá bảng ghi thất bại' })
-            }
+            if (!Id || isNaN(Id))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
+            await db.query('delete from spendingitem where id = ?', [Id]);
+            return res.json({ success: true, status: 200, message: 'Xoá chi tiêu thành công' });
         } catch (err) {
             logger.error(err);
-            res.json({ success: false, message: 'Có lỗi khi xoá bảng ghi này' })
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' })
         }
     },
 
@@ -189,33 +166,46 @@ module.exports = {
         try {
             var sql = 'SELECT SUM(Price) AS TotalPrice FROM SpendingItem WHERE Status = 1';
             const result = await db.query(sql);
-            res.json({
+
+            return res.json({
                 success: true,
-                data: result[0].totalprice
+                status: 200,
+                message: "Lấy dữ liệu thành công",
+                data: {
+                    totalPrice: result[0].totalprice
+                }
             })
         } catch (err) {
             logger.error(err);
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
     calculateItemPrice: async (req, res) => {
-        const { SpendName } = req.query;
-
         try {
-            var sql = 'select count(*) as count from spendingitem where NameItem = ? and status = 1';
-            var params = [SpendName];
-            const countResult = await db.query(sql, params);
+            const { SpendName } = req.query;
+
+            if (!SpendName)
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
+            let sql = 'select count(*) as count from spendingitem where NameItem = ? and status = 1';
+            const countResult = await db.query(sql, [SpendName]);
 
             sql = 'select sum(Price) as totalprice from spendingitem where NameItem = ? and status = 1';
-            const priceResult = await db.query(sql, params);
+            const priceResult = await db.query(sql, [SpendName]);
 
-            res.json({
+            return res.json({
                 success: true,
-                count: countResult[0].count,
-                price: priceResult[0].totalprice
+                status: 200,
+                message: "Lấy dữ liệu thành công",
+                data: {
+                    count: countResult[0].count,
+                    price: priceResult[0].totalprice
+                }
             })
         } catch (err) {
             logger.error(err);
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
@@ -223,20 +213,19 @@ module.exports = {
         try {
             const { id } = req.query;
 
+            if (!id || isNaN(id))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' })
+
             let sql = 'select * from spendingitem where id = ? and status = 1';
             const result = await db.query(sql, [id])
 
             sql = 'select namelist from spendinglist where id = ?';
             const nameList = await db.query(sql, [result[0].spendlistid]);
 
-            if (result.length > 0) {
-                res.json({ success: true, data: { ...result[0], ...nameList[0] }, message: 'Lấy dữ liệu thành công' })
-            } else {
-                res.json({ success: false, message: 'Lấy dữ liệu thất bại' })
-            }
+            return res.json({ success: true, status: 200, message: 'Lấy dữ liệu thành công', data: { ...result[0], ...nameList[0] } })
         } catch (e) {
             logger.error(e);
-            res.json({ success: false, message: 'Có lỗi khi lấy dữ liệu' });
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     }
 }

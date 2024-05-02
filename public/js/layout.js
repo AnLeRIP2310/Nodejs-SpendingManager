@@ -179,7 +179,7 @@ $('#page-spending').click(function () {
                 .then(template => {
                     const compiledTemplate = Handlebars.compile(template);
                     const html = compiledTemplate({
-                        spendingList: res.spendingList
+                        spendingList: res.data.spendingList
                     });
                     $('#page-content').html(html);
                     applyLanguage(settingsObj.language);
@@ -206,7 +206,7 @@ $('#page-statics').click(function () {
                 .then(template => {
                     const compiledTemplate = Handlebars.compile(template);
                     const html = compiledTemplate({
-                        spendingList: res.spendingList
+                        spendingList: res.data.spendingList
                     });
                     $('#page-content').html(html);
                     applyLanguage(settingsObj.language);

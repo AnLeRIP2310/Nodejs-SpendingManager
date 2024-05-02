@@ -5,9 +5,12 @@ const logger = require('../../configs/logger')
 
 module.exports = {
     getData: async (req, res) => {
-        const { token } = req.query
-
         try {
+            const { token } = req.query
+
+            if (!token)
+                return res.json({ success: false, status: 400, message: "Dữ liệu yêu cầu không hợp lệ" });
+
             const userId = await db.table.users.getId(token);
 
             var sql = `SELECT spl.*, COALESCE(SUM(sp.price), 0) AS totalprice FROM spendinglist AS spl 
@@ -15,53 +18,48 @@ module.exports = {
                 WHERE spl.usersid = ? AND spl.status = 1 GROUP BY spl.id;`
             const result = await db.query(sql, [userId])
 
-            res.json({
-                success: true,
-                data: result
-            })
+            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: result })
         } catch (err) {
-            logger.error(err)
+            logger.error(err);
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 
     editSpendlist: async (req, res) => {
-        const { Id, SpendName } = req.body
-
         try {
-            var sql = 'update SpendingList set NameList = ? where id = ?'
-            var params = [SpendName, Id]
-            const result = await db.query(sql, params)
+            const { Id, SpendName } = req.body
 
-            console.log(result);
-            res.json({ success: true })
+            if (!Id || isNaN(Id))
+                return res.json({ success: false, status: 400, message: "Dữ liệu yêu cầu không hợp lệ" });
+
+            // cập nhật danh sách
+            await db.query('update SpendingList set NameList = ? where id = ?', [SpendName, Id]);
+            return res.json({ success: true, status: 200, message: "Cập nhật danh sách thành công" })
         } catch (err) {
-            logger.error(err)
+            logger.error(err);
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" })
         }
     },
 
     delSpendlist: async (req, res) => {
-        const { Id } = req.body
-
         try {
+            const { Id } = req.body
+
+            if (!Id || isNaN(Id))
+                return res.json({ success: false, status: 400, message: "Dữ liệu yêu cầu không hợp lệ" })
+
             // Xoá tất cả item trong list trước khi xoá list
             let sql = "delete from spendingitem where spendlistid = ?";
-            const itemResult = await db.query(sql, [Id])
+            await db.query(sql, [Id])
 
-            if (itemResult) {
-                sql = 'delete from SpendingList where id = ?'
-                const listResult = await db.query(sql, [Id])
+            // Xoá list
+            sql = 'delete from SpendingList where id = ?'
+            await db.query(sql, [Id])
 
-                if (listResult) {
-                    res.json({ success: true, message: "Xoá danh sách thành công" })
-                } else {
-                    res.json({ success: false, message: "Xoá danh sách thất bại" })
-                }
-            } else {
-                res.json({ success: false, message: "Xoá dữ liệu trong danh sách thất bại" })
-            }
+            return res.json({ success: true, status: 200, message: "Xoá danh sách thành công" })
         } catch (e) {
             logger.error(e)
-            res.json({ success: false, message: "Có lỗi khi xoá danh sách" })
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" })
         }
     },
 }

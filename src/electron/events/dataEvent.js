@@ -74,35 +74,3 @@ ipcMain.on('import-db', async () => {
         logger.error(e)
     }
 })
-
-// Bắt sự kiện thay đổi đường dẫn lưu database
-ipcMain.on('change-dbPath', () => {
-    try {
-        let dbPath = db.dbPath.get();
-
-        dialog.showOpenDialog({
-            properties: ['openDirectory'],
-        }).then(result => {
-            if (!result.canceled) {
-                const selectedDirectory = result.filePaths[0];
-                const newdbPath = path.join(selectedDirectory, 'SpendingDB.db');
-
-                // Sao chép tệp db đến vị trí mới
-                fs.copyFileSync(dbPath, newdbPath);
-
-                const resultPath = appIniConfigs.updateIniConfigs('Data', 'dbPath', newdbPath);
-
-                if (resultPath) {
-                    app.relaunch();
-                    app.exit();
-                } else {
-                    logger.error('Lỗi khi thay đổi thư mục:');
-                }
-            }
-        }).catch(err => {
-            logger.error(err);
-        });
-    } catch (e) {
-        logger.error(e)
-    }
-});

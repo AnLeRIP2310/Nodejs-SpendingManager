@@ -132,8 +132,10 @@
             "delete": {
                 "title": "Are you sure you want to delete this list? All data on this list will also be deleted.",
                 "reminder": "Don't show the reminder again",
-                "close": "Close",
-                "delete": "Delete"
+                "button": {
+                    "close": "Close",
+                    "delete": "Delete"
+                }
             }
         }
     },
@@ -241,7 +243,6 @@
             "on": "Enable",
             "off": "Disable"
         },
-        "dbPath": "Change the path to the data directory",
         "formSyncData": {
             "button": {
                 "login": "Sign in to Google Drive",

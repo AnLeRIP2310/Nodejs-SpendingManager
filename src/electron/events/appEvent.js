@@ -45,12 +45,6 @@ ipcMain.on('collapse-tray', (event, data) => {
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
 });
 
-// Bắt sự kiện khởi động lại ứng dụng
-ipcMain.on('reload-app', () => {
-    app.relaunch();
-    app.exit();
-})
-
 // Bắt sự kiện kiểm tra theme trên hệ thống
 ipcMain.on('get-system-theme', (event) => {
     // Gửi phản hồi về quá trình render

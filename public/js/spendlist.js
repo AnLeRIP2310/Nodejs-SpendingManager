@@ -50,7 +50,7 @@ $(document).ready(function () {
         var row = $(this).closest('tr'); curentlistRow = row;
         curentListId = row.find('#tbl-spendlist-id').text();
 
-        if(settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
+        if(settingsObj.reminderDelete || settingsObj.reminderDelete == 'true') {
             $('#modalConfirmDeleteList').modal('show')
         } else {
             $(this).closest('tr').remove();
@@ -147,7 +147,7 @@ $('#btn-spendlist-add').click(function () {
         dataType: 'json',
         contentype: 'application/json',
         success: function (data) {
-            if (data.success == true) {
+            if (data.success) {
                 $('#tbl-spendlist-add').val('');
                 showSuccessToast('Thêm danh sách thành công');
 

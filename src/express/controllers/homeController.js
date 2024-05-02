@@ -32,17 +32,22 @@ module.exports = {
             sql = `select strftime(?, atupdate) AS week, SUM(price) AS totalprice FROM spendingitem WHERE status = 1 GROUP BY week ORDER BY week desc`;
             const totalPerWeek = await db.query(sql, ['%Y-%W']);
 
-            res.json({
+            return res.json({
                 success: true,
-                today: todayResult[0].total, // Tổng tiền ngày hôm nay
-                yesterday: yesterdayResult[0].total, // Tổng tiền ngày hôm qua
-                thisWeek: thisWeekResult[0].total, // Tổng tiền tuần hiện tại
-                lastWeek: lastWeekResult[0].total, // Tổng tiền tuần trước
-                totalPerWeek: totalPerWeek, // Tổng tiền mỗi tuần
-                totalPerSpendItem: totalPerSpendItem, // Tổng tiền mỗi khoán chi
+                status: 200,
+                message: 'Lấy dữ liệu thành công',
+                data: {
+                    today: todayResult[0].total, // Tổng tiền ngày hôm nay
+                    yesterday: yesterdayResult[0].total, // Tổng tiền ngày hôm qua
+                    thisWeek: thisWeekResult[0].total, // Tổng tiền tuần hiện tại
+                    lastWeek: lastWeekResult[0].total, // Tổng tiền tuần trước
+                    totalPerWeek: totalPerWeek, // Tổng tiền mỗi tuần
+                    totalPerSpendItem: totalPerSpendItem, // Tổng tiền mỗi khoán chi
+                }
             });
         } catch (error) {
             logger.error(error);
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
@@ -59,10 +64,10 @@ module.exports = {
                 }
             });
 
-            res.json({ success: true, data: response.data.data, message: 'Lấy dữ liệu thành công' })
+            return res.json({ success: true, status: 200, message: 'Lấy dữ liệu thành công', data: response.data.data })
         } catch (e) {
             logger.error(e)
-            res.json({ success: false, message: 'Có lỗi khi lấy dữ liệu' })
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" })
         }
     },
 
@@ -83,15 +88,11 @@ module.exports = {
             }
 
             weather.getAllWeather(function (err, JSONObj) {
-                if (JSONObj) {
-                    res.json({ success: true, data: JSONObj, message: 'Lấy dữ liệu thời tiết thành công' })
-                } else {
-                    res.json({ success: false, message: 'Lấy dữ liệu thời tiết thất bại' })
-                }
+                return res.json({ success: true, status: 200, message: 'Lấy dữ liệu thành công', data: JSONObj })
             })
         } catch (e) {
             logger.error(e)
-            res.json({ success: false, message: 'Có lỗi khi lấy dữ liệu thời tiết' })
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' })
         }
     },
 }

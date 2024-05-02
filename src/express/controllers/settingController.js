@@ -20,42 +20,33 @@ module.exports = {
         try {
             // Lấy ra các cài đặt trong tệp ini
             const iniConfigs = appIniConfigs.getIniConfigs();
-
-            res.json({
-                dbPath: db.dbPath.get(),
-                iniObject: iniConfigs,
-            });
+            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: { iniObject: iniConfigs } });
         } catch (e) {
-            logger.error(e)
+            logger.error(e);
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 
     editData: (req, res) => {
-        const { name, value, group } = req.body;
-
         try {
+            const { name, value, group } = req.body;
+
             appIniConfigs.updateIniConfigs(group, name, value);
-            res.json({ success: true });
+            return res.json({ success: true, status: 200, message: "Cập nhật caì đặt thành công" });
         } catch (e) {
-            logger.error(e)
+            logger.error(e);
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 
     resetData: (req, res) => {
-        let dbPath = db.dbPath.get();
-        let defaultDbPath = db.dbPath.getDefault();
-
-        if (appIniConfigs.getIniConfigs('dbPath') != 'default') {
-            // Sao chép database về vị trí mặt định
-            fs.copyFileSync(dbPath, defaultDbPath);
-
+        try {
             // Tạo lại tệp cấu hình .ini để reset tất cả cài đặt
             appIniConfigs.createIniConfigs();
-            res.json({ success: true, action: 'reload' });
-        } else {
-            // Tạo lại tệp cấu hình .ini để reset tất cả cài đặt
-            appIniConfigs.createIniConfigs();
-            res.json({ success: true });
+            return res.json({ success: true, status: 200, message: "Khôi phục tệp cấu hình thành công" });
+        } catch (e) {
+            logger.error(e);
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 
@@ -63,36 +54,42 @@ module.exports = {
         try {
             // Lấy ngày hiện tại (yyyy-mm-dd)
             const today = new Date().toISOString().split('T')[0];
-
-            var sql = 'SELECT COUNT(*) as count FROM spendinglist WHERE lastentry >= ?'
-            const result = await db.query(sql, [today])
-
-            res.json({ success: true, result: result[0].count });
+            const result = await db.query('SELECT COUNT(*) as count FROM spendinglist WHERE lastentry >= ?', [today])
+            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", result: result[0].count });
         } catch (e) {
-            logger.error(e)
+            logger.error(e);
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 
     checkSyncStatus: async (req, res) => {
-        // Kiểm tra xem tệp refresh_token có tồn tại không
-        if (fs.existsSync(path.join(folderAppConfigs, 'data', 'Token.json'))) {
-            const emailGGDrive = appIniConfigs.getIniConfigs('emailGGDrive');
-            const syncDate = appIniConfigs.getIniConfigs('syncDate');
+        try {
+            // Kiểm tra xem tệp refresh_token có tồn tại không
+            if (fs.existsSync(path.join(folderAppConfigs, 'data', 'Token.json'))) {
+                const emailGGDrive = appIniConfigs.getIniConfigs('emailGGDrive');
+                const syncDate = appIniConfigs.getIniConfigs('syncDate');
 
-            if (emailGGDrive != '', syncDate != '') {
-                res.json({ status: true, message: 'Đã đăng nhập GGDrive', email: emailGGDrive, syncDate: syncDate })
+                if (emailGGDrive != '', syncDate != '') {
+                    return res.json({ status: true, status: 200, message: 'Đã đăng nhập vào tài khoản', data: { email: emailGGDrive, syncDate: syncDate } })
+                } else {
+                    return res.json({ status: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' })
+                }
             } else {
-                res.json({ status: false, message: 'Chưa đăng nhập GGDrive' })
+                return res.json({ status: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' })
             }
-        } else {
-            res.json({ status: false, message: 'Chưa đăng nhập GGDrive' })
+        } catch (e) {
+            logger.error(e);
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 
     backupData: async (req, res) => {
-        const { token } = req.query;
-
         try {
+            const { token } = req.query;
+
+            if (!token)
+                return res.json({ success: false, status: 400, message: "Dữ liệu yêu cầu không hợp lệ" });
+
             // Xoá các file sao lưu trên ggdrive
             const listFiles = await ggDrive.getListFile()
 
@@ -116,11 +113,16 @@ module.exports = {
             sql = 'select * from noted';
             const noted = await db.query(sql);
 
+            // Lấy ra danh sách thu nhập tháng
+            sql = 'select * from income';
+            const income = await db.query(sql);
+
             // Tạo biến obj chứa dữ liệu
             const dataObj = {
                 spendingList: spendList,
                 spendingItem: spendItem,
-                noted: noted
+                noted: noted,
+                income: income
             };
 
             // Chuyển obj thành chuỗi JSON với định dạng đẹp
@@ -137,16 +139,17 @@ module.exports = {
             // Lưu ngày sao lưu vào settings ini
             appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
 
-            res.json({ success: true });
+            return res.json({ success: true, status: 200, message: "Sao lưu dữ liệu thành công" });
         } catch (e) {
             logger.error(e); res.json({ success: false });
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 
     syncData: async (req, res) => {
-        ggDrive.setAuthen();
-
         try {
+            ggDrive.setAuthen();
+
             // Lấy ra fileId trong cài dặt
             var fileId = appIniConfigs.getIniConfigs('fileGGDriveId');
 
@@ -165,8 +168,7 @@ module.exports = {
                     appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
                 } else {
                     // Trường hợp chưa có bất kì file nào thì trả về kết quả
-                    res.json({ success: false, status: 404, message: 'Không tìm thấy tệp sao lưu' })
-                    return;
+                    return res.json({ success: false, status: 404, message: 'Không tìm thấy tệp sao lưu' });
                 }
             }
 
@@ -176,14 +178,10 @@ module.exports = {
             // Sau khi đã tải về, đọc nội dung của tệp
             const spendData = JSON.parse(fs.readFileSync(downloadResult.pathSave, 'utf8'))
 
-            if (spendData) {
-                res.json({ success: true, message: 'Lấy dữ liệu thành công', data: spendData });
-            } else {
-                res.json({ success: false, message: 'Lấy dữ liệu thất bại', });
-            }
+            return res.json({ success: true, status: 200, message: 'Lấy dữ liệu thành công', data: spendData });
         } catch (e) {
             logger.error(e)
-            res.json({ success: false, message: 'Có lỗi khi lấy dữ liệu', });
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 }
@@ -199,71 +197,93 @@ wss.on('connection', function connection(ws) {
 
     // Nhận sự kiện đồng bộ dữ lệu từ client
     ws.on('message', async function (data) {
-        const dataObj = JSON.parse(data)
+        try {
+            const dataObj = JSON.parse(data)
 
-        // Khởi tạo một mảng để lưu các giá trị chưa có trong database
-        var dataNotExist = { spendingList: [], spendingItem: [], noted: [] };
+            // Khởi tạo một mảng để lưu các giá trị chưa có trong database
+            var dataNotExist = { spendingList: [], spendingItem: [], noted: [], income: [] };
 
-        // Kiểm tra spendingList
-        for (const spendingList of dataObj.spendingList) {
-            let sql = 'select * from spendinglist where id =? and namelist = ?';
-            const checkList = await db.query(sql, [spendingList.id, spendingList.namelist]);
+            // Kiểm tra spendingList
+            for (const spendingList of dataObj.spendingList) {
+                let sql = 'select * from spendinglist where id =? and namelist = ?';
+                const checkList = await db.query(sql, [spendingList.id, spendingList.namelist]);
 
-            // Thêm danh sách vào mảng nếu nó chưa tồn tại
-            if (checkList.length == 0) { dataNotExist.spendingList.push(spendingList); }
+                // Thêm danh sách vào mảng nếu nó chưa tồn tại
+                if (checkList.length == 0) { dataNotExist.spendingList.push(spendingList); }
 
-            // Kiểm tra spendingItem
-            for (const spendingItem of dataObj.spendingItem) {
-                sql = 'select * from spendingitem where id =? and spendlistid = ? and nameitem = ?';
-                const checkItem = await db.query(sql, [spendingItem.id, spendingList.id, spendingItem.nameitem]);
+                // Kiểm tra spendingItem
+                for (const spendingItem of dataObj.spendingItem) {
+                    sql = 'select * from spendingitem where id =? and spendlistid = ? and nameitem = ?';
+                    const checkItem = await db.query(sql, [spendingItem.id, spendingList.id, spendingItem.nameitem]);
 
-                // Nếu Item vào mảng nếu nó chưa tồn tại
-                if (checkItem.length == 0) { dataNotExist.spendingItem.push(spendingItem); }
+                    // Nếu Item vào mảng nếu nó chưa tồn tại
+                    if (checkItem.length == 0) { dataNotExist.spendingItem.push(spendingItem); }
+                }
             }
-        }
 
-        // Kiểm tra noted
-        for (const noted of dataObj.noted) {
-            let sql = 'select * from noted where id =? and namelist = ?';
-            const checkNoted = await db.query(sql, [noted.id, noted.namelist]);
+            // Kiểm tra noted
+            for (const noted of dataObj.noted) {
+                let sql = 'select * from noted where id =? and namelist = ?';
+                const checkNoted = await db.query(sql, [noted.id, noted.namelist]);
 
-            // Thêm vào mảng nếu nó chưa tồn tại
-            if (checkNoted.length == 0) { dataNotExist.noted.push(noted); }
-        }
+                // Thêm vào mảng nếu nó chưa tồn tại
+                if (checkNoted.length == 0) { dataNotExist.noted.push(noted); }
+            }
 
-        // Lấy tổng số tiến trình dữ liệu
-        const totalProcess = dataNotExist.spendingItem.length + dataNotExist.spendingList.length + dataNotExist.noted.length;
-        let currentProcess = 0;
-        let successProcess = 0;
+            // Kiểm tra income
+            for (const income of dataObj.income) {
+                let sql = 'select * from noted where id = ? and spendlistid = ? and price = ?';
+                const checkIncome = await db.query(sql, [income.id, income.spendlistid, income.price])
 
-        // hàm tính tổng tiến trình hiện tại
-        async function calculateProcess() {
-            currentProcess++
-            successProcess = Math.floor((currentProcess / totalProcess) * 100);
-            ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
-        }
+                // Thêm vào mảng nếu nó chưa tồn tại
+                if (checkIncome.length == 0) { dataNotExist.income.push(income) }
+            }
 
-        // Lấy ra người dùng hiện tại
-        const userId = await db.table.users.getId(dataObj.token)
+            // Lấy tổng số tiến trình dữ liệu
+            const totalProcess = dataNotExist.spendingItem.length + dataNotExist.spendingList.length + dataNotExist.noted.length;
+            let currentProcess = 0;
+            let successProcess = 0;
 
-        // Sau khi đã kiểm tra xong, tiến hành lặp qua dữ liệu và thêm vào database
-        if (dataNotExist.spendingList.length > 0) {
-            // Thêm spendingList
-            for (const spendList of dataNotExist.spendingList) {
-                let sql = 'insert into spendinglist (usersid, namelist, atcreate, atupdate, lastentry, status) values (?, ?, ?, ?, ?, ?)';
-                let params = [userId, spendList.namelist, spendList.atcreate, spendList.atupdate, spendList.lastentry, spendList.status];
-                await db.query(sql, params);
+            // hàm tính tổng tiến trình hiện tại
+            async function calculateProcess() {
+                currentProcess++
+                successProcess = Math.floor((currentProcess / totalProcess) * 100);
+                ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
+            }
 
-                // Lấy ra Id của danh sách vừa thêm
-                const spendListId = await db.lastInsertId();
+            // Lấy ra người dùng hiện tại
+            const userId = await db.table.users.getId(dataObj.token)
 
-                // Lọc ra các item của danh sách
-                const filSpendItem = _.filter(dataNotExist.spendingItem, { 'spendlistid': spendList.id });
+            // Sau khi đã kiểm tra xong, tiến hành lặp qua dữ liệu và thêm vào database
+            if (dataNotExist.spendingList.length > 0) {
+                // Thêm spendingList
+                for (const spendList of dataNotExist.spendingList) {
+                    let sql = 'insert into spendinglist (usersid, namelist, atcreate, atupdate, lastentry, status) values (?, ?, ?, ?, ?, ?)';
+                    let params = [userId, spendList.namelist, spendList.atcreate, spendList.atupdate, spendList.lastentry, spendList.status];
+                    await db.query(sql, params);
 
-                // Thêm spendingItem
-                for (const spendItem of filSpendItem) {
+                    // Lấy ra Id của danh sách vừa thêm
+                    const spendListId = await db.lastInsertId();
+
+                    // Lọc ra các item của danh sách
+                    const filSpendItem = _.filter(dataNotExist.spendingItem, { 'spendlistid': spendList.id });
+
+                    // Thêm spendingItem
+                    for (const spendItem of filSpendItem) {
+                        sql = `insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)`;
+                        params = [spendListId, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate, spendItem.atupdate, spendItem.status];
+                        await db.query(sql, params);
+
+                        // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
+                        calculateProcess();
+                        await delay(); // Độ trễ trước khi thực hiện tiếp
+                    }
+                }
+            } else {
+                // Nếu không có spendingList, thêm các spendingItem
+                for (const spendItem of dataNotExist.spendingItem) {
                     sql = `insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)`;
-                    params = [spendListId, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate, spendItem.atupdate, spendItem.status];
+                    params = [spendItem.spendlistid, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate, spendItem.atupdate, spendItem.status];
                     await db.query(sql, params);
 
                     // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
@@ -271,34 +291,36 @@ wss.on('connection', function connection(ws) {
                     await delay(); // Độ trễ trước khi thực hiện tiếp
                 }
             }
-        } else {
-            // Nếu không có spendingList, thêm các spendingItem
-            for (const spendItem of dataNotExist.spendingItem) {
-                sql = `insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)`;
-                params = [spendItem.spendlistid, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate, spendItem.atupdate, spendItem.status];
-                await db.query(sql, params);
 
-                // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
-                calculateProcess();
-                await delay(); // Độ trễ trước khi thực hiện tiếp
+            // Thêm noted
+            if (dataNotExist.noted.length > 0) {
+                for (const noted of dataNotExist.noted) {
+                    let sql = 'insert into noted (usersid, namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
+                    await db.query(sql, [noted.usersid, noted.namelist, noted.content, noted.atcreate, noted.atupdate, noted.status]);
+
+                    // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
+                    calculateProcess();
+                    await delay(); // Độ trễ trước khi thực hiện tiếp
+                }
             }
-        }
 
-        // Thêm noted
-        if (dataNotExist.noted.length > 0) {
-            for (const noted of dataNotExist.noted) {
-                sql = 'insert into noted (usersid, namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
-                params = [noted.usersid, noted.namelist, noted.content, noted.atcreate, noted.atupdate, noted.status];
-                await db.query(sql, params);
+            // Thêm income
+            if (dataNotExist?.income?.length > 0) {
+                for (const income of dataNotExist.income) {
+                    let sql = 'insert into income (spendlistid, price, atcreate, atupdate, status) values (?, ?, ?, ?, ?)';
+                    await db.query(sql, [income.spendlistid, income.price, income.atcreate, income.atupdate, income.status]);
 
-                // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
-                calculateProcess();
-                await delay(); // Độ trễ trước khi thực hiện tiếp
+                    // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
+                    calculateProcess();
+                    await delay(); // Độ trễ trước khi thực hiện tiếp
+                }
             }
-        }
 
-        // Lưu thời gian đồng bộ vào tệp setting ini
-        appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
-        ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess: 100 }));
+            // Lưu thời gian đồng bộ vào tệp setting ini
+            appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
+            ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess: 100 }));
+        } catch (e) {
+            logger.error(e);
+        }
     });
 })

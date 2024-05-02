@@ -43,10 +43,10 @@ function drawChart_totalPerDate() {
     }
 
     function formatDay(value) {
-        var parts = value.split('-');
-        var day = parts[2];
-        var month = parts[1];
-        var year = parts[0];
+        let parts = value.split('-');
+        let day = parts[2];
+        let month = parts[1];
+        let year = parts[0];
         return `Ngày ${day} tháng ${month} năm ${year}`;
     }
 
@@ -82,17 +82,17 @@ function drawChart_totalPerDate() {
 
                     // Gán dữ liệu phù hợp dựa trên tuỳ chọn
                     if ($('#statics_type').val() == 'date') {
-                        xAxisData = res.totalPerDay.map(item => item.date);
-                        seriesData = res.totalPerDay.map(item => item.total);
+                        xAxisData = res.data.totalPerDay.map(item => item.date);
+                        seriesData = res.data.totalPerDay.map(item => item.total);
                     } else if ($('#statics_type').val() == 'week') {
-                        xAxisData = res.totalPerWeek.map(item => item.week);
-                        seriesData = res.totalPerWeek.map(item => item.total);
+                        xAxisData = res.data.totalPerWeek.map(item => item.week);
+                        seriesData = res.data.totalPerWeek.map(item => item.total);
                     } else if ($('#statics_type').val() == 'month') {
-                        xAxisData = res.totalPerMonth.map(item => item.month);
-                        seriesData = res.totalPerMonth.map(item => item.total);
+                        xAxisData = res.data.totalPerMonth.map(item => item.month);
+                        seriesData = res.data.totalPerMonth.map(item => item.total);
                     } else if ($('#statics_type').val() == 'year') {
-                        xAxisData = res.totalPerYear.map(item => item.year);
-                        seriesData = res.totalPerYear.map(item => item.total);
+                        xAxisData = res.data.totalPerYear.map(item => item.year);
+                        seriesData = res.data.totalPerYear.map(item => item.total);
                     }
 
                     var dataLength = xAxisData.length;
@@ -187,35 +187,35 @@ function getTotalSpending() {
         },
         success: function (res) {
             if (res.success) {
-                $('#total_today').text(formatCurrency(res.today)) // Tổng hôm nay
-                $('#total_yesterday').text(formatCurrency(res.yesterday)) // Tổng hôm qua
-                $('#total_thisWeek').text(formatCurrency(res.thisWeek)) // Tổng tuần này
-                $('#total_lastWeek').text(formatCurrency(res.lastWeek)) // Tổng tuần trước
+                $('#total_today').text(formatCurrency(res.data.today)) // Tổng hôm nay
+                $('#total_yesterday').text(formatCurrency(res.data.yesterday)) // Tổng hôm qua
+                $('#total_thisWeek').text(formatCurrency(res.data.thisWeek)) // Tổng tuần này
+                $('#total_lastWeek').text(formatCurrency(res.data.lastWeek)) // Tổng tuần trước
 
                 // Tổng tiền mỗi khoản chi
-                res.totalPerSpendItem.forEach((item) => {
+                res.data.totalPerSpendItem.forEach((item) => {
                     item.totalprice = formatCurrency(item.totalprice);
                 });
-                var source = $('#template-totalPerSpendItem').html();
-                var convertSource = convertPlaceHbs(source);
-                var template = Handlebars.compile(convertSource);
-                var data = template({ totalPerSpendItem: res.totalPerSpendItem });
+                let source = $('#template-totalPerSpendItem').html();
+                let convertSource = convertPlaceHbs(source);
+                let template = Handlebars.compile(convertSource);
+                let data = template({ totalPerSpendItem: res.data.totalPerSpendItem });
                 $('#tb-totalPerSpendItem').html(data);
 
                 // Tổng các khoản chi
-                $('#total_spenditem').text(res.totalSpendItem + ' khoản Chi');
+                $('#total_spenditem').text(res.data.totalSpendItem + ' khoản Chi');
 
                 // Tổng ngày chi
-                $('#total_date').text(res.totalDate + ' ngày');
+                $('#total_date').text(res.data.totalDate + ' ngày');
 
                 // Tổng tiền trên danh sách
-                $('#total_spendlist').text(formatCurrency(res.totalPrice));
+                $('#total_spendlist').text(formatCurrency(res.data.totalPrice));
 
                 // Lấy các năm
                 source = $('#template-panel-input_year').html();
                 convertSource = convertPlaceHbs(source);
                 template = Handlebars.compile(convertSource);
-                data = template({ yearList: res.yearList });
+                data = template({ yearList: res.data.yearList });
                 $('#panel-input_year').html(data);
             }
         },
@@ -281,7 +281,7 @@ function drawChart_totalperspenditem(data) {
 // Hàm lấy dữ liệu từ db cho hàm drawChart_totalperspenditem
 function getDataForTotalPerSpenditem() {
     var value;
-    var change_display = $('#change_display-pieStatics').val();
+    const change_display = $('#change_display-pieStatics').val();
 
     if (change_display == 'date') {
         value = $('#panel-input_date').val();
@@ -397,9 +397,9 @@ function closeAddIncome() { rowAdd = false; $('#incomeTBody tr').first().remove(
 function createIncome(element) {
     const rowIncome = $(element).closest('[name="rowIncome"]');
     const month = rowIncome.find('input[type="month"]').val() || new Date().toISOString().slice(0, 7);
-    const price = rowIncome.find('input[type="text"]').val()?.replace(/[^0-9]/g, '');
+    const price = rowIncome.find('input[type="text"]').val().replace(/[^0-9]/g, '');
 
-    var data = {
+    let data = {
         spendlistId: $('#statics_spendList').val(),
         price: price,
         atcreate: `${month}-01`
@@ -415,7 +415,7 @@ function createIncome(element) {
             if (res.success) {
                 getIncomeData(); // Gọi hàm để thống kê lại dữ liệu
                 showSuccessToast(res.message);
-            } else if (res.status == 400) {
+            } else if (!res.success && res.status) {
                 showErrorToast(res.message)
             }
         },
@@ -493,7 +493,7 @@ function autoAddIncomeForMonth() {
             dataType: "json",
             contentype: 'application/json',
             success: function (res) {
-                if(res.success) {
+                if (res.success && res.status === 200) {
                     getIncomeData();
                 }
             },

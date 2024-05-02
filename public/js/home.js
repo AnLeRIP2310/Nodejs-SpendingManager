@@ -89,12 +89,12 @@ function getTotalSpending() {
         url: urlapi + '/home/getData',
         success: function (res) {
             if (res.success) {
-                $('#total_today').text(formatCurrency(res.today)) // Tổng hôm nay
-                $('#total_yesterday').text(formatCurrency(res.yesterday)) // Tổng hôm qua
-                $('#total_thisweek').text(formatCurrency(res.thisWeek)) // Tổng tuần này
-                $('#total_lastWeek').text(formatCurrency(res.yesterday)) // Tổng tuần trước
+                $('#total_today').text(formatCurrency(res.data.today)) // Tổng hôm nay
+                $('#total_yesterday').text(formatCurrency(res.data.yesterday)) // Tổng hôm qua
+                $('#total_thisweek').text(formatCurrency(res.data.thisWeek)) // Tổng tuần này
+                $('#total_lastWeek').text(formatCurrency(res.data.yesterday)) // Tổng tuần trước
 
-                drawChart(res.totalPerWeek);
+                drawChart(res.data.totalPerWeek);
             }
         },
         error: function (err) {

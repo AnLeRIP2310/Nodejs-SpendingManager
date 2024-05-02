@@ -1,14 +1,16 @@
 const db = require('../../configs/db')
-const myUtils = require('../../configs/myUtils')
 const logger = require('../../configs/logger')
 
 
 
 module.exports = {
     getData: async (req, res) => {
-        const { spendList } = req.query;
-
         try {
+            const { spendList } = req.query;
+
+            if (!spendList || isNaN(spendList))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
             // Lấy tổng tiền ngày hôm nay
             let sql = 'SELECT SUM(price) AS total FROM spendingitem WHERE DATE(atupdate) = DATE(?) AND SpendListId = ? AND status = 1';
             const todayResult = await db.query(sql, ['now', spendList]);
@@ -46,31 +48,34 @@ module.exports = {
                 AND Status = 1 GROUP BY strftime(?, AtUpdate) ORDER BY strftime(?, AtUpdate) DESC;`
             const yearList = await db.query(sql, ['%Y', '%Y', '%Y']);
 
-            res.json({
+            return res.json({
                 success: true,
+                status: 200,
                 message: 'Lấy dữ liệu thành công',
-                today: todayResult[0].total, // Tổng tiền ngày hôm nay
-                yesterday: yesterdayResult[0].total, // Tổng tiền ngày hôm qua
-                thisWeek: thisWeekResult[0].total, // Tổng tiền tuần hiện tại
-                lastWeek: lastWeekResult[0].total, // Tổng tiền tuần trước
-
-                totalPerSpendItem: totalPerSpendItem, // Tổng tiền mỗi khoán chi
-
-                totalSpendItem: totalSpendItem[0].total, // Tổng các khoản chi
-                totalDate: totalDate[0].total, // Tổng ngày chi
-                totalPrice: totalPrice[0].total, // Tổng tiền chi
-
-                yearList: yearList, // Lấy các năm
+                data: {
+                    today: todayResult[0].total, // Tổng tiền ngày hôm nay
+                    yesterday: yesterdayResult[0].total, // Tổng tiền ngày hôm qua
+                    thisWeek: thisWeekResult[0].total, // Tổng tiền tuần hiện tại
+                    lastWeek: lastWeekResult[0].total, // Tổng tiền tuần trước
+                    totalPerSpendItem: totalPerSpendItem, // Tổng tiền mỗi khoán chi
+                    totalSpendItem: totalSpendItem[0].total, // Tổng các khoản chi
+                    totalDate: totalDate[0].total, // Tổng ngày chi
+                    totalPrice: totalPrice[0].total, // Tổng tiền chi
+                    yearList: yearList, // Lấy các năm
+                }
             })
         } catch (error) {
-            res.json({ success: false, message: 'Lấy dữ liệu thất bại', })
             logger.error(error);
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ', })
         }
     },
 
     getDataForChart1: async (req, res) => {
         try {
             const { spendListId } = req.query;
+
+            if (!spendListId || isNaN(spendListId))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' })
 
             // Lấy tổng tiền mỗi ngày
             let sql = 'SELECT DATE(AtUpdate) AS Date, SUM(Price) AS Total FROM SpendingItem WHERE SpendListId = ? AND Status = 1 GROUP BY DATE(AtUpdate) ORDER BY Date DESC';
@@ -88,30 +93,31 @@ module.exports = {
             sql = 'SELECT strftime(?, atupdate) AS year, SUM(price) AS total FROM spendingitem WHERE SpendListId = ? AND status = 1 GROUP BY year ORDER BY year DESC';
             const totalPerYear = await db.query(sql, ['%Y', spendListId]);
 
-            if (totalPerDay && totalPerWeek && totalPerMonth && totalPerYear) {
-                res.json({
-                    success: true,
-                    message: 'Lấy dữ liệu thành công',
+            return res.json({
+                success: true,
+                status: 200,
+                message: 'Lấy dữ liệu thành công',
+                data: {
                     totalPerDay: totalPerDay,
                     totalPerWeek: totalPerWeek,
                     totalPerMonth: totalPerMonth,
                     totalPerYear: totalPerYear
-                })
-            } else {
-                res.json({ success: false, message: 'Lấy dữ liệu thất bại' })
-            }
+                }
+            });
         } catch (e) {
             logger.error(e)
-            res.json({ success: false, message: 'Có lỗi khi lấy dữ liệu' })
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' })
         }
     },
 
     getDataForChart2: async (req, res) => {
-        const { type, value, SpendListId } = req.query;
-
         try {
-            var sql, param;
-            let resultData;
+            const { type, value, SpendListId } = req.query;
+
+            if (!type && !SpendListId || isNaN(SpendListId))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' })
+
+            let sql, param, resultData;
 
             if (value == '' || value == undefined) {
                 sql = `SELECT NameItem, SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? AND Status = 1 
@@ -134,12 +140,10 @@ module.exports = {
                 resultData = result;
             }
 
-            res.json({
-                success: true,
-                data: resultData
-            })
+            return res.json({ success: true, status: 200, message: 'Lấy dữ liệu thành công', data: resultData })
         } catch (err) {
             logger.error(err);
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" })
         }
     },
 
@@ -147,9 +151,8 @@ module.exports = {
         try {
             const { spendListId } = req.query;
 
-            if (!spendListId) {
-                return res.json({ success: false, status: 400, message: "Invalid request data" })
-            }
+            if (!spendListId || isNaN(spendListId))
+                return res.json({ success: false, status: 400, message: "Dữ liệu yêu cầu không hợp lệ" })
 
             // Lấy ra thông tin từ bảng income
             let sql = `select * from income where spendlistid = ? order by atcreate`;
@@ -188,10 +191,11 @@ module.exports = {
                     saved: amountSaved
                 })
             };
-            res.json({ success: true, status: 200, message: 'Data retrieved successfully', data: incomeData });
+
+            return res.json({ success: true, status: 200, message: 'Lấy dữ liệu thành công', data: incomeData });
         } catch (e) {
             logger.error(e);
-            res.json({ success: false, status: 500, message: 'Internal server error' });
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
@@ -199,28 +203,24 @@ module.exports = {
         try {
             const { atcreate, price, spendlistId } = req.body;
 
-            // Kiểm tra sự tồn tại nếu được phép
+            if (isNaN(spendlistId))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
+            // Kiểm tra sự tồn tại
             let sql = 'SELECT * FROM income WHERE strftime(?, atcreate) = strftime(?, ?) AND spendlistid = ?';
             const checkResult = await db.query(sql, ['%Y-%m', '%Y-%m', atcreate, spendlistId]);
 
             if (checkResult?.length > 0) {
-                console.log(checkResult);
-                return res.json({ success: false, status: 400, message: 'Resource already exists' });
+                return res.json({ success: true, status: 200, message: 'Thu nhập tháng này đã tồn tại' });
             }
 
             // Thêm dữ liệu vào bảng
             sql = 'INSERT INTO income (spendlistid , price, atcreate) VALUES (?, ?, ?)';
-            const result = await db.query(sql, [spendlistId, price, atcreate])
-
-            // Trả về dữ liệu dựa trên kết quả
-            if (result) {
-                res.json({ success: true, status: 201, message: 'Resource created successfully' });
-            } else {
-                res.json({ success: false, status: 400, message: 'Invalid request data' });
-            }
+            await db.query(sql, [spendlistId, price, atcreate])
+            return res.json({ success: true, status: 201, message: 'Thêm thu nhập tháng thành công' });
         } catch (e) {
             logger.error(e)
-            res.json({ success: false, status: 500, message: "Internal server error" });
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 
@@ -228,17 +228,15 @@ module.exports = {
         try {
             const { id, price, atcreate } = req.body;
 
-            let sql = 'UPDATE income SET price = ?, atcreate = ? WHERE id = ?';
-            const result = await db.query(sql, [price, atcreate, id])
+            if (!id || isNaN(id))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
 
-            if (result) {
-                res.json({ success: true, status: 200, message: 'Resource updated successfully' });
-            } else {
-                res.json({ success: false, status: 400, message: 'Invalid request data' });
-            }
+            let sql = 'UPDATE income SET price = ?, atcreate = ? WHERE id = ?';
+            await db.query(sql, [price, atcreate, id])
+            return res.json({ success: true, status: 200, message: 'Cập nhật thu nhập tháng thành công' });
         } catch (e) {
             logger.error(e)
-            res.json({ success: false, status: 500, message: "Internal server error" });
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 
@@ -246,18 +244,15 @@ module.exports = {
         try {
             const { id } = req.body;
 
+            if (!id || isNaN(id))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' })
+
             let sql = 'DELETE FROM income WHERE id = ?';
-            const result = await db.query(sql, [id])
-
-            if (result) {
-                res.json({ success: true, status: 200, message: 'Resource deleted successfully' });
-            } else {
-                res.json({ success: false, status: 400, message: 'Invalid request data' });
-            }
-
+            await db.query(sql, [id])
+            return res.json({ success: true, status: 200, message: 'Xoá thu nhập tháng thành công' });
         } catch (e) {
             logger.error(e)
-            res.json({ success: false, status: 500, message: "Internal server error" });
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 
@@ -265,29 +260,28 @@ module.exports = {
         try {
             const { spendListId } = req.body;
 
+            if (!spendListId || isNaN(spendListId))
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
             // Kiểm tra tháng này đã có dữ liệu chưa
             let sql = 'SELECT * FROM income WHERE strftime(?, atcreate) = strftime(?, ?) AND spendlistid = ?';
             const isExists = await db.query(sql, ['%Y-%m', '%Y-%m', new Date().toISOString(), spendListId]);
 
             // Nếu chưa có thì tiến hành thêm vào
-            if(isExists?.length == 0) {
+            if (isExists?.length == 0) {
                 // Lấy giá tiền của tháng gần nhất
-                sql = 'SELECT price FROM income ORDER BY atcreate DESC LIMIT 1';
-                const price = await db.query(sql,);
+                const price = await db.query('SELECT price FROM income ORDER BY atcreate DESC LIMIT 1');
 
                 // Thêm dữ liệu vào bảng
                 sql = 'INSERT INTO income (spendlistid , price, atcreate) VALUES (?, ?, ?)';
-                const result = await db.query(sql, [spendListId, price[0].price, new Date().toISOString()])
-
-                if(result) {
-                    res.json({ success: true, status: 201, message: 'Resource created successfully' });
-                } else {
-                    res.json({ success: false, status: 400, message: 'Invalid request data' });
-                }
+                await db.query(sql, [spendListId, price[0].price, new Date().toISOString()])
+                return res.json({ success: true, status: 201, message: 'Thêm thu nhập cho tháng này thành công' })
+            } else {
+                return res.json({ success: true, status: 200, message: 'Tháng này đã được thêm' });
             }
         } catch (e) {
             logger.error(e)
-            res.json({ success: false, status: 500, message: "Internal server error" });
+            return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
 }

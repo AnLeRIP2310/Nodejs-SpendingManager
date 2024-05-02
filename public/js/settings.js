@@ -5,9 +5,8 @@ function loadSettings() {
         type: 'GET',
         url: urlapi + '/setting/getData',
         success: async function (res) {
-            if (res != null) {
-                settingsObj = res.iniObject.App;
-                $('#st_dbPath').val(res.dbPath); // gán đường dẫn đến db
+            if (res.status) {
+                settingsObj = res.data.iniObject.App;
                 $('#app_version').text(settingsObj.version);
 
                 darkModeSetting();
@@ -298,9 +297,6 @@ $('#btn-reset_setting').click(function () {
             if (res.success) {
                 showSuccessToast('Đặt lại cài đặt ứng dụng thành công');
                 loadSettings();
-
-                if (res.action == 'reload' && ipcRenderer) { ipcRenderer.send('reload-app') }
-
                 // fix lỗi element tooltip bị treo khi reset
                 $('.popover.bs-popover-auto.fade.show').remove();
             }
@@ -325,15 +321,6 @@ $('#btn-import_db').click(function () {
 $('#btnConfirmImport').click(function () {
     ipcRenderer.send('import-db');
 });
-
-
-// Sự kiện chọn thư mục lưu trữ dữ liệu
-$('#btn-dbPath').click(function () {
-    if (ipcRenderer != null) {
-        ipcRenderer.send('change-dbPath');
-    }
-});
-
 
 // btn Đăng nhập vào google drive
 $('#btn-syncData-Login').click(function () {
@@ -416,6 +403,7 @@ $('#btn-syncData').click(function () {
                     spendingList: res.data.spendingList,
                     spendingItem: res.data.spendingItem,
                     noted: res.data.noted,
+                    income: res.data.income,
                     token: JSON.parse(localStorage.getItem('AuthToken')).token,
                 }
                 ws.send(JSON.stringify(dataObj));
@@ -485,8 +473,8 @@ function checkSyncStatus() {
             if (res.status) {
                 $('#btn-syncData-Login').addClass('d-none'); // Ẩn nút đăng nhập GGDrive
                 $('#syncDataContent').removeClass('d-none'); // Hiển thị nội dung đồng bộ
-                $('#tbl_syncEmail').val(res.email); // Gán email vào thẻ input
-                $('#txt_syncDate').text(res.syncDate); // Gán thời gian sao lưu vào thẻ
+                $('#tbl_syncEmail').val(res.data.email); // Gán email vào thẻ input
+                $('#txt_syncDate').text(res.data.syncDate); // Gán thời gian sao lưu vào thẻ
             } else {
                 $('#btn-syncData-Login').removeClass('d-none'); // Hiển thị lại nút đăng nhập GGDrive
                 $('#syncDataContent').addClass('d-none'); // Ẩn nội dung đồng bộ

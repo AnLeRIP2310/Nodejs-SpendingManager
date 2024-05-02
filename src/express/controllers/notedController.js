@@ -2,10 +2,14 @@ const db = require('../../configs/db')
 const logger = require('../../configs/logger')
 
 
+
 module.exports = {
     getData: async (req, res) => {
         try {
             const { token } = req.query;
+
+            if (!token)
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
 
             // Lấy userId
             const userId = await db.table.users.getId(token);
@@ -13,24 +17,10 @@ module.exports = {
             let sql = 'select * from noted where usersid = ? and status = ? order by id desc';
             const result = await db.query(sql, [userId, 1]);
 
-            if (result) {
-                res.json({
-                    success: true,
-                    notedlist: result,
-                    message: 'Lấy ra danh sách thành công'
-                })
-            } else {
-                res.json({
-                    success: false,
-                    message: 'Lấy ra danh sách thất bại'
-                })
-            }
+            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: { notedlist: result } });
         } catch (e) {
             logger.error(e)
-            res.json({
-                success: false,
-                message: 'Có lỗi khi lấy danh sách'
-            })
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
@@ -38,27 +28,14 @@ module.exports = {
         try {
             const { notedId } = req.query;
 
-            let sql = 'select content from noted where id = ?';
-            const result = await db.query(sql, notedId)
+            if (!notedId)
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' })
 
-            if (result) {
-                res.json({
-                    success: true,
-                    data: result,
-                    message: 'Lấy ra nội dung thành công'
-                })
-            } else {
-                res.json({
-                    success: false,
-                    message: 'Lấy ra nội dung thất bại'
-                })
-            }
+            const result = await db.query('select content from noted where id = ?', notedId);
+            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: result });
         } catch (e) {
             logger.error(e)
-            res.json({
-                success: false,
-                message: 'Có lỗi khi lấy ra nội dung'
-            })
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
@@ -66,30 +43,18 @@ module.exports = {
         try {
             const { token, searchKey } = req.query;
 
+            if (!token)
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
             const userId = await db.table.users.getId(token);
 
             let sql = 'select * from noted where usersid = ? and namelist like ? and status = ? order by id desc'
-
             const result = await db.query(sql, [userId, `%${searchKey}%`, 1]);
 
-            if (result) {
-                res.json({
-                    success: true,
-                    notedlist: result,
-                    message: 'Lấy dữ liệu thành công'
-                });
-            } else {
-                res.json({
-                    success: false,
-                    message: 'Lấy dữ liệu thất bại'
-                })
-            }
+            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: { notedlist: result } });
         } catch (e) {
             logger.error(e)
-            res.json({
-                success: false,
-                message: 'Có lỗi khi lấy dữ liệu'
-            })
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
@@ -97,33 +62,24 @@ module.exports = {
         try {
             const { Token, NameList } = req.body;
 
+            if (!Token)
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
             // Lấy ra userId từ token
             const UserId = await db.table.users.getId(Token);
 
             const AtCreate = new Date().toISOString();
             const Content = `<span>Chưa có nội dung được thêm vào</span>`;
+
             // Thực hiện truy vấn
             let sql = 'insert into noted (usersId, namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
             let params = [UserId, NameList, Content, AtCreate, AtCreate, 1]
-            const result = await db.query(sql, params);
+            await db.query(sql, params);
 
-            if (result) {
-                res.json({
-                    success: true,
-                    message: 'Thêm danh sách mới thành công'
-                })
-            } else {
-                res.json({
-                    success: false,
-                    message: 'Thêm danh sách mới thất bại'
-                })
-            }
+            return res.json({ success: true, status: 201, message: "Thêm ghi chú thành công" });
         } catch (e) {
             logger.error(e)
-            res.json({
-                success: false,
-                message: 'Có lỗi khi thêm danh sách'
-            })
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
@@ -131,26 +87,14 @@ module.exports = {
         try {
             const { notedId, nameList, content } = req.body;
 
-            let sql = 'update noted set namelist = ?, content = ? where id = ?';
-            const result = await db.query(sql, [nameList, content, notedId])
+            if (!notedId)
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
 
-            if (result) {
-                res.json({
-                    success: true,
-                    message: 'Cập nhật nội dung thành công'
-                })
-            } else {
-                res.json({
-                    success: false,
-                    message: 'Cập nhật nội dung thất bại'
-                })
-            }
+            await db.query('update noted set namelist = ?, content = ? where id = ?', [nameList, content, notedId])
+            return res.json({ success: true, status: 200, message: "Cập nhật ghi chú thành công" });
         } catch (e) {
             logger.error(e)
-            res.json({
-                success: false,
-                message: 'Có lỗi khi cập nhật nội dung'
-            })
+            return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 
@@ -158,16 +102,14 @@ module.exports = {
         try {
             const { IdNoted } = req.body;
 
-            let sql = 'delete from noted where id = ?';
-            const result = await db.query(sql, [IdNoted]);
-            if (result) {
-                res.json({ success: true, message: 'Đã xoá danh sách này thành công' });
-            } else {
-                res.json({ success: false, message: "Xoá danh sách này thất bại" });
-            }
+            if (!IdNoted)
+                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
+
+            await db.query('delete from noted where id = ?', [IdNoted]);
+            return res.json({ success: true, status: 200, message: 'Xoá ghi chú thành công' });
         } catch (e) {
             logger.error(e)
-            res.json({ success: false, message: 'Có lỗi khi xoá danh sách này' });
+            return res.json({success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
 }
