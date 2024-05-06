@@ -321,7 +321,7 @@ $('#page-noted').click(function () {
             token: JSON.parse(localStorage.getItem('AuthToken')).token
         },
         success: function (res) {
-            res.notedlist.forEach((item) => {
+            res.data.notedlist.forEach((item) => {
                 item.atcreate = formatDate(item.atcreate)
                 item.atupdate = formatDate(item.atupdate)
             })

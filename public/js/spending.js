@@ -72,35 +72,37 @@ function displaySpendingItems() {
         type: 'GET',
         url: urlapi + '/spending/getSpendingForSpendList',
         data: data,
-        success: function (response) {
-            // Đảo ngược thứ tự của mảng response.data
-            var SpendingData = response.data.reverse();
+        success: function (res) {
+            if (res.success) {
+                // Đảo ngược thứ tự của mảng res.data
+                var SpendingData = res.data.reverse();
 
-            // Chỉnh sửa dữ liệu nhận được
-            SpendingData.forEach((item) => {
-                // Chuyển định dạng ngày
-                item.atcreate = formatDate(item.atcreate);
-                item.atupdate = formatDate(item.atupdate);
-                // Định dạng giá tiền
-                item.price = formatCurrency(item.price);
-            });
+                // Chỉnh sửa dữ liệu nhận được
+                SpendingData.forEach((item) => {
+                    // Chuyển định dạng ngày
+                    item.atcreate = formatDate(item.atcreate);
+                    item.atupdate = formatDate(item.atupdate);
+                    // Định dạng giá tiền
+                    item.price = formatCurrency(item.price);
+                });
 
-            var source = $('#template-tbody').html();
-            var convertSource = convertPlaceHbs(source);
-            var template = Handlebars.compile(convertSource);
-            var data = template({ spendItemByList: SpendingData });
+                var source = $('#template-tbody').html();
+                var convertSource = convertPlaceHbs(source);
+                var template = Handlebars.compile(convertSource);
+                var data = template({ spendItemByList: SpendingData });
 
-            $('#tbody').prepend(data);
+                $('#tbody').prepend(data);
 
-            // Cập nhật offset sau mỗi lần tải dữ liệu
-            tblOffset_spending += tbLimit_spending;
+                // Cập nhật offset sau mỗi lần tải dữ liệu
+                tblOffset_spending += tbLimit_spending;
 
-            // Cuộn đến vị trí mà người dùng đang xem sau khi dữ liệu được cập nhật
-            $('#tbContainer').scrollTop($('#tbContainer')[0].scrollHeight - lastScrollHeight);
+                // Cuộn đến vị trí mà người dùng đang xem sau khi dữ liệu được cập nhật
+                $('#tbContainer').scrollTop($('#tbContainer')[0].scrollHeight - lastScrollHeight);
 
-            handleRowClickEvent(); // Thêm sự kiện click cho các row
-            calculateTotalPrice(); //Gọi hàm tính tổng
-            spendingSuggest() // Tạo danh sách gợi ý từ
+                handleRowClickEvent(); // Thêm sự kiện click cho các row
+                calculateTotalPrice(); //Gọi hàm tính tổng
+                spendingSuggest() // Tạo danh sách gợi ý từ
+            }
         },
         error: function (err) {
             console.log(err);
@@ -432,7 +434,7 @@ $('#btnUpdate').on('click', function () {
         Details: $('#spendDetails').val() || "Không có thông tin",
         AtUpdate: $('#spendDate').val(),
     }
-    
+
     if (!data.Id) {
         showWarningToast('Vui lòng chọn dữ liệu muốn sửa');
         return;
@@ -502,7 +504,7 @@ $('#btnConfirmDelete').click(function () {
 
 // hàm xoá dữ liệu trong bảng
 function deleteSpendingItem() {
-    const data = {Id: $('#spendId').val()};
+    const data = { Id: $('#spendId').val() };
 
     if (data.Id == null) {
         showWarningToast('Vui lòng chọn dữ liệu muốn xoá');

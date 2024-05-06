@@ -105,25 +105,24 @@ module.exports = {
             let sql = 'select * from spendinglist where usersid = ?';
             const spendList = await db.query(sql, [userId]);
 
-            // Lấy ra các mục của danh sách chi tiêu
-            sql = 'select * from spendingitem';
-            const spendItem = await db.query(sql);
-
-            // Lấy ra danh sách nhật ký
-            sql = 'select * from noted';
-            const noted = await db.query(sql);
-
-            // Lấy ra danh sách thu nhập tháng
-            sql = 'select * from income';
-            const income = await db.query(sql);
+            // Khai báo danh sách các câu lệnh SQL cần thực hiện
+            const queries = [
+                { name: 'spendingList', sql: 'select * from spendinglist where usersid = ?' },
+                { name: 'spendingItem', sql: 'select * from spendingitem' },
+                { name: 'noted', sql: 'select * from noted' },
+                { name: 'income', sql: 'select * from income' }
+            ];
 
             // Tạo biến obj chứa dữ liệu
-            const dataObj = {
-                spendingList: spendList,
-                spendingItem: spendItem,
-                noted: noted,
-                income: income
-            };
+            const dataObj = {};
+
+            // Lặp qua mảng các câu lệnh SQL
+            for (const query of queries) {
+                const result = await db.query(query.sql, [userId]);
+                if (result.length > 0) {
+                    dataObj[query.name] = result;
+                }
+            }
 
             // Chuyển obj thành chuỗi JSON với định dạng đẹp
             const jsonData = JSON.stringify(dataObj, null, 2);
