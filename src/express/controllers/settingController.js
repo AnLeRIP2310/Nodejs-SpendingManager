@@ -101,28 +101,24 @@ module.exports = {
             // Lấy ra id người dùng
             const userId = await db.table.users.getId(token);
 
-            // Lấy danh sách chi tiêu
-            let sql = 'select * from spendinglist where usersid = ?';
-            const spendList = await db.query(sql, [userId]);
-
-            // Khai báo danh sách các câu lệnh SQL cần thực hiện
+            // Mảng các truy vấn
             const queries = [
-                { name: 'spendingList', sql: 'select * from spendinglist where usersid = ?' },
-                { name: 'spendingItem', sql: 'select * from spendingitem' },
-                { name: 'noted', sql: 'select * from noted' },
-                { name: 'income', sql: 'select * from income' }
+                db.query('SELECT * FROM spendinglist WHERE usersid = ?', [userId]),
+                db.query('SELECT * FROM spendingitem'),
+                db.query('SELECT * FROM noted'),
+                db.query('SELECT * FROM income')
             ];
+
+            // Chờ tất cả các truy vấn hoàn thành
+            const [spendList, spendItem, noted, income] = await Promise.all(queries);
 
             // Tạo biến obj chứa dữ liệu
             const dataObj = {};
 
-            // Lặp qua mảng các câu lệnh SQL
-            for (const query of queries) {
-                const result = await db.query(query.sql, [userId]);
-                if (result.length > 0) {
-                    dataObj[query.name] = result;
-                }
-            }
+            if (spendList.length > 0) dataObj.spendingList = spendList;
+            if (spendItem.length > 0) dataObj.spendingItem = spendItem;
+            if (noted.length > 0) dataObj.noted = noted;
+            if (income.length > 0) dataObj.income = income;
 
             // Chuyển obj thành chuỗi JSON với định dạng đẹp
             const jsonData = JSON.stringify(dataObj, null, 2);
