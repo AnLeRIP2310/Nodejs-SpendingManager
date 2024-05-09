@@ -263,21 +263,27 @@ module.exports = {
             if (!spendListId || isNaN(spendListId))
                 return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
 
-            // Kiểm tra tháng này đã có dữ liệu chưa
-            let sql = 'SELECT * FROM income WHERE strftime(?, atcreate) = strftime(?, ?) AND spendlistid = ?';
-            const isExists = await db.query(sql, ['%Y-%m', '%Y-%m', new Date().toISOString(), spendListId]);
+            // Kiểm tra xem có tồn tại dữ liệu trong bảng hay không
+            let sql = "SELECT * FROM income";
+            const checkData = await db.query(sql);
 
-            // Nếu chưa có thì tiến hành thêm vào
-            if (isExists?.length == 0) {
-                // Lấy giá tiền của tháng gần nhất
-                const price = await db.query('SELECT price FROM income ORDER BY atcreate DESC LIMIT 1');
+            if (checkData?.length > 0) {
+                // Kiểm tra tháng này đã có dữ liệu chưa
+                sql = 'SELECT * FROM income WHERE strftime(?, atcreate) = strftime(?, ?) AND spendlistid = ?';
+                const isExists = await db.query(sql, ['%Y-%m', '%Y-%m', new Date().toISOString(), spendListId]);
 
-                // Thêm dữ liệu vào bảng
-                sql = 'INSERT INTO income (spendlistid , price, atcreate) VALUES (?, ?, ?)';
-                await db.query(sql, [spendListId, price[0].price, new Date().toISOString()])
-                return res.json({ success: true, status: 201, message: 'Thêm thu nhập cho tháng này thành công' })
-            } else {
-                return res.json({ success: true, status: 200, message: 'Tháng này đã được thêm' });
+                // Nếu chưa có thì tiến hành thêm vào
+                if (isExists?.length == 0) {
+                    // Lấy giá tiền của tháng gần nhất
+                    const price = await db.query('SELECT price FROM income ORDER BY atcreate DESC LIMIT 1');
+
+                    // Thêm dữ liệu vào bảng
+                    sql = 'INSERT INTO income (spendlistid , price, atcreate) VALUES (?, ?, ?)';
+                    await db.query(sql, [spendListId, price[0].price, new Date().toISOString()])
+                    return res.json({ success: true, status: 201, message: 'Thêm thu nhập cho tháng này thành công' })
+                } else {
+                    return res.json({ success: true, status: 200, message: 'Tháng này đã được thêm' });
+                }
             }
         } catch (e) {
             logger.error(e)
