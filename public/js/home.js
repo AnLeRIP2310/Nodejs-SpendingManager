@@ -92,7 +92,7 @@ function getTotalSpending() {
                 $('#total_today').text(formatCurrency(res.data.today)) // Tổng hôm nay
                 $('#total_yesterday').text(formatCurrency(res.data.yesterday)) // Tổng hôm qua
                 $('#total_thisweek').text(formatCurrency(res.data.thisWeek)) // Tổng tuần này
-                $('#total_lastWeek').text(formatCurrency(res.data.yesterday)) // Tổng tuần trước
+                $('#total_lastWeek').text(formatCurrency(res.data.lastWeek)) // Tổng tuần trước
 
                 drawChart(res.data.totalPerWeek);
             }
@@ -155,13 +155,13 @@ $('#btn_weatherMyAddress').click(function () {
         $.ajax({
             type: 'GET',
             url: 'https://freegeoip.app/json/',
-            success: function (res) { getWeatherData('',settingsObj.language, res.latitude, res.longitude) },
+            success: function (res) { getWeatherData('', settingsObj.language, res.latitude, res.longitude) },
             error: function (err) { console.log(err) }
         })
     } else {
         navigator.geolocation.getCurrentPosition(function success(position) {
             // Gọi hàm lấy ra thông tin thời tiết
-            getWeatherData('',settingsObj.language, position.coords.latitude, position.coords.longitude)
+            getWeatherData('', settingsObj.language, position.coords.latitude, position.coords.longitude)
         }, function error(err) { console.log(err) });
     }
 })
