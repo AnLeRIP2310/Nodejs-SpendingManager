@@ -196,43 +196,47 @@ wss.on('connection', function connection(ws) {
             const dataObj = JSON.parse(data)
 
             // Khởi tạo một mảng để lưu các giá trị chưa có trong database
-            var dataNotExist = { spendingList: [], spendingItem: [], noted: [], income: [] };
+            const dataNotExist = { spendingList: [], spendingItem: [], noted: [], income: [] };
 
             // Kiểm tra spendingList
-            for (const spendingList of dataObj.spendingList) {
-                let sql = 'select * from spendinglist where id =? and namelist = ?';
-                const checkList = await db.query(sql, [spendingList.id, spendingList.namelist]);
+            if (dataObj?.spendingList?.length)
+                for (const spendingList of dataObj.spendingList) {
+                    let sql = 'select * from spendinglist where id =? and namelist = ?';
+                    const checkList = await db.query(sql, [spendingList.id, spendingList.namelist]);
 
-                // Thêm danh sách vào mảng nếu nó chưa tồn tại
-                if (checkList.length == 0) { dataNotExist.spendingList.push(spendingList); }
+                    // Thêm danh sách vào mảng nếu nó chưa tồn tại
+                    if (checkList.length == 0) { dataNotExist.spendingList.push(spendingList); }
 
-                // Kiểm tra spendingItem
-                for (const spendingItem of dataObj.spendingItem) {
-                    sql = 'select * from spendingitem where id =? and spendlistid = ? and nameitem = ?';
-                    const checkItem = await db.query(sql, [spendingItem.id, spendingList.id, spendingItem.nameitem]);
+                    // Kiểm tra spendingItem
+                    if (dataObj?.spendingItem?.length)
+                        for (const spendingItem of dataObj.spendingItem) {
+                            sql = 'select * from spendingitem where id =? and spendlistid = ? and nameitem = ?';
+                            const checkItem = await db.query(sql, [spendingItem.id, spendingList.id, spendingItem.nameitem]);
 
-                    // Nếu Item vào mảng nếu nó chưa tồn tại
-                    if (checkItem.length == 0) { dataNotExist.spendingItem.push(spendingItem); }
+                            // Nếu Item vào mảng nếu nó chưa tồn tại
+                            if (checkItem.length == 0) { dataNotExist.spendingItem.push(spendingItem); }
+                        }
                 }
-            }
 
             // Kiểm tra noted
-            for (const noted of dataObj.noted) {
-                let sql = 'select * from noted where id =? and namelist = ?';
-                const checkNoted = await db.query(sql, [noted.id, noted.namelist]);
+            if (dataObj?.noted?.length)
+                for (const noted of dataObj.noted) {
+                    let sql = 'select * from noted where id =? and namelist = ?';
+                    const checkNoted = await db.query(sql, [noted.id, noted.namelist]);
 
-                // Thêm vào mảng nếu nó chưa tồn tại
-                if (checkNoted.length == 0) { dataNotExist.noted.push(noted); }
-            }
+                    // Thêm vào mảng nếu nó chưa tồn tại
+                    if (checkNoted.length == 0) { dataNotExist.noted.push(noted); }
+                }
 
             // Kiểm tra income
-            for (const income of dataObj.income) {
-                let sql = 'select * from noted where id = ? and spendlistid = ? and price = ?';
-                const checkIncome = await db.query(sql, [income.id, income.spendlistid, income.price])
+            if (dataObj?.income?.length)
+                for (const income of dataObj.income) {
+                    let sql = 'select * from noted where id = ? and spendlistid = ? and price = ?';
+                    const checkIncome = await db.query(sql, [income.id, income.spendlistid, income.price])
 
-                // Thêm vào mảng nếu nó chưa tồn tại
-                if (checkIncome.length == 0) { dataNotExist.income.push(income) }
-            }
+                    // Thêm vào mảng nếu nó chưa tồn tại
+                    if (checkIncome.length == 0) { dataNotExist.income.push(income) }
+                }
 
             // Lấy tổng số tiến trình dữ liệu
             const totalProcess = dataNotExist.spendingItem.length + dataNotExist.spendingList.length + dataNotExist.noted.length;
@@ -288,7 +292,7 @@ wss.on('connection', function connection(ws) {
             }
 
             // Thêm noted
-            if (dataNotExist.noted.length > 0) {
+            if (dataNotExist?.noted?.length) {
                 for (const noted of dataNotExist.noted) {
                     let sql = 'insert into noted (usersid, namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
                     await db.query(sql, [noted.usersid, noted.namelist, noted.content, noted.atcreate, noted.atupdate, noted.status]);
@@ -300,7 +304,7 @@ wss.on('connection', function connection(ws) {
             }
 
             // Thêm income
-            if (dataNotExist?.income?.length > 0) {
+            if (dataNotExist?.income?.length) {
                 for (const income of dataNotExist.income) {
                     let sql = 'insert into income (spendlistid, price, atcreate, atupdate, status) values (?, ?, ?, ?, ?)';
                     await db.query(sql, [income.spendlistid, income.price, income.atcreate, income.atupdate, income.status]);

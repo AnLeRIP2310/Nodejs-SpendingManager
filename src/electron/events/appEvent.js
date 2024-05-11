@@ -19,7 +19,7 @@ app.on('before-quit', async (event) => {
 
             if (tokenResult.data.success) {
                 const backupResult = await axios.get(`http://${process.env.HOST}:${process.env.PORT}/setting/backupData?token=${tokenResult.data.token}`);
-                backupResult.data.success && (appQuit = true, app.quit(), windowManager.setIsQuitting(true));
+                backupResult.data.success && (appQuit = true, windowManager.setIsQuitting(true), app.exit());
             }
         }
     } catch (e) {
