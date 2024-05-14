@@ -283,21 +283,36 @@ function spendingSuggest() {
             }
         });
 
+        function focusNextInput(currentInput) {
+            var inputs = $('input');
+            var index = inputs.index(currentInput);
+            if (index >= 0 && index < inputs.length - 1) {
+                inputs.eq(index + 1).focus();
+            }
+        }
+
         // Lắng nghe sự kiện khi người dùng nhấn Tab
         $("#spendName").on("keydown", function (e) {
-            var autocompleteStatus = $(".autocomplete-suggestions").css("display");
             if (e.key === "Tab") {
+                var suggestionsList = $(".autocomplete-suggestions");
+                var activeSuggestion = suggestionsList.find(".autocomplete-suggestion.selected");
 
-                if (autocompleteStatus === "block") {
-                    var suggestionsList = $(".autocomplete-suggestions");
-                    if (suggestionsList.length > 0) {
-                        var matchingSuggestion = suggestionsList.find(".autocomplete-suggestion").first();
-                        if (matchingSuggestion.length > 0) {
-                            matchingSuggestion.click();
+                if (suggestionsList.css("display") === "block") {
+                    e.preventDefault(); // Ngăn không cho hành động mặc định của Tab xảy ra
+
+                    if (activeSuggestion.length > 0) {
+                        activeSuggestion.click();
+                    } else {
+                        var firstSuggestion = suggestionsList.find(".autocomplete-suggestion").first();
+                        if (firstSuggestion.length > 0) {
+                            firstSuggestion.click();
                         }
                     }
-                } else {
-                    return true;
+
+                    // Chuyển focus sang ô input tiếp theo
+                    setTimeout(function () {
+                        focusNextInput($("#spendName"));
+                    }, 100); // Đặt một độ trễ nhỏ để đảm bảo gợi ý được hoàn thành trước khi chuyển focus
                 }
             }
         });

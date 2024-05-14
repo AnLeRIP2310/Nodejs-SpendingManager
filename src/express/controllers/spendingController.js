@@ -17,7 +17,7 @@ module.exports = {
             let params = [userId];
             const spendingList = await db.query(sql, params);
 
-            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: {spendingList: spendingList} });
+            return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: { spendingList: spendingList } });
         } catch (err) {
             logger.error(err);
             return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
@@ -69,7 +69,7 @@ module.exports = {
             }
 
             // Giới hạn dữ liệu lấy và hiển thị
-            sql += ' ORDER BY Id DESC LIMIT ? OFFSET ?';
+            sql += ' ORDER BY AtUpdate DESC, Id DESC LIMIT ? OFFSET ?';
             params.push(tbLimit, tblOffset);
 
             const dataResult = await db.query(sql, params);
