@@ -38,7 +38,7 @@ SpendingManager là một dự án cá nhân do tôi phát triển, là ứng d�
    - Cho phép người dùng sao lưu và đồng bộ dữ liệu với Google Drive, giúp bảo vệ dữ liệu và tiện ích khi sử dụng ứng dụng trên nhiều thiết bị.
 
 ## Tải xuống
-Bạn có thể [tải xuống](https://github.com/ALR2310/SpendingManager/releases/latest) phiên bản ứng dụng mới nhất cho window [tại đây](https://github.com/ALR2310/SpendingManager/releases/latest).
+Bạn có thể tải xuống phiên bản ứng dụng mới nhất cho window [tại đây](https://github.com/ALR2310/SpendingManager/releases/latest).
 
 ## Tín dụng
 

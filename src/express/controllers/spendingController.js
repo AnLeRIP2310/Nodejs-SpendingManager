@@ -83,7 +83,7 @@ module.exports = {
 
     getListNameSpending: async (req, res) => {
         try {
-            var sql = 'SELECT NameItem FROM SpendingItem Where Status = 1';
+            var sql = 'SELECT NameItem FROM SpendingItem Where Status = 1 Order By NameItem';
             const result = await db.query(sql);
             // Xử lý kết quả để lấy danh sách các tên
             const names = result.map(item => item.nameitem);

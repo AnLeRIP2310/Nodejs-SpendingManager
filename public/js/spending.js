@@ -256,6 +256,9 @@ function getListNameSpending(callback) {
         success: function (res) {
             // Gộp các tên trùng lặp thành một mảng duy nhất
             const uniqueExpenseNames = Array.from(new Set(res.data));
+
+            console.log(uniqueExpenseNames)
+
             // Gọi hàm callback và truyền dữ liệu về cho nó
             callback(uniqueExpenseNames);
         },
@@ -273,12 +276,20 @@ function spendingSuggest() {
             minChars: 1,
             source: function (term, suggest) {
                 term = term.toLowerCase();
-                var suggestions = [];
+                var suggestionsStartWithTerm = [];
+                var suggestionsContainTerm = [];
+                
                 for (const element of data) {
-                    if (~element.toLowerCase().indexOf(term)) {
-                        suggestions.push(element);
+                    const lowerElement = element.toLowerCase();
+                    if (lowerElement.startsWith(term)) {
+                        suggestionsStartWithTerm.push(element);
+                    } else if (~lowerElement.indexOf(term)) {
+                        suggestionsContainTerm.push(element);
                     }
                 }
+                
+                // Gộp hai danh sách lại, các từ bắt đầu bằng term sẽ xuất hiện trước
+                const suggestions = suggestionsStartWithTerm.concat(suggestionsContainTerm);
                 suggest(suggestions);
             }
         });

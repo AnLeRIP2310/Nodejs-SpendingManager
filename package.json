@@ -1,7 +1,7 @@
 {
     "name": "spendingmanager",
-    "version": "3.0.4",
-    "description": "Application for taking notes and managing personal expenses",
+    "version": "3.0.5",
+    "description": "Ứng dụng ghi chú và quản lý chi tiêu cá nhân",
     "main": "./src/electronApp.js",
     "scripts": {
         "start": "nodemon src/app.js",
