@@ -29,7 +29,7 @@ function checkForNewData() {
                 if (res.data.result == 0) {
                     // Kiểm tra cài đặt xem có được gửi thông báo không
                     const notifySpend = appIniConfigs.getIniConfigs('notifySpend');
-                    if (notifySpend == true || notifySpend == 'true') { sendNotification() }
+                    if (notifySpend || notifySpend == 'true') { sendNotification() }
                 }
             })
             .catch(error => {

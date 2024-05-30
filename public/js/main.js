@@ -124,17 +124,3 @@ Handlebars.registerHelper('formatPercent', function (value) {
         return Math.abs(value).toFixed(0) + '%'
     }
 });
-
-function deleteCookie(name) {
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
-}
-function getCookie(name) {
-    const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-    return cookieValue ? cookieValue.pop() : '';
-}
-function setCookie(name, value, days) {
-    const expiration = new Date();
-    expiration.setTime(expiration.getTime() + (days * 24 * 60 * 60 * 1000));
-    const expires = "expires=" + expiration.toUTCString();
-    document.cookie = name + "=" + value + "; " + expires + "; path=/";
-}

@@ -55,7 +55,7 @@ autoUpdater.on('update-available', async () => {
         var releaseNote, owner, repo;
 
         // Sử dụng biểu thức chính quy để tìm owner và repo
-        const match = gitUrl.match(/github\.com\/([^\/]+)\/([^\/]+)\.git/i);
+        const match = gitUrl.match(/github\.com\/([^/]+)\/([^/]+)\.git/i);
 
         if (match) {
             owner = match[1]; repo = match[2];

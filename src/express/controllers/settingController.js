@@ -69,13 +69,13 @@ module.exports = {
                 const emailGGDrive = appIniConfigs.getIniConfigs('emailGGDrive');
                 const syncDate = appIniConfigs.getIniConfigs('syncDate');
 
-                if (emailGGDrive != '', syncDate != '') {
-                    return res.json({ status: true, status: 200, message: 'Đã đăng nhập vào tài khoản', data: { email: emailGGDrive, syncDate: syncDate } })
+                if (emailGGDrive != '' && syncDate != '') {
+                    return res.json({ success: true, status: 200, message: 'Đã đăng nhập vào tài khoản', data: { email: emailGGDrive, syncDate: syncDate } })
                 } else {
-                    return res.json({ status: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' })
+                    return res.json({ success: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' })
                 }
             } else {
-                return res.json({ status: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' })
+                return res.json({ success: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' })
             }
         } catch (e) {
             logger.error(e);
@@ -281,8 +281,8 @@ wss.on('connection', function connection(ws) {
             } else {
                 // Nếu không có spendingList, thêm các spendingItem
                 for (const spendItem of dataNotExist.spendingItem) {
-                    sql = `insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)`;
-                    params = [spendItem.spendlistid, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate, spendItem.atupdate, spendItem.status];
+                    let sql = `insert into spendingitem (spendlistid, nameitem, price, details, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?, ?)`;
+                    let params = [spendItem.spendlistid, spendItem.nameitem, spendItem.price, spendItem.details, spendItem.atcreate, spendItem.atupdate, spendItem.status];
                     await db.query(sql, params);
 
                     // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành

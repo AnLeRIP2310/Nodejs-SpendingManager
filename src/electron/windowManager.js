@@ -87,7 +87,7 @@ function createMainWindow() {
     mainWindow.on('close', (event) => {
         let closeDefault = appIniConfigs.getIniConfigs('closeDefault');
 
-        if (isQuitting == false) {
+        if (!isQuitting) {
             event.preventDefault();
             if (closeDefault == 'ask') {
                 mainWindow.webContents.send('before-closeApp');

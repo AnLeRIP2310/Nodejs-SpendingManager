@@ -1,9 +1,5 @@
 const urlapi = 'http://localhost:3962';
-var ipcRenderer;
-
-if (window.electron && window.electron.ipcRenderer) {
-    ipcRenderer = window.electron.ipcRenderer;
-}
+var ipcRenderer = window.electron?.ipcRenderer;
 
 // Btn mở form đăng ký
 $('#link_register').click(function () {
@@ -59,7 +55,7 @@ $('#btn-login').click(() => {
                     token: res.token,
                 }
 
-                if (remember == true) {
+                if (remember) {
                     currentDate.setDate(currentDate.getDate() + 30); // Thêm 30 ngày vào currentDate
                     loginInfor.timeslife = formatDate(currentDate);
                 } else {
@@ -180,6 +176,8 @@ function handleLoginSuccess(token) {
 
 // Xử lý thông điệp từ cửa sổ popup
 window.addEventListener('message', function (event) {
+    if(event.origin !== 'http://localhost:3962') return;
+
     const { data } = event;
     if (data && data.message === 'reload') {
         handleLoginSuccess(data.token);

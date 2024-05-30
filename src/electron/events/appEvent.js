@@ -19,7 +19,7 @@ app.on('before-quit', async (event) => {
 
             if (tokenResult.data.success) {
                 const backupResult = await axios.get(`http://${process.env.HOST}:${process.env.PORT}/setting/backupData?token=${tokenResult.data.token}`);
-                backupResult.data.success && (appQuit = true, windowManager.setIsQuitting(true), app.exit());
+                if (backupResult.data.success) { appQuit = true; windowManager.setIsQuitting(true); app.exit(); }
             }
         }
     } catch (e) {
@@ -29,7 +29,7 @@ app.on('before-quit', async (event) => {
 
 // Bắt sự kiện thoát ứng dụng
 ipcMain.on('quit-app', (event, data) => {
-    if (data == true) {
+    if (data) {
         appIniConfigs.updateIniConfigs('App', 'closeDefault', 'quit');
     }
     windowManager.setIsQuitting(true);
@@ -38,7 +38,7 @@ ipcMain.on('quit-app', (event, data) => {
 
 // Bắt sự kiện thu xuống khay hệ thống
 ipcMain.on('collapse-tray', (event, data) => {
-    if (data == true) {
+    if (data) {
         appIniConfigs.updateIniConfigs('App', 'closeDefault', 'tray');
     }
     const mainWindow = windowManager.getMainWindow();
@@ -55,7 +55,7 @@ ipcMain.on('get-system-theme', (event) => {
 ipcMain.on('startWithWindow', () => {
     const startWithWindow = appIniConfigs.getIniConfigs('startWithWindow')
 
-    if (startWithWindow == true || startWithWindow == 'true') {
+    if (startWithWindow || startWithWindow == 'true') {
         app.setLoginItemSettings({ openAtLogin: true });
     } else {
         app.setLoginItemSettings({ openAtLogin: false });

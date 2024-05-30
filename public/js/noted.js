@@ -235,7 +235,7 @@ function handleAssignEvents() {
     // Nút đóng/mở form sửa-xoá
     $('.btn-noted-toggle-action').click(function (event) {
         var dataId = $(this).data('id');
-        openActionForm(dataId, true)
+        openActionForm(dataId)
     });
 
     // Nút lấy nội dung trên danh sách
@@ -275,7 +275,7 @@ function handleAssignEvents() {
     $('.btn-notedDelete').click(function (event) {
         event.stopPropagation();
         btnDelete = event.currentTarget;
-        if (settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
+        if (settingsObj.reminderDelete || settingsObj.reminderDelete == 'true') {
             $('#modalConfirmDeleteNoted').modal('show')
         } else {
             notedDelete(event.currentTarget);
@@ -321,7 +321,7 @@ function handleAssignEvents() {
 
     // Nút huỷ thay đổi
     $('#btn-noted-close').click(function () {
-        openActionForm(currentOpenId, false) // đóng form sửa/xoá
+        openActionForm(currentOpenId) // đóng form sửa/xoá
         openEditForm(currentOpenId, false) //đóng chế độ sửa
     });
 
@@ -348,7 +348,7 @@ function handleAssignEvents() {
                         $(textNamelist).text(data.nameList)
                     }
 
-                    openActionForm(currentOpenId, false) // đóng form sửa/xoá
+                    openActionForm(currentOpenId) // đóng form sửa/xoá
                     openEditForm(currentOpenId, false) //đóng chế độ sửa
                 } else {
                     showErrorToast(res.message);

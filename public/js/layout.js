@@ -1,11 +1,5 @@
 const urlapi = 'http://localhost:3962';
-
-
-var ipcRenderer;
-
-if (window.electron && window.electron.ipcRenderer) {
-    ipcRenderer = window.electron.ipcRenderer;
-}
+var ipcRenderer = window.electron?.ipcRenderer;
 
 if (ipcRenderer) {
     // Nhận sự kiện đóng ứng dụng hay thu xuống khay
@@ -224,7 +218,7 @@ let pageSetting = false;
 
 // Page Profile
 $('#page-profile').click(function () {
-    if (pageProfile == false) {
+    if (!pageProfile) {
         pageProfile = true;
 
         $.ajax({
@@ -298,7 +292,7 @@ $('#page-spendlist').click(function () {
 
 // Page Setting
 $('#page-setting').click(function () {
-    if (pageSetting == false) {
+    if (!pageSetting) {
         pageSetting = true;
 
         fetch('templates/setting.hbs')

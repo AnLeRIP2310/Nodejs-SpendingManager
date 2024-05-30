@@ -148,7 +148,7 @@ $('#st_language').on('change', function () {
 
 // xử lý cài dặt reminder
 function reminderDelete() {
-    if (settingsObj.reminderDelete == true || settingsObj.reminderDelete == 'true') {
+    if (settingsObj.reminderDelete || settingsObj.reminderDelete == 'true') {
         $('#st_reminder').prop('checked', true);
         $('label[for="st_reminder"]').text(langObj.settingPage.checked.on)
     } else {
@@ -169,7 +169,7 @@ function tooltipSetting() {
     const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
 
-    if (settingsObj.tooltip == true || settingsObj.tooltip == 'true') {
+    if (settingsObj.tooltip || settingsObj.tooltip == 'true') {
         $('#st_tooltip').prop('checked', true);
         $('label[for="st_tooltip"]').text(langObj.settingPage.checked.on)
         // Bật popover
@@ -215,7 +215,7 @@ $('#st_closeDefault').on('change', function () {
 
 // Xử lý cài đặt notifySpend
 function allowNotifySetting() {
-    if (settingsObj.notifySpend == true || settingsObj.notifySpend == 'true') {
+    if (settingsObj.notifySpend || settingsObj.notifySpend == 'true') {
         $('#st_notifySpend').prop('checked', true);
         $('label[for="st_notifySpend"]').text(langObj.settingPage.checked.on)
     } else {
@@ -232,7 +232,7 @@ $('#st_notifySpend').on('change', function () {
 
 // Xử lý cài đặt StartWithWindow
 function startWithWindowSetting() {
-    if (settingsObj.startWithWindow == true || settingsObj.startWithWindow == 'true') {
+    if (settingsObj.startWithWindow || settingsObj.startWithWindow == 'true') {
         $('#st_startWithWindow').prop('checked', true);
         $('label[for="st_startWithWindow"]').text(langObj.settingPage.checked.on)
     } else {
@@ -252,7 +252,7 @@ $('#st_startWithWindow').on('change', function () {
 
 // Xử lý cài đặt autoUpdate
 function autoUpdateSetting() {
-    if (settingsObj.autoUpdate == true || settingsObj.autoUpdate == 'true') {
+    if (settingsObj.autoUpdate || settingsObj.autoUpdate == 'true') {
         $('#st_autoUpdate').prop('checked', true);
         $('label[for="st_autoUpdate"]').text(langObj.settingPage.checked.on)
     } else {
@@ -269,7 +269,7 @@ $('#st_autoUpdate').on('change', function () {
 
 // Xử lý cài đặt DownloadPrompt
 function downloadPromptSetting() {
-    if (settingsObj.downloadPrompt == true || settingsObj.downloadPrompt == 'true') {
+    if (settingsObj.downloadPrompt || settingsObj.downloadPrompt == 'true') {
         $('#st_downloadPrompt').prop('checked', true);
         $('label[for="st_downloadPrompt"]').text(langObj.settingPage.checked.on)
     } else {
@@ -395,7 +395,7 @@ $('#btn-syncData').click(function () {
         type: 'GET',
         url: urlapi + '/setting/syncData',
         success: function (res) {
-            if (res.success == false && res.status == 404) {
+            if (!res.success && res.status == 404) {
                 // Gọi hàm để sao lưu dữ liệu
                 $('#btn-backupData').click();
             } else if (res.success && res.data != null) {
@@ -450,6 +450,8 @@ $('#btn-backupData').click(function () {
 
 // Xử lý thông điệp nhận được từ GGDriveCallback
 window.addEventListener('message', function (event) {
+    if (event.origin !== 'http://localhost:3962') return;
+
     const { data } = event;
     if (data && data.message === 'syncData') {
         $('#btn-syncData').click();
