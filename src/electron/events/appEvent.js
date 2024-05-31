@@ -24,6 +24,7 @@ app.on('before-quit', async (event) => {
         }
     } catch (e) {
         logger.error(e);
+        app.quit();
     }
 });
 

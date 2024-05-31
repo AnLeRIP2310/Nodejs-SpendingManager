@@ -33,6 +33,16 @@ const myUtils = {
         return `${day}/${month}/${year} - ${timeString}`;
     },
 
+    // Hàm thêm thời gian hiện tại cho ngày
+    addTimeToDay(date) {
+        // Lấy thời gian hiện tại
+        const now = new Date();
+        const currentHours = String(now.getHours()).padStart(2, '0');
+        const currentMinutes = String(now.getMinutes()).padStart(2, '0');
+        const currentSeconds = String(now.getSeconds()).padStart(2, '0');
+        return `${date}T${currentHours}:${currentMinutes}:${currentSeconds}`;
+    },
+
     // Hàm định dạng giá trị số thành giá trị tiền tệ
     formatCurrency(value) {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
@@ -40,7 +50,7 @@ const myUtils = {
 
     // Hàm mã hoá refreshToken của GGDrive
     encryptRefreshToken(refreshToken) {
-        const algorithm = 'aes-256-cbc';
+        const algorithm = 'aes-256-gcm';
         const key = process.env.KEY_ENCRYPT_REFRESH_TOKEN;
         const iv = crypto.randomBytes(16);
 
@@ -56,7 +66,7 @@ const myUtils = {
 
     // Hàm giải mã refreshToken của GGDrive
     decryptRefreshToken(encryptedToken, iv) {
-        const algorithm = 'aes-256-cbc';
+        const algorithm = 'aes-256-gcm';
         const key = process.env.KEY_ENCRYPT_REFRESH_TOKEN;
 
         const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
@@ -68,7 +78,7 @@ const myUtils = {
 
     // Hàm giải mã refreshToken với đường dẫn đến tệp Json
     decryptRefreshTokenByPath(pathToJsonFile) {
-        const algorithm = 'aes-256-cbc';
+        const algorithm = 'aes-256-gcm';
         const key = process.env.KEY_ENCRYPT_REFRESH_TOKEN;
 
         // Đọc nội dung tệp Json đồng bộ

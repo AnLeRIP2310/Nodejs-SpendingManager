@@ -257,8 +257,6 @@ function getListNameSpending(callback) {
             // Gộp các tên trùng lặp thành một mảng duy nhất
             const uniqueExpenseNames = Array.from(new Set(res.data));
 
-            console.log(uniqueExpenseNames)
-
             // Gọi hàm callback và truyền dữ liệu về cho nó
             callback(uniqueExpenseNames);
         },
