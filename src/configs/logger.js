@@ -47,7 +47,7 @@ const logger = {
     /**
      * Ghi các thông tin ứng dụng vào tệp nhật ký 
      * 
-     * @param {...any} messages - Thông điệp cần ghi, có thể là một, obj hoặc array
+     * @param {...any} messages - Thông điệp cần ghi, có thể truyền vào một obj hoặc array
      * 
      * @example
      * 
@@ -55,11 +55,10 @@ const logger = {
      * logger.log('chuỗi', [array], {objcet},...);
      */
     log(...messages) {
+        console.log(...messages);
         const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '-');
         const logFileName = `app_log-${timestamp}.txt`;
         const logPath = path.join(logDir, logFileName);
-
-        console.log(timestamp)
 
         try {
             const formattedMessages = messages.map((msg) => {

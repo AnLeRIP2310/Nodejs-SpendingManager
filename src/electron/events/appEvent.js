@@ -13,7 +13,7 @@ app.on('before-quit', async (event) => {
             event.preventDefault();
 
             const mainWindow = windowManager.getMainWindow();
-            mainWindow.isVisible() && mainWindow.hide();
+            mainWindow?.isVisible() && mainWindow?.hide();
 
             const tokenResult = await axios.get(`http://${process.env.HOST}:${process.env.PORT}/auth/CUToken`);
 

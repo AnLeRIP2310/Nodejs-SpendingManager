@@ -32,11 +32,10 @@ const defaultConfigs = {
 
 
 var folderAppConfigs; // Biến lưu thư mục cấu hình
-if (process.platform === 'win32') {
+if (process.platform === 'win32')
     folderAppConfigs = path.join(process.env.USERPROFILE, 'Documents', 'SpendingManager');
-} else if (process.platform === 'darwin') {
+else if (process.platform === 'darwin')
     folderAppConfigs = path.join(process.env.HOME, 'Documents', 'SpendingManager');
-}
 
 // Tạo thư mục cấu hình nếu nó chưa tồn tại
 if (!fs.existsSync(folderAppConfigs)) {
@@ -270,7 +269,7 @@ function validateConfigs(exceptions = []) {
             if (value === undefined) {
                 console.log(`[Thiếu] Giá trị của ${group}.${name} bị thiếu. Đặt lại mặt định: ${validOptions[0]}`);
                 createIniConfigs(group, name, validOptions[0]);
-            } else if (validOptions && validOptions.includes(value)) {
+            } else if (validOptions?.includes(value)) {
                 continue;
             } else if (!defaultConfigs[group]?.[name]) {
                 console.log(`[Dư thừa] Giá trị của ${group}.${name} không tồn tại trong defaultConfigs. Xoá giá trị này.`);
