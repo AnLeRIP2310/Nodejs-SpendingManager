@@ -120,15 +120,16 @@ function resetAndDisplayItems() {
 $('#SpendingList').on('change', function () {
     resetAndDisplayItems()
 });
+
+var isSearching = false;
+$('.spend-search').on('mouseenter', () => isSearching = true); // Đặt cờ khi nhấn vào input
+$('.spend-search').on('mouseleave', () => isSearching = false); // Huỷ cờ khi rời khỏi input
+
 // Gọi sự kiện khi có tìm kiếm với debounce
 $('#txtSearch').on('input', _.debounce(resetAndDisplayItems, 300));
-
-
+// Gọi sự kiện tìm kiếm khi nhấn enter
 $('#txtSearch').on('keyup', function (event) {
-    if (event.keyCode === 13) {
-        event.preventDefault();
-        resetAndDisplayItems()
-    }
+    if (event.keyCode === 13) resetAndDisplayItems();
 });
 // Gọi sự kiện khi có tuỳ chọn thời gian
 $('#txtSearchDate').on('change', function () {
@@ -161,7 +162,7 @@ $('#typeDateSearch').on('change', function () {
 });
 // Tải thêm danh sách khi cuộn table
 $('#tbContainer').scroll(function () {
-    if ($('#tbContainer').scrollTop() === 0) {
+    if (!isSearching && $('#tbContainer').scrollTop() === 0) {
         // Lưu lại chiều cao trước khi thêm dữ liệu mới
         lastScrollHeight = $('#tbContainer')[0].scrollHeight;
 
@@ -276,7 +277,7 @@ function spendingSuggest() {
                 term = term.toLowerCase();
                 var suggestionsStartWithTerm = [];
                 var suggestionsContainTerm = [];
-                
+
                 for (const element of data) {
                     const lowerElement = element.toLowerCase();
                     if (lowerElement.startsWith(term)) {
@@ -285,7 +286,7 @@ function spendingSuggest() {
                         suggestionsContainTerm.push(element);
                     }
                 }
-                
+
                 // Gộp hai danh sách lại, các từ bắt đầu bằng term sẽ xuất hiện trước
                 const suggestions = suggestionsStartWithTerm.concat(suggestionsContainTerm);
                 suggest(suggestions);
