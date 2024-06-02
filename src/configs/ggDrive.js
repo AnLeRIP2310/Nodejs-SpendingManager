@@ -36,7 +36,7 @@ module.exports = {
             if (fs.existsSync(pathToJsonToken)) {
                 // Thiết lập thông tin xác thực
                 oauth2Client.setCredentials({
-                    refresh_token: decryptRefreshTokenByPath(pathToJsonToken) || refreshToken,
+                    refresh_token: myUtils.decryptRefreshTokenByPath(pathToJsonToken) || refreshToken,
                 });
 
                 // Tạo phiên làm việc với đối tượng OAuth2Client

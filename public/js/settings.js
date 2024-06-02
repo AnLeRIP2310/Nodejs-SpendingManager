@@ -473,7 +473,6 @@ function checkSyncStatus() {
         url: urlapi + '/setting/checkSyncStatus',
         success: function (res) {
             if (res.success) {
-                console.log('Ứng dụng đã đăng nhập')
                 $('#btn-syncData-Login').addClass('d-none'); // Ẩn nút đăng nhập GGDrive
                 $('#syncDataContent').removeClass('d-none'); // Hiển thị nội dung đồng bộ
                 $('#tbl_syncEmail').val(res.data?.email); // Gán email vào thẻ input
@@ -498,14 +497,16 @@ $('#btn-CheckForUpdate').click(function () {
     if (ipcRenderer != null) {
         ipcRenderer.send('check-for-update')
     }
-
+    // Mở form xem tiến trình tải về
     $('#updateApp-content').removeClass('d-none').addClass('animate__fadeInDown')
 })
 
 // Đóng modal và gọi sự kiện tải về
 $('#btnConfirmDownloadUpdate').click(function () {
-    let remember_checkUpdater = $('#remember_checkUpdater').prop('checked');
+    // Mở form xem tiến trình tải về
+    $('#updateApp-content').removeClass('d-none').addClass('animate__fadeInDown')
 
+    let remember_checkUpdater = $('#remember_checkUpdater').prop('checked');
     if (remember_checkUpdater) {
         settingsObj.downloadPrompt = false;
         editSettings('downloadPrompt', false, 'App', downloadPromptSetting);

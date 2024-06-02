@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const logger = require('./logger');
+const fs = require("fs");
 
 
 
@@ -93,7 +95,7 @@ const myUtils = {
 
             return decryptedToken;
         } catch (err) {
-            errorLogs(err, 'Lỗi khi đọc tệp JSON');
+            logger.error(err, 'Lỗi khi đọc tệp JSON');
             return null;
         }
     },
