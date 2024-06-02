@@ -50,7 +50,7 @@ const myUtils = {
 
     // Hàm mã hoá refreshToken của GGDrive
     encryptRefreshToken(refreshToken) {
-        const algorithm = 'aes-256-gcm';
+        const algorithm = 'aes-256-cbc';
         const key = process.env.KEY_ENCRYPT_REFRESH_TOKEN;
         const iv = crypto.randomBytes(16);
 
@@ -66,7 +66,7 @@ const myUtils = {
 
     // Hàm giải mã refreshToken của GGDrive
     decryptRefreshToken(encryptedToken, iv) {
-        const algorithm = 'aes-256-gcm';
+        const algorithm = 'aes-256-cbc';
         const key = process.env.KEY_ENCRYPT_REFRESH_TOKEN;
 
         const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
@@ -78,7 +78,7 @@ const myUtils = {
 
     // Hàm giải mã refreshToken với đường dẫn đến tệp Json
     decryptRefreshTokenByPath(pathToJsonFile) {
-        const algorithm = 'aes-256-gcm';
+        const algorithm = 'aes-256-cbc';
         const key = process.env.KEY_ENCRYPT_REFRESH_TOKEN;
 
         // Đọc nội dung tệp Json đồng bộ

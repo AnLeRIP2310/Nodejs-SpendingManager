@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const logger = require('./logger');
 const appIniConfigs = require('./appIniConfigs');
+const myUtils = require('./myUtils');
 
 
 
@@ -20,33 +21,7 @@ if (process.platform === 'win32') {
 
 
 
-
-// Hàm giải mã refreshToken
-function decryptRefreshToken(pathToJsonFile) {
-    const algorithm = 'aes-256-cbc';
-    const key = process.env.KEY_ENCRYPT_REFRESH_TOKEN;
-
-    // Đọc nội dung tệp Json đồng bộ
-    try {
-        const data = fs.readFileSync(pathToJsonFile);
-        const tokenData = JSON.parse(data);
-        const { encryptedToken, iv } = tokenData.encryptedToken;
-
-        const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
-        let decryptedToken = decipher.update(encryptedToken, 'hex', 'utf8');
-        decryptedToken += decipher.final('utf8');
-
-        return decryptedToken;
-    } catch (err) {
-        logger.error(err, 'Lỗi khi đọc tệp JSON');
-        return null;
-    }
-}
-
-
 var drive;
-
-
 
 module.exports = {
     setAuthen: (clientId, clientSecret, refreshToken) => {
@@ -61,7 +36,7 @@ module.exports = {
             if (fs.existsSync(pathToJsonToken)) {
                 // Thiết lập thông tin xác thực
                 oauth2Client.setCredentials({
-                    refresh_token: decryptRefreshToken(pathToJsonToken) || refreshToken,
+                    refresh_token: decryptRefreshTokenByPath(pathToJsonToken) || refreshToken,
                 });
 
                 // Tạo phiên làm việc với đối tượng OAuth2Client
@@ -217,7 +192,7 @@ module.exports = {
 
             let response;
 
-            if (appDataFolder == false) {
+            if (!appDataFolder) {
                 response = await drive.files.list({
                     fields: 'files(id, name, mimeType)',
                 });

@@ -472,11 +472,12 @@ function checkSyncStatus() {
         type: 'GET',
         url: urlapi + '/setting/checkSyncStatus',
         success: function (res) {
-            if (res.status) {
+            if (res.success) {
+                console.log('Ứng dụng đã đăng nhập')
                 $('#btn-syncData-Login').addClass('d-none'); // Ẩn nút đăng nhập GGDrive
                 $('#syncDataContent').removeClass('d-none'); // Hiển thị nội dung đồng bộ
-                $('#tbl_syncEmail').val(res.data.email); // Gán email vào thẻ input
-                $('#txt_syncDate').text(res.data.syncDate); // Gán thời gian sao lưu vào thẻ
+                $('#tbl_syncEmail').val(res.data?.email); // Gán email vào thẻ input
+                $('#txt_syncDate').text(res.data?.syncDate); // Gán thời gian sao lưu vào thẻ
             } else {
                 $('#btn-syncData-Login').removeClass('d-none'); // Hiển thị lại nút đăng nhập GGDrive
                 $('#syncDataContent').addClass('d-none'); // Ẩn nội dung đồng bộ
