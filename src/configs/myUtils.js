@@ -35,16 +35,6 @@ const myUtils = {
         return `${day}/${month}/${year} - ${timeString}`;
     },
 
-    // Hàm thêm thời gian hiện tại cho ngày
-    addTimeToDay(date) {
-        // Lấy thời gian hiện tại
-        const now = new Date();
-        const currentHours = String(now.getHours()).padStart(2, '0');
-        const currentMinutes = String(now.getMinutes()).padStart(2, '0');
-        const currentSeconds = String(now.getSeconds()).padStart(2, '0');
-        return `${date}T${currentHours}:${currentMinutes}:${currentSeconds}`;
-    },
-
     // Hàm định dạng giá trị số thành giá trị tiền tệ
     formatCurrency(value) {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);

@@ -43,6 +43,16 @@ function formatDateTime(value) {
     return `${day}/${month}/${year} - ${timeString}`;
 }
 
+// Hàm lấy thời gian địa phương
+function getDatetimeLocal() {
+    var dateTimeString = new Date().toLocaleString();
+    // Tách ngày, tháng, năm và giờ, phút từ chuỗi
+    var [timeString, dateString] = dateTimeString.split(' ');
+    var [hour, minute] = timeString.split(':');
+    var [day, month, year] = dateString.split('/').map(item => parseInt(item, 10));
+    return `${year}-${month < 10 ? '0' + month : month}-${day}T${hour}:${minute}`;
+}
+
 // Hàm định dạng số thành định dạng tiền tệ
 function formatCurrency(value) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);

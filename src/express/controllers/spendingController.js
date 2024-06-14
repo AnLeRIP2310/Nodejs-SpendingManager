@@ -27,11 +27,7 @@ module.exports = {
 
     insertSpendingList: async (req, res) => {
         try {
-            const { token, namelist, status } = req.body;
-            var { atcreate } = req.body;
-
-            // Thêm thời gian vào biến ngày
-            atcreate = myUtils.addTimeToDay(atcreate)
+            const { token, namelist, atcreate, status } = req.body;
 
             if (!token)
                 return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
@@ -101,11 +97,7 @@ module.exports = {
 
     insertSpending: async (req, res) => {
         try {
-            const { ListId, Name, Price, Details, Status } = req.body;
-            var { AtCreate, AtUpdate } = req.body;
-
-            // Thêm thời gian vào biến ngày
-            AtCreate = myUtils.addTimeToDay(AtCreate); AtUpdate = myUtils.addTimeToDay(AtUpdate);
+            const { ListId, Name, Price, Details, AtCreate, AtUpdate, Status } = req.body;
 
             if (!ListId || isNaN(ListId))
                 return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
@@ -140,11 +132,7 @@ module.exports = {
 
     updateSpending: async (req, res) => {
         try {
-            const { Id, ListId, Name, Price, Details } = req.body;
-            var {AtUpdate } = req.body;
-
-            // Thêm thời gian vào biến ngày
-            AtUpdate = myUtils.addTimeToDay(AtUpdate);
+            const { Id, ListId, Name, Price, Details, AtUpdate } = req.body;
 
             if (!Id || isNaN(Id) || !ListId || isNaN(ListId))
                 return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });

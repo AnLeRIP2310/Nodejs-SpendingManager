@@ -578,7 +578,7 @@ function deleteSpendingItem() {
 // nút clear data
 $('#btnClearData').on('click', function () {
     $('#spendId').val('');
-    $('#spendDate').val(formatDateForInput(formatDate(new Date())));
+    $('#spendDate').val(getDatetimeLocal());
     $('#spendName').val('');
     $('#spendPrice').val('');
     $('#spendDetails').val('');
@@ -600,8 +600,8 @@ $('#spendName, #spendPrice, #spendDetails').on('keyup', function (event) {
 });
 
 // Bật/Tắt tuỳ chọn trên ô giá tiền
-const autoAdd000 = () => $('#checkAutoAddNumber').prop('checked', settingsObj.autoAdd000);
-const allowCalc = () => $('#checkAllowCalc').prop('checked', settingsObj.allowCalc);
+function autoAdd000() { $('#checkAutoAddNumber').prop('checked', settingsObj.autoAdd000) }
+function allowCalc() { $('#checkAllowCalc').prop('checked', settingsObj.allowCalc) }
 
 $('#checkAutoAddNumber').on('change', function () {
     settingsObj.autoAdd000 = this.checked;
@@ -641,13 +641,13 @@ $('#btn-pdf_export').click(function () {
     });
 
     // Tải tệp PDF
-    doc.save('Spending.pdf');
+    doc.save('SpendingData.pdf');
 })
 
 
 function onPageLoad() {
     // Đặt thời gian mặt định cho thẻ input
-    $('#spendDate').val(formatDateForInput(formatDate(new Date())));
+    $('#spendDate').val(getDatetimeLocal());
 
     // Hiển thị danh sách chi tiêu
     displaySpendingItems();
