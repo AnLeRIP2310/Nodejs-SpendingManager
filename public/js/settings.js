@@ -476,7 +476,7 @@ function checkSyncStatus() {
                 $('#btn-syncData-Login').addClass('d-none'); // Ẩn nút đăng nhập GGDrive
                 $('#syncDataContent').removeClass('d-none'); // Hiển thị nội dung đồng bộ
                 $('#tbl_syncEmail').val(res.data?.email); // Gán email vào thẻ input
-                $('#txt_syncDate').text(res.data?.syncDate); // Gán thời gian sao lưu vào thẻ
+                $('#txt_backupDate').text(res.data?.backupDate); // Gán thời gian sao lưu vào thẻ
             } else {
                 $('#btn-syncData-Login').removeClass('d-none'); // Hiển thị lại nút đăng nhập GGDrive
                 $('#syncDataContent').addClass('d-none'); // Ẩn nội dung đồng bộ

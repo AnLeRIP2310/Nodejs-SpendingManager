@@ -66,11 +66,11 @@ module.exports = {
         try {
             // Kiểm tra xem tệp refresh_token có tồn tại không
             if (fs.existsSync(path.join(folderAppConfigs, 'data', 'Token.json'))) {
-                const emailGGDrive = appIniConfigs.getIniConfigs('emailGGDrive');
-                const syncDate = appIniConfigs.getIniConfigs('syncDate');
+                const driveEmail = appIniConfigs.getIniConfigs('driveEmail');
+                const backupDate = appIniConfigs.getIniConfigs('backupDate');
 
-                if (emailGGDrive != '' && syncDate != '') {
-                    return res.json({ success: true, status: 200, message: 'Đã đăng nhập vào tài khoản', data: { email: emailGGDrive, syncDate: syncDate } })
+                if (driveEmail != '' && backupDate != '') {
+                    return res.json({ success: true, status: 200, message: 'Đã đăng nhập vào tài khoản', data: { email: driveEmail, backupDate: backupDate } })
                 } else {
                     return res.json({ success: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' })
                 }
@@ -128,11 +128,11 @@ module.exports = {
 
             // Lưu id tệp vô settings ini
             if (resultUpload) {
-                appIniConfigs.updateIniConfigs('Data', 'fileGGDriveId', resultUpload.data.id);
+                appIniConfigs.updateIniConfigs('Data', 'driveFileId', resultUpload.data.id);
             }
 
             // Lưu ngày sao lưu vào settings ini
-            appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
+            appIniConfigs.updateIniConfigs('Data', 'backupDate', myUtils.formatDateTime(new Date()));
 
             return res.json({ success: true, status: 200, message: "Sao lưu dữ liệu thành công" });
         } catch (e) {
@@ -146,7 +146,7 @@ module.exports = {
             ggDrive.setAuthen();
 
             // Lấy ra fileId trong cài dặt
-            var fileId = appIniConfigs.getIniConfigs('fileGGDriveId');
+            var fileId = appIniConfigs.getIniConfigs('driveFileId');
 
             // Nếu fileId không tồn tại thì lấy ra fileId từ ggDrive
             if (fileId == '' || fileId == null || fileId == undefined) {
@@ -159,8 +159,8 @@ module.exports = {
                     fileId = getFileId.files[lastFileId].id
 
                     // Lưu fileId vào setting ini để sử dụng sau này
-                    appIniConfigs.updateIniConfigs('Data', 'fileGGDriveId', fileId);
-                    appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
+                    appIniConfigs.updateIniConfigs('Data', 'driveFileId', fileId);
+                    appIniConfigs.updateIniConfigs('Data', 'backupDate', myUtils.formatDateTime(new Date()));
                 } else {
                     // Trường hợp chưa có bất kì file nào thì trả về kết quả
                     return res.json({ success: false, status: 404, message: 'Không tìm thấy tệp sao lưu' });
@@ -318,7 +318,7 @@ function startWSS(port) {
                 }
 
                 // Lưu thời gian đồng bộ vào tệp setting ini
-                appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDateTime(new Date()));
+                appIniConfigs.updateIniConfigs('Data', 'backupDate', myUtils.formatDateTime(new Date()));
                 ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess: 100 }));
             } catch (e) {
                 logger.error(e);

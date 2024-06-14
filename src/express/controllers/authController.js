@@ -333,8 +333,8 @@ module.exports = {
             const userEmail = userInfo.data.user.emailAddress;
 
             // Thêm email vào tệp ini
-            appIniConfigs.updateIniConfigs('Data', 'emailGGDrive', userEmail);
-            appIniConfigs.updateIniConfigs('Data', 'syncDate', myUtils.formatDate(new Date()));
+            appIniConfigs.updateIniConfigs('Data', 'driveEmail', userEmail);
+            appIniConfigs.updateIniConfigs('Data', 'backupDate', myUtils.formatDate(new Date()));
 
             // Mã hóa Refresh Token 
             const encryptedToken = myUtils.encryptRefreshToken(refreshToken);
@@ -372,9 +372,9 @@ module.exports = {
             fs.unlinkSync(pathSettingFolder + 'data/Token.json');
             console.log('Tệp Token.json đã được xoá thành công.');
 
-            // appIniConfigs.updateIniConfigs('Data', 'fileGGDriveId', '');
-            appIniConfigs.updateIniConfigs('Data', 'emailGGDrive', '');
-            appIniConfigs.updateIniConfigs('Data', 'syncDate', '');
+            // appIniConfigs.updateIniConfigs('Data', 'driveFileId', '');
+            appIniConfigs.updateIniConfigs('Data', 'driveEmail', '');
+            appIniConfigs.updateIniConfigs('Data', 'backupDate', '');
 
             res.json({ success: true, message: "Đăng xuất khỏi GGDrive thành công" })
         } else {

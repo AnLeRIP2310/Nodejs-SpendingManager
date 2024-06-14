@@ -8,9 +8,9 @@ const ini = require('ini');
 const defaultConfigs = {
     Data: {
         dbPath: ['default'],
-        fileGGDriveId: [''],
-        emailGGDrive: [''],
-        syncDate: [''],
+        driveFileId: [''],
+        driveEmail: [''],
+        backupDate: [''],
     },
     App: {
         version: [''],
@@ -27,6 +27,8 @@ const defaultConfigs = {
         startWithWindow: [false, true],
         autoUpdate: [false, true],
         downloadPrompt: [true, false],
+        autoAdd000: [true, false],
+        allowCalc: [true, false],
     }
 };
 
@@ -307,7 +309,7 @@ if (!fs.existsSync(iniFilePath)) {
 }
 
 // Gọi hàm để kiểm tra tệp .ini
-const excep = ['fileGGDriveId', 'emailGGDrive', 'syncDate', 'version', 'dbPath']
+const excep = ['driveFileId', 'driveEmail', 'backupDate', 'version', 'dbPath']
 validateConfigs(excep);
 
 // Kiểm tra giá trị của biến dbPath tránh trường hợp giá trị bị rỗng

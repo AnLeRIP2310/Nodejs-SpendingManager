@@ -18,16 +18,16 @@
 
 .brtop {
     position: absolute;
-    height: 25px !important;
-    width: 100% !important;
+    height: 25px;
+    width: 100%;
     background-color: transparent;
     top: -25px;
 }
 
 .brbottom {
     position: absolute;
-    height: 25px !important;
-    width: 100% !important;
+    height: 25px;
+    width: 100%;
     background-color: transparent;
     bottom: -25px;
 }

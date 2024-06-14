@@ -106,7 +106,7 @@
                             <label for="spendId" class="form__label">Id</label>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col-9">
                         <div class="form__group field">
                             <input id="spendDate" type="date" class="form__field" placeholder="Ngày Tháng">
                         </div>
@@ -123,6 +123,27 @@
                     <input id="spendPrice" type="text" class="form__field" placeholder="Số Tiền"
                         autocomplete="Họ Và Tên">
                     <label for="spendPrice" class="form__label">Số Tiền</label>
+
+                    <div class="spendPrice_tooltip pointer">
+                        <i class="spendPrice_tooltip-icons fa-regular fa-circle-info"></i>
+
+                        <div class="spendPrice_tooltip-content card">
+                            <div class="form-check user-select-none">
+                                <input class="form-check-input pointer" type="checkbox" id="checkAutoAddNumber">
+                                <label class="form-check-label pointer fs-6" for="checkAutoAddNumber">
+                                    Tự thêm 000 vào cuối giá tiền
+                                </label>
+                            </div>
+
+                            <div class="form-check user-select-none">
+                                <input class="form-check-input pointer" type="checkbox" id="checkAllowCalc">
+                                <label class="form-check-label pointer fs-6" for="checkAllowCalc">
+                                    Cho phép thực hiện tính toán cơ bản
+                                </label>
+                            </div>
+                            <div class="brtop"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form__group field mb-1">
@@ -133,7 +154,7 @@
 
                 <button id="btnClearData" class="btn w-100 mt-3 text-black" style="background-color: #a3d1ff;">
                     <span>Dọn Dữ Liệu</span>
-                    <i class="fa-sharp fa-solid fa-trash"></i>
+                    <i class="fa-solid fa-broom-wide"></i>
                 </button>
             </div>
 

@@ -370,43 +370,48 @@ function isOperation(input) {
 }
 
 // Hàm tính toán đơn giản
-function calculate() {
-    const spendPrice = $('#spendPrice')
+function CheckCalc() {
+    // Kiểm tra cài đặt xem có được phép thực hiện tính toán hay không
+    if (settingsObj.allowCalc) {
+        // Nếu được phép, thực hiện tính toán
+        const spendPrice = $('#spendPrice')
 
-    if (isOperation(spendPrice.val())) {
-        try {
-            const result = eval(spendPrice.val()); // Sử dụng hàm eval() để tính toán phép toán nhập vào
-            spendPrice.val(result);
-        } catch (error) { }
+        if (isOperation(spendPrice.val())) {
+            try {
+                const result = eval(spendPrice.val()); // Sử dụng hàm eval() để tính toán phép toán nhập vào
+                spendPrice.val(result);
+            } catch (error) { }
+        }
     }
 }
 
+function checkAddNumber() {
+    // Kiểm tra xem có được phép thêm 000 vào cuối giá tiền ha không
+    if (settingsObj.autoAdd000)
+        return '000';
+    else
+        return '';
+}
 
 //#region Button Add, Update, Delete, Clear
 
 // nút thêm dữ liệu vào bảng
 $('#btnCreate').on('click', function () {
-    calculate();
+    CheckCalc();    // Hàm kiểm tra và thực hiện tính toán nếu được phép
 
     const data = {
         ListId: $('#SpendingList').val(),
         Name: $('#spendName').val(),
-        Price: $('#spendPrice').val() + '000',
+        Price: $('#spendPrice').val() + checkAddNumber(),
         Details: $('#spendDetails').val() || "Không có thông tin",
         AtCreate: $('#spendDate').val(),
         AtUpdate: $('#spendDate').val(),
         Status: 1,
     };
 
-    if (data.ListId == null) {
-        showWarningToast('Chưa có danh sách nào được chọn');
-        return;
-    }
-
-    if (data.Name == '') {
-        showWarningToast('Vui lòng nhập tên khoản chi');
-        return;
-    }
+    if (data.ListId == null) { showWarningToast('Chưa có danh sách nào được chọn'); return; }
+    if (data.Name == '') { showWarningToast('Vui lòng nhập tên khoản chi'); return; }
+    if (isNaN(data.Price)) { showWarningToast('Giá trị tiền không hợp lệ'); return; }
 
     $.ajax({
         type: 'POST',
@@ -514,6 +519,7 @@ $('#btnDelete').on('click', function () {
         deleteSpendingItem()
     }
 });
+
 // Nút xác nhận xoá dữ liệu trong bảng
 $('#btnConfirmDelete').click(function () {
     // Kiểm tra xem có tick vào ô tắt thông báo không
@@ -593,6 +599,24 @@ $('#spendName, #spendPrice, #spendDetails').on('keyup', function (event) {
     }
 });
 
+// Bật/Tắt tuỳ chọn trên ô giá tiền
+const autoAdd000 = () => $('#checkAutoAddNumber').prop('checked', settingsObj.autoAdd000);
+const allowCalc = () => $('#checkAllowCalc').prop('checked', settingsObj.allowCalc);
+
+$('#checkAutoAddNumber').on('change', function () {
+    settingsObj.autoAdd000 = this.checked;
+    editSettings('autoAdd000', this.checked, 'App', autoAdd000);
+})
+
+$('#checkAllowCalc').on('change', function () {
+    settingsObj.allowCalc = this.checked;
+    editSettings('allowCalc', this.checked, 'App', allowCalc);
+})
+
+// Đóng/mở nội dung của tuỳ chọn
+$(".spendPrice_tooltip").on('click', () => $('.spendPrice_tooltip-content').css("display", "block"))
+$('.spendPrice_tooltip').on('mouseleave', () => $('.spendPrice_tooltip-content').css("display", "none"))
+
 //#endregion
 
 // Nút Xuất file Excel
@@ -630,4 +654,8 @@ function onPageLoad() {
 
     // cuộn bảng xuống dưới
     scrollTableToBottom();
+
+    // Tài cài đặt mặt định
+    autoAdd000();
+    allowCalc();
 } onPageLoad();

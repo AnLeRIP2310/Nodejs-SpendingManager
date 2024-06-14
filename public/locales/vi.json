@@ -181,7 +181,7 @@
             "desc": "Chọn vị trí cửa sổ sẽ hiển thị theo chiều ngang"
         },
         "winPosY": {
-            "name": "window position Y:",
+            "name": "Vị trí cửa sổ dọc:",
             "value": {
                 "top": "Căn trên",
                 "center": "Căn giữa",
@@ -261,7 +261,7 @@
                 "desc3": "Đã đồng bộ",
                 "desc4": "Đang đồng bộ"
             },
-            "day": "Ngày",
+            "day": "Thời gian:",
             "desc": "Chức năng đồng bộ/sao lưu hiện tại vẫn đang là 'THỬ NGHIỆM' nên sẽ có thể phát sinh lỗi, vui lòng sử dụng cách xuất dữ liệu thủ công bên dưới để sao lưu/khôi phục dữ liệu nếu cần thiết"
         },
         "formUpdate": {
