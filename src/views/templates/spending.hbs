@@ -42,7 +42,7 @@
 
             <!-- Table  -->
             <div class="row pt-2" style="padding: 0 12px;">
-                <div id="tbContainer" class="tableScroll overflow-auto border-top border-bottom border-end" style="height: 455px;">
+                <div id="tbContainer" class="tableScroll overflow-auto border" style="height: 455px;">
                     <table id="tbdata" class="table table-sm table-hover border-start border-end spend-table">
                         <thead>
                             <tr>
@@ -71,7 +71,7 @@
                                 %#each spendItemByList%
                                     <tr class="pointer">
                                         <th data-id="%this.id%" scope="row">%this.id%</th>
-                                        <td>%this.atupdate%</td>
+                                        <td title="%this.datetime%">%this.atupdate%</td>
                                         <td>%this.nameitem%</td>
                                         <td>%this.price%</td>
                                         <td>%this.details%</td>

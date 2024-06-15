@@ -79,6 +79,8 @@ function displaySpendingItems() {
 
                 // Chỉnh sửa dữ liệu nhận được
                 SpendingData.forEach((item) => {
+                    // Thêm loại thời gian phù hợp với thẻ input
+                    item.datetime = item.atupdate || item.atcreate
                     // Chuyển định dạng ngày
                     item.atcreate = formatDate(item.atcreate);
                     item.atupdate = formatDate(item.atupdate);
@@ -181,7 +183,7 @@ function displayRowInfo(row) {
     // Nhận các giá trị ô từ hàng được nhấp
     var cells = row.cells;
     var id = cells[0].innerText;
-    var dateTime = cells[1].innerText;
+    var dateTime = $(cells[1]).attr('title');
     var expenseType = cells[2].innerText;
     var amountWithCurrency = cells[3].innerText;
     var additionalInfo = cells[4].innerText;
@@ -192,7 +194,7 @@ function displayRowInfo(row) {
     $('#spendId').val(id);
     $('#spendName').val(expenseType);
     $('#spendPrice').val(amount);
-    $('#spendDate').val(formatDateForInput(dateTime));
+    $('#spendDate').val(dateTime.includes('T') ? dateTime : dateTime + 'T00:00:00');
     $('#spendDetails').val(additionalInfo);
 
     // Gọi hàm xử lý hàng khi có sự kiện click

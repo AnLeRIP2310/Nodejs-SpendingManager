@@ -64,13 +64,19 @@ module.exports = {
 
             // Kiểm tra xem có từ khoá tìm kiếm không
             if (SearchKey) {
-                const searchQuery = `(NameItem LIKE ? OR Details LIKE ? OR Price Like ?)`;
+                const searchQuery = `(NameItem LIKE ? OR Details LIKE ? OR Price LIKE ? OR Id LIKE ?)`;
                 sql += ` AND ${searchQuery}`;
-                params.push(`%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`);
+                params.push(`%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`, `%${SearchKey}%`);
+
+                // Sắp xếp theo NameItem trước, sau đó mới đến AtUpdate và Id
+                sql += ' ORDER BY NameItem ASC, AtUpdate DESC, Id DESC';
+            } else {
+                // Sắp xếp mặc định theo AtUpdate và Id
+                sql += ' ORDER BY AtUpdate DESC, Id DESC';
             }
 
             // Giới hạn dữ liệu lấy và hiển thị
-            sql += ' ORDER BY AtUpdate DESC, Id DESC LIMIT ? OFFSET ?';
+            sql += ' LIMIT ? OFFSET ?';
             params.push(tbLimit, tblOffset);
 
             const dataResult = await db.query(sql, params);
