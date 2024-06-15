@@ -1,16 +1,17 @@
-const sqlite3 = require('sqlite3').verbose();
+const sqlcipher = require('@journeyapps/sqlcipher').verbose();
+// const sqlite3 = require('sqlite3').verbose();
 const appIniConfigs = require('./appIniConfigs');
 const logger = require('./logger');
 const path = require('path');
 const fs = require('fs');
+const encryptionKey = process.env.DB_ENCRYP_KEY;
 
 
 
 let database;
-let pathToDb = appIniConfigs.getIniConfigs('dbPath');
 let isConnected = false;
+let pathToDb = appIniConfigs.getIniConfigs('dbPath');
 const defPathToDb = path.join(appIniConfigs.getfolderAppConfigs(), 'data', 'SpendingDB.db');
-
 
 // Kiểm tra và gán đường dẫn db từ tệp .ini
 if (pathToDb == 'default') { pathToDb = defPathToDb; }
@@ -67,7 +68,8 @@ async function initDB() {
         }
 
         // Khởi tạo database
-        database = new sqlite3.Database(pathToDb);
+        database = new sqlcipher.Database(pathToDb);
+        database.run(`PRAGMA key = '${encryptionKey}';`);
         isConnected = true;
 
         // Tạo các bảng
@@ -156,7 +158,8 @@ async function initDB() {
 function connectDB() {
     try {
         if (!isConnected) {
-            database = new sqlite3.Database(pathToDb);
+            database = new sqlcipher.Database(pathToDb);
+            database.run(`PRAGMA key = '${encryptionKey}';`);
             isConnected = true;
             console.log('Kết nối đến database thành công')
         } else {
