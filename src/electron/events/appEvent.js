@@ -3,13 +3,19 @@ const windowManager = require('../windowManager');
 const appIniConfigs = require('../../configs/appIniConfigs');
 const logger = require('../../configs/logger');
 const axios = require('axios');
+const fs = require("fs");
+const path = require("path");
 
 
+
+function checkDriveLogin() {
+    return fs.existsSync(path.join(appIniConfigs.getfolderAppConfigs(), 'data', 'Token.json'));
+}
 
 let appQuit = false;
 app.on('before-quit', async (event) => {
     try {
-        if (!appQuit && app.isPackaged) {
+        if (!appQuit && app.isPackaged && checkDriveLogin()) {
             event.preventDefault();
 
             const mainWindow = windowManager.getMainWindow();

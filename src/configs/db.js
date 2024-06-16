@@ -1,5 +1,5 @@
-const sqlcipher = require('@journeyapps/sqlcipher').verbose();
-// const sqlite3 = require('sqlite3').verbose();
+require('dotenv').config({ path: require('path').join(__dirname, '../../.env') });
+const sqlite3 = require('@journeyapps/sqlcipher').verbose();
 const appIniConfigs = require('./appIniConfigs');
 const logger = require('./logger');
 const path = require('path');
@@ -68,9 +68,12 @@ async function initDB() {
         }
 
         // Khởi tạo database
-        database = new sqlcipher.Database(pathToDb);
-        database.run(`PRAGMA key = '${encryptionKey}';`);
-        isConnected = true;
+        if (!isConnected) {
+            database = new sqlite3.Database(pathToDb);
+            database.run('PRAGMA cipher_compatibility = 4');
+            database.run(`PRAGMA key = '${encryptionKey}'`);
+            isConnected = true;
+        }
 
         // Tạo các bảng
         await query(`
@@ -158,8 +161,9 @@ async function initDB() {
 function connectDB() {
     try {
         if (!isConnected) {
-            database = new sqlcipher.Database(pathToDb);
-            database.run(`PRAGMA key = '${encryptionKey}';`);
+            database = new sqlite3.Database(pathToDb);
+            database.run('PRAGMA cipher_compatibility = 4');
+            database.run(`PRAGMA key = '${encryptionKey}'`);
             isConnected = true;
             console.log('Kết nối đến database thành công')
         } else {

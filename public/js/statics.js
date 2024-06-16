@@ -367,11 +367,11 @@ function getIncomeData() {
             if (res.status) {
                 const source = convertPlaceHbs($('#template-incomeTBody').html());
                 const template = Handlebars.compile(source)
-                const html = template({ incomeData: res.data.reverse() })
+                const html = template({ incomeData: res.data?.reverse() })
                 $('#incomeTBody').html(html)
 
                 // Ẩn nút tạo mới nếu danh sách rỗng
-                if (res.data.length == 0) { $('#btn-IncomeAdd').addClass('d-none') }
+                if (res.data?.length == 0) { $('#btn-IncomeAdd').addClass('d-none') }
 
                 tooltipSetting() // áp dụng cài đặt tooltip cho bảng
 

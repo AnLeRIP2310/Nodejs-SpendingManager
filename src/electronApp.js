@@ -18,8 +18,7 @@ if (!gotTheLock) {
     app.quit();
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
-        // Nếu người dùng cố gắng mở một cửa sổ mới, bạn có thể thực hiện một số hành động ở đây
-        // Ví dụ, bạn có thể đưa cửa sổ chính của ứng dụng lên phía trước
+        // Nếu người dùng cố gắn mở ứng dụng mới, hiển thị cửa sổ chính
         if (windowManager.getMainWindow()) {
             if (windowManager.getMainWindow().isMinimized()) windowManager.getMainWindow().restore();
             windowManager.getMainWindow().focus();

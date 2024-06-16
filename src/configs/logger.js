@@ -36,7 +36,7 @@ const logger = {
         try {
             const logEntry = `${error.stack || error}\n`;
             fs.appendFileSync(logPath, logEntry, 'utf-8');
-            console.log('Đã ghi nhật kí thành công');
+            // console.log('Đã ghi nhật kí thành công');
         } catch (e) {
             console.log('Ghi nhật kí thất bại:', e);
         }
@@ -52,9 +52,9 @@ const logger = {
      * @example
      * 
      * // Gọi hàm và truyền vào giá trị
-     * logger.log('chuỗi', [array], {objcet},...);
+     * logger.info('chuỗi', [array], {objcet},...);
      */
-    log(...messages) {
+    info(...messages) {
         console.log(...messages);
         const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '-');
         const logFileName = `app_log-${timestamp}.txt`;
@@ -72,7 +72,7 @@ const logger = {
             const logMessage = formattedMessages.join('\n');
 
             fs.appendFileSync(logPath, `${logMessage}\n`, 'utf-8');
-            console.log('Đã ghi nhật kí thành công');
+            // console.log('Đã ghi nhật kí thành công');
         } catch (e) {
             console.log('Ghi nhật kí thất bại:', e);
         }

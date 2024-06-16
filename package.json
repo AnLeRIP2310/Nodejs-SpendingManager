@@ -66,7 +66,6 @@
         "passport-facebook": "^3.0.0",
         "passport-google-oauth20": "^2.0.0",
         "pretty-bytes": "^5.6.0",
-        "sqlite3": "^5.1.6",
         "uuid": "^9.0.1",
         "ws": "^8.16.0"
     },
