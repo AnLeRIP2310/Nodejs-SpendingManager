@@ -390,6 +390,9 @@ function getIncomeData() {
     })
 } getIncomeData();
 
+// Hàm xoá class invalid trên input
+function clearInvalidInput(element) { $(element).removeClass('is-invalid') }
+
 // Hàm xoá rowIncome khỏi bảng
 function closeAddIncome() { rowAdd = false; $('#incomeTBody tr').first().remove() }
 
@@ -399,7 +402,13 @@ function createIncome(element) {
     const month = rowIncome.find('input[type="month"]').val() || new Date().toISOString().slice(0, 7);
     const price = rowIncome.find('input[type="text"]').val().replace(/[^0-9]/g, '');
 
-    let data = {
+    if (!price) {
+        rowIncome.find('input[type="text"]').addClass('is-invalid')
+        rowIncome.find('input[type="text"]').attr("placeholder", "Giá trị không được để trống")
+        return;
+    }
+
+    const data = {
         spendlistId: $('#statics_spendList').val(),
         price: price,
         atcreate: `${month}-01`

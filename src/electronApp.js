@@ -7,6 +7,7 @@ const notifyEvent = require('./electron/events/notifyEvent');
 require('./electron/events/appEvent');
 require('./electron/events/authEvent');
 require('./electron/events/dataEvent');
+require('dotenv').config();
 
 
 

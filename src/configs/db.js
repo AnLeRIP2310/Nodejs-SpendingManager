@@ -69,10 +69,16 @@ async function initDB() {
 
         // Khởi tạo database
         if (!isConnected) {
-            database = new sqlite3.Database(pathToDb);
-            database.run('PRAGMA cipher_compatibility = 4');
-            database.run(`PRAGMA key = '${encryptionKey}'`);
-            isConnected = true;
+            database = new sqlite3.Database(pathToDb, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+                if (err) {
+                    logger.error(err, "Kết nối database thất bại");
+                } else {
+                    database.run('PRAGMA cipher_compatibility = 4');
+                    database.run(`PRAGMA key = '${encryptionKey}'`);
+                    isConnected = true;
+                    console.log('Kết nối đến database thành công')
+                }
+            });
         }
 
         // Tạo các bảng
@@ -161,11 +167,16 @@ async function initDB() {
 function connectDB() {
     try {
         if (!isConnected) {
-            database = new sqlite3.Database(pathToDb);
-            database.run('PRAGMA cipher_compatibility = 4');
-            database.run(`PRAGMA key = '${encryptionKey}'`);
-            isConnected = true;
-            console.log('Kết nối đến database thành công')
+            database = new sqlite3.Database(pathToDb, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+                if (err) {
+                    logger.error(err, "Kết nối database thất bại");
+                } else {
+                    database.run('PRAGMA cipher_compatibility = 4');
+                    database.run(`PRAGMA key = '${encryptionKey}'`);
+                    isConnected = true;
+                    console.log('Kết nối đến database thành công')
+                }
+            });
         } else {
             console.log('Đã có kết nối đến database')
         }

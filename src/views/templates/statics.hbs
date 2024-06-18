@@ -49,7 +49,7 @@
     <div class="row">
         <div class="statics_chart col-8 border-end border-dark p-0 position-relative">
             <!-- Thống kê thu nhập -->
-            <div style="padding: 12px;">
+            <div class="border-bottom border-dark" style="padding: 12px;">
                 <div class="tableScroll"
                     style="min-height: 143px; height: 32px; max-height: 300px; overflow-y: auto; resize: vertical;">
                     <table class="table table-sm table-hover border h-100">
@@ -80,7 +80,7 @@
                                 </td>
                                 <td class="text-center">
                                     <span>%formatCurrency this.price%</span>
-                                    <input type="text" class="form-control form-control-sm text-center d-none" value="%this.price%" onmouseenter="inputCurrency(this)" oninput="inputCurrency(this)">
+                                    <input type="text" class="form-control form-control-sm text-center d-none" value="%this.price%" onkeypress="clearInvalidInput(this)" onmouseenter="inputCurrency(this)" oninput="inputCurrency(this)">
                                 </td>
                                 <td class="text-center text-nowrap %addClassForPercent this.percent%" data-bs-toggle="tooltip" data-bs-html="true"
                                     data-bs-title="Số tiền bạn đã chi tháng này <strong class='%addClassForPercent this.percent%'>
@@ -117,7 +117,7 @@
                                     </span>
                                     <div class="d-flex w-100 justify-content-center mt-2">
                                         <div name="rowIncome" class="input-group input-group-sm" style="width: 200px;">
-                                            <input type="text" class="form-control form-control-sm" oninput="inputCurrency(this)">
+                                            <input type="text" class="form-control form-control-sm" onkeypress="clearInvalidInput(this)" oninput="inputCurrency(this)">
                                             <button class="btn btn-sm btn-outline-success" onclick="createIncome(this)">
                                                 <i class="fa-solid fa-floppy-disk"></i>
                                             </button>
