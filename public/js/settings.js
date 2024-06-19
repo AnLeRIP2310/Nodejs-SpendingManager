@@ -399,14 +399,7 @@ $('#btn-syncData').click(function () {
                 // Gọi hàm để sao lưu dữ liệu
                 $('#btn-backupData').click();
             } else if (res.success && res.data != null) {
-                const dataObj = {
-                    spendingList: res.data.spendingList,
-                    spendingItem: res.data.spendingItem,
-                    noted: res.data.noted,
-                    income: res.data.income,
-                    token: JSON.parse(localStorage.getItem('AuthToken')).token,
-                }
-                ws.send(JSON.stringify(dataObj));
+                ws.send(JSON.stringify(res.data));
             }
         },
         error: function (err) {
@@ -432,9 +425,6 @@ $('#btn-backupData').click(function () {
     $.ajax({
         type: 'GET',
         url: urlapi + '/setting/backupData',
-        data: {
-            token: JSON.parse(localStorage.getItem('AuthToken')).token
-        },
         success: function (res) {
             if (res.success) {
                 checkSyncStatus();

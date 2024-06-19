@@ -15,7 +15,6 @@ $('#btnSaveSpendingList').on('click', function () {
 // Hàm thêm một danh sách mới
 function addSpendingList() {
     const data = {
-        token: JSON.parse(localStorage.getItem('AuthToken')).token,
         namelist: $('#newSpendingList').val(),
         atcreate: formatDate(new Date()),
         status: 1
@@ -227,6 +226,7 @@ function handleRowClickEvent() {
 function calculateTotalPrice() {
     $.ajax({
         type: "GET",
+        data: {listId: $('#SpendingList').val()},
         url: urlapi + "/spending/calculateTotalPrice",
         success: function (res) {
             $('#spendListTotal').text(formatCurrency(res.data.totalPrice));
@@ -239,7 +239,8 @@ function calculateItemPrice(SpendName) {
         type: "GET",
         url: urlapi + "/spending/calculateItemPrice",
         data: {
-            SpendName: SpendName
+            SpendName: SpendName,
+            listId: $('#SpendingList').val()
         },
         success: function (res) {
             $('#spendItemCount').text(res.data.count);
@@ -430,7 +431,7 @@ $('#btnCreate').on('click', function () {
                 // Tạo HTML cho hàng mới
                 var newRow = `<tr class ="pointer">
                                 <th data-id="${dataRes.id}" scope="row">${dataRes.id}</th>
-                                <td>${dataRes.atupdate}</td>
+                                <td title="${data.AtCreate}">${dataRes.atupdate}</td>
                                 <td>${dataRes.nameitem}</td>
                                 <td>${formatCurrency(dataRes.price)}</td>
                                 <td>${dataRes.details}</td>

@@ -6,18 +6,10 @@ const logger = require('../../configs/logger')
 module.exports = {
     getData: async (req, res) => {
         try {
-            const { token } = req.query
-
-            if (!token)
-                return res.json({ success: false, status: 400, message: "Dữ liệu yêu cầu không hợp lệ" });
-
-            const userId = await db.table.users.getId(token);
-
             var sql = `SELECT spl.*, COALESCE(SUM(sp.price), 0) AS totalprice FROM spendinglist AS spl 
                 LEFT JOIN spendingitem AS sp ON spl.id = sp.spendlistid AND sp.status = 1 
-                WHERE spl.usersid = ? AND spl.status = 1 GROUP BY spl.id;`
-            const result = await db.query(sql, [userId])
-
+                WHERE spl.status = 1 GROUP BY spl.id;`
+            const result = await db.query(sql)
             return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: result })
         } catch (err) {
             logger.error(err);
@@ -55,7 +47,6 @@ module.exports = {
             // Xoá list
             sql = 'delete from SpendingList where id = ?'
             await db.query(sql, [Id])
-
             return res.json({ success: true, status: 200, message: "Xoá danh sách thành công" })
         } catch (e) {
             logger.error(e)

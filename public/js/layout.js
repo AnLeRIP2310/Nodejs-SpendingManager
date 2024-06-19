@@ -1,5 +1,5 @@
 const urlapi = 'http://localhost:3962';
-var ipcRenderer = window.electron?.ipcRenderer;
+var ipcRenderer = window.Electron?.ipcRenderer;
 
 if (ipcRenderer) {
     // Nhận sự kiện đóng ứng dụng hay thu xuống khay
@@ -76,69 +76,6 @@ sidebarItems.forEach(item => {
     });
 });
 
-// Hàm xử lý khi đăng nhập hết hạn
-function handleLoginExpired() {
-    localStorage.removeItem('AuthToken');
-
-    if (ipcRenderer != null) {
-        // Gửi thông điệp đến main process
-        ipcRenderer.send('login-expired');
-    } else {
-        window.location.href = 'http://127.0.0.1:5500/src/views/login.html';
-    }
-}
-
-// Hàm kiểm tra trạng thái đăng nhập
-function checkIsLogin() {
-    // Kiểm tra xem người dùng đã đăng nhập chưa
-    if (localStorage.getItem('AuthToken') != null) {
-        const AuthToken = JSON.parse(localStorage.getItem('AuthToken'));
-        // Kiểm tra token có chính xác không
-        if (AuthToken.token) {
-            $.ajax({
-                type: 'GET',
-                url: 'http://localhost:3962/auth/checkToken',
-                data: {
-                    token: AuthToken.token
-                },
-                success: function (res) {
-                    if (res.success) {
-                        // Kiểm tra xem token còn hiệu lực không
-                        var currentDate = new Date(formatDateForInput(formatDate(new Date()))).getTime();
-                        var storedDate = new Date(formatDateForInput((AuthToken.timeslife))).getTime();
-
-                        if (currentDate > storedDate) {
-                            handleLoginExpired();
-                        }
-                    } else {
-                        handleLoginExpired();
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
-        } else {
-            handleLoginExpired();
-        }
-    } else {
-        handleLoginExpired();
-    }
-} checkIsLogin();
-
-// Btn đăng xuất
-$('#page-logout').click(() => {
-    localStorage.removeItem('AuthToken');
-
-    if (ipcRenderer != null) {
-        // Gửi thông điệp đến main process
-        ipcRenderer.send('login-expired');
-    } else {
-        window.location.href = 'http://127.0.0.1:5500/src/views/login.html'
-    }
-})
-
-
 
 // -----------Load Page----------------
 
@@ -164,9 +101,6 @@ $('#page-spending').click(function () {
     $.ajax({
         type: 'GET',
         url: urlapi + '/spending/getData',
-        data: {
-            token: JSON.parse(localStorage.getItem('AuthToken')).token
-        },
         success: function (res) {
             fetch('templates/spending.hbs')
                 .then(response => response.text())
@@ -191,9 +125,6 @@ $('#page-statics').click(function () {
     $.ajax({
         type: 'GET',
         url: urlapi + '/spending/getData',
-        data: {
-            token: JSON.parse(localStorage.getItem('AuthToken')).token
-        },
         success: function (res) {
             fetch('templates/statics.hbs')
                 .then(response => response.text())
@@ -213,60 +144,11 @@ $('#page-statics').click(function () {
     })
 })
 
-let pageProfile = false;
-let pageSetting = false;
-
-// Page Profile
-$('#page-profile').click(function () {
-    if (!pageProfile) {
-        pageProfile = true;
-
-        $.ajax({
-            type: 'GET',
-            url: urlapi + '/profile/getData',
-            data: {
-                token: JSON.parse(localStorage.getItem('AuthToken')).token
-            },
-            success: function (res) {
-                if (res.success) {
-                    if (res.data[0].avatar == null) {
-                        res.data[0].avatar = urlapi + '/images/defaultAvatar.jpg';
-                    }
-
-                    if (res.data[0].displayname == null) {
-                        res.data[0].displayname = res.data[0].username
-                    }
-
-                    fetch('templates/profile.hbs')
-                        .then(response => response.text())
-                        .then(template => {
-                            const compiledTemplate = Handlebars.compile(template);
-                            const html = compiledTemplate({
-                                userInfor: res.data
-                            });
-                            $('#offcanvasProfile').html(html);
-                            applyLanguage(settingsObj.language);
-                        })
-                        .catch(error => console.error('Error:', error));
-                } else {
-                    showWarningToast('Lấy thông tin người dùng thất bại')
-                }
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        })
-    }
-})
-
 // Page Spendlist
 $('#page-spendlist').click(function () {
     $.ajax({
         type: 'GET',
         url: urlapi + '/spendlist/getData',
-        data: {
-            token: JSON.parse(localStorage.getItem('AuthToken')).token
-        },
         success: function (res) {
             res.data.forEach((item) => {
                 item.status = item.status == 1 ? 'Actived' : 'Disable';
@@ -291,6 +173,7 @@ $('#page-spendlist').click(function () {
 });
 
 // Page Setting
+let pageSetting = false;
 $('#page-setting').click(function () {
     if (!pageSetting) {
         pageSetting = true;
@@ -311,9 +194,6 @@ $('#page-noted').click(function () {
     $.ajax({
         type: 'GET',
         url: urlapi + '/noted/getData',
-        data: {
-            token: JSON.parse(localStorage.getItem('AuthToken')).token
-        },
         success: function (res) {
             res.data.notedlist.forEach((item) => {
                 item.atcreate = formatDate(item.atcreate)

@@ -83,32 +83,8 @@ async function initDB() {
 
         // Tạo các bảng
         await query(`
-            CREATE TABLE IF NOT EXISTS Users (
-                Id          INTEGER  PRIMARY KEY,
-                GoogleId    TEXT,
-                FacebookId  TEXT,
-                UserName    TEXT     COLLATE NOCASE,
-                PassWord    TEXT,
-                Avatar      TEXT,
-                DisplayName TEXT     COLLATE NOCASE,
-                AtCreate    DATETIME,
-                Email       TEXT     COLLATE NOCASE,
-                Status      INTEGER  DEFAULT 1
-            )
-        `);
-
-        await query(`
-            CREATE TABLE IF NOT EXISTS AuthToken (
-                Id          INTEGER PRIMARY KEY,
-                UsersId     INTEGER REFERENCES Users (Id),
-                Token       TEXT
-            )
-        `);
-
-        await query(`
             CREATE TABLE IF NOT EXISTS SpendingList (
                 Id          INTEGER  PRIMARY KEY,
-                UsersId     INTEGER  REFERENCES Users (Id),
                 NameList    TEXT     COLLATE NOCASE,
                 AtCreate    DATETIME,
                 AtUpdate    DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -133,7 +109,6 @@ async function initDB() {
         await query(`
             CREATE TABLE IF NOT EXISTS Noted (
                 Id          INTEGER  PRIMARY KEY,
-                UsersId     INTEGER  REFERENCES users (id),
                 NameList    TEXT     COLLATE nocase,
                 Content     TEXT     COLLATE nocase,
                 AtCreate    DATETIME,
@@ -233,31 +208,6 @@ async function lastInsertId() {
     }
 }
 
-
-const users = {
-    /**
-     * Lấy ID người dùng bằng mã xác thực token trong database
-     * @param {string} token - mã xác thực Token.
-     * @returns {Promise<number|null>} ID người dùng hoặc null nếu không tìm thấy.
-     *
-     * @example
-     * // Sử dụng hàm getId từ đối tượng users
-     * const Id = await db.users.getId(token);
-     */
-    getId: async (token) => {
-        try {
-            const result = await query('select * from AuthToken where token = ?', [token]);
-            if (result && result.length > 0) {
-                return result[0].usersid;
-            } else {
-                return null;
-            }
-        } catch (e) {
-            logger.error(e)
-        }
-    }
-}
-
 const dbPath = {
     /**
      * Lấy đường dẫn đến cơ sở dữ liệu hiện tại.
@@ -288,8 +238,7 @@ const db = {
     closeDB,
     connectDB,
     lastInsertId,
-    dbPath,
-    table: { users },
+    dbPath
 }
 
 module.exports = db

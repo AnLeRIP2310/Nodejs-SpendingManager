@@ -5,45 +5,8 @@ const path = require('path');
 
 
 let mainWindow;
-let loginWindow;
 let tray;
 let isQuitting = false;
-
-
-// Hàm tạo cửa sổ đăng nhập
-function createLoginWindow() {
-    const mainScreen = screen.getPrimaryDisplay().workAreaSize;
-    const windowWidth = 800;
-    const windowHeight = 500;
-    const screenWidth = mainScreen.width;
-    const screenHeight = mainScreen.height;
-    const windowPositionX = parseFloat(appIniConfigs.getIniConfigs('windowPositionX'))
-    const windowPositionY = parseFloat(appIniConfigs.getIniConfigs('windowPositionY'));
-
-    loginWindow = new BrowserWindow({
-        width: windowWidth,
-        height: windowHeight,
-        resizable: false,
-        autoHideMenuBar: true,
-        webPreferences: {
-            nodeIntegration: true,
-            enableRemoteModule: true,
-            devTools: false,
-            preload: path.join(__dirname, '..', 'configs', 'preload.js')
-        },
-        x: Math.floor(screenWidth * windowPositionX - windowWidth / 2),
-        y: Math.floor((screenHeight * windowPositionY - windowHeight) / 2),
-    });
-
-    loginWindow.loadFile(path.join(__dirname, '..', 'views', 'login.html'));
-
-    // Khi cửa sổ đóng, giải phóng bộ nhớ
-    loginWindow.on('closed', () => {
-        loginWindow = null;
-    });
-
-    return loginWindow
-}
 
 // Hàm tạo cửa sổ chính
 function createMainWindow() {
@@ -112,10 +75,8 @@ function createMainWindow() {
 
 
 const windowManager = {
-    createLoginWindow,
     createMainWindow,
     getMainWindow: () => mainWindow,
-    getLoginWindow: () => loginWindow,
     getIsQuitting: () => isQuitting,
     setIsQuitting: (value) => isQuitting = value
 }

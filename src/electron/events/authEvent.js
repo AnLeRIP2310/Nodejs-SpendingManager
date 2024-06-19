@@ -32,39 +32,3 @@ ipc.server.start();
 ipcMain.on('loginGGDrive', (event, url) => {
     shell.openExternal(url); // Mở cửa sổ đăng nhập trên trình duyệt
 })
-
-// Bắt sự kiện đăng nhập google
-ipcMain.on('loginGoogle', (event, url) => {
-    shell.openExternal(url); // Mở cửa sổ đăng nhập trên trình duyệt
-})
-
-// Bắt sự kiện đăng nhập facebook
-ipcMain.on('loginFacebook', (event, url) => {
-    shell.openExternal(url); // Mở cửa sổ đăng nhập trên trình duyệt
-})
-
-// Bắt sự kiện đăng nhập thành công
-ipcMain.on('login-success', () => {
-    const loginWindow = windowManager.getLoginWindow();
-
-    // Đóng cửa sổ đăng nhập
-    loginWindow.close();
-
-    // Mở cửa sổ chính
-    windowManager.createMainWindow();
-});
-
-// Bắt sự kiện đăng nhập hết hạn
-ipcMain.on('login-expired', () => {
-    // Khai báo các biến
-    const mainWindow = windowManager.getMainWindow();
-    const isQuitting = windowManager.getIsQuitting();
-
-    if (!isQuitting) {
-        windowManager.setIsQuitting(true);
-        mainWindow.close();
-
-        // Mở cửa sổ đăng nhập
-        windowManager.createLoginWindow();
-    }
-})

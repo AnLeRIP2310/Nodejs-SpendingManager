@@ -85,25 +85,17 @@ module.exports = {
 
     backupData: async (req, res) => {
         try {
-            const { token } = req.query;
-
-            if (!token)
-                return res.json({ success: false, status: 400, message: "Dữ liệu yêu cầu không hợp lệ" });
-
-            // Xoá các file sao lưu trên ggdrive
+            // Xoá các file sao lưu cũ trên ggdrive
             const listFiles = await ggDrive.getListFile()
 
             for (const files of listFiles.files) {
-                console.log('Đã xoá tệp có Id: ' + files.id)
                 await ggDrive.deleteFile(files.id)
+                console.log('Đã xoá tệp có Id: ' + files.id)
             }
-
-            // Lấy ra id người dùng
-            const userId = await db.table.users.getId(token);
 
             // Mảng các truy vấn
             const queries = [
-                db.query('SELECT * FROM spendinglist WHERE usersid = ?', [userId]),
+                db.query('SELECT * FROM spendinglist'),
                 db.query('SELECT * FROM spendingitem'),
                 db.query('SELECT * FROM noted'),
                 db.query('SELECT * FROM income')
@@ -127,13 +119,10 @@ module.exports = {
             const resultUpload = await ggDrive.uploadFile('spendingData.json', jsonData, 'application/json');
 
             // Lưu id tệp vô settings ini
-            if (resultUpload) {
-                appIniConfigs.updateIniConfigs('Data', 'driveFileId', resultUpload.data.id);
-            }
+            if (resultUpload) appIniConfigs.updateIniConfigs('Data', 'driveFileId', resultUpload.data.id);
 
             // Lưu ngày sao lưu vào settings ini
             appIniConfigs.updateIniConfigs('Data', 'backupDate', myUtils.formatDateTime(new Date()));
-
             return res.json({ success: true, status: 200, message: "Sao lưu dữ liệu thành công" });
         } catch (e) {
             logger.error(e); res.json({ success: false });
@@ -172,7 +161,6 @@ module.exports = {
 
             // Sau khi đã tải về, đọc nội dung của tệp
             const spendData = JSON.parse(fs.readFileSync(downloadResult.pathSave, 'utf8'))
-
             return res.json({ success: true, status: 200, message: 'Lấy dữ liệu thành công', data: spendData });
         } catch (e) {
             logger.error(e)
@@ -252,15 +240,12 @@ function startWSS(port) {
                     ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
                 }
 
-                // Lấy ra người dùng hiện tại
-                const userId = await db.table.users.getId(dataObj.token)
-
                 // Sau khi đã kiểm tra xong, tiến hành lặp qua dữ liệu và thêm vào database
                 if (dataNotExist.spendingList.length > 0) {
                     // Thêm spendingList
                     for (const spendList of dataNotExist.spendingList) {
-                        let sql = 'insert into spendinglist (usersid, namelist, atcreate, atupdate, lastentry, status) values (?, ?, ?, ?, ?, ?)';
-                        let params = [userId, spendList.namelist, spendList.atcreate, spendList.atupdate, spendList.lastentry, spendList.status];
+                        let sql = 'insert into spendinglist (namelist, atcreate, atupdate, lastentry, status) values (?, ?, ?, ?, ?, ?)';
+                        let params = [spendList.namelist, spendList.atcreate, spendList.atupdate, spendList.lastentry, spendList.status];
                         await db.query(sql, params);
 
                         // Lấy ra Id của danh sách vừa thêm
@@ -296,8 +281,8 @@ function startWSS(port) {
                 // Thêm noted
                 if (dataNotExist?.noted?.length) {
                     for (const noted of dataNotExist.noted) {
-                        let sql = 'insert into noted (usersid, namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
-                        await db.query(sql, [noted.usersid, noted.namelist, noted.content, noted.atcreate, noted.atupdate, noted.status]);
+                        let sql = 'insert into noted (namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
+                        await db.query(sql, [noted.namelist, noted.content, noted.atcreate, noted.atupdate, noted.status]);
 
                         // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành
                         calculateProcess();
@@ -328,10 +313,10 @@ function startWSS(port) {
 
     wss.on('error', (err) => {
         if (err.code === 'EADDRINUSE') {
-            console.log(`Port ${port} is already in use. Trying a new port...`);
+            console.log(`Port ${port} đã được sử dụng. Thử một port mới...`);
             // startWSS(port + 1); // Thử mở trên một cổng khác
         } else {
-            console.error('WebSocket server error:', err);
+            console.error('WebSocket Lỗi server:', err);
         }
     });
 }

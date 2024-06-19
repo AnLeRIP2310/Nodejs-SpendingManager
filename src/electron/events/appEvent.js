@@ -21,12 +21,8 @@ app.on('before-quit', async (event) => {
             const mainWindow = windowManager.getMainWindow();
             mainWindow?.isVisible() && mainWindow?.hide();
 
-            const tokenResult = await axios.get(`http://${process.env.HOST}:${process.env.PORT}/auth/CUToken`);
-
-            if (tokenResult.data.success) {
-                const backupResult = await axios.get(`http://${process.env.HOST}:${process.env.PORT}/setting/backupData?token=${tokenResult.data.token}`);
-                if (backupResult.data.success) { appQuit = true; windowManager.setIsQuitting(true); app.exit(); }
-            }
+            const backupResult = await axios.get(`http://${process.env.HOST}:${process.env.PORT}/setting/backupData`);
+            if (backupResult.data.success) { appQuit = true; windowManager.setIsQuitting(true); app.exit(); }
         }
     } catch (e) {
         logger.error(e);

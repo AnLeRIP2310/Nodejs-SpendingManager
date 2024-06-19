@@ -40,7 +40,6 @@ function handleCreateAndSearch() {
             isFormNotedOpen = 1;
         } else {
             const data = {
-                Token: JSON.parse(localStorage.getItem('AuthToken')).token,
                 NameList: $('#txt-notedAdd').val() || 'Ghi chú của tôi',
             }
 
@@ -85,7 +84,6 @@ function handleCreateAndSearch() {
                 type: 'GET',
                 url: urlapi + '/noted/searchNoted',
                 data: {
-                    token: JSON.parse(localStorage.getItem('AuthToken')).token,
                     searchKey: $('#txt-notedSearch').val()
                 },
                 success: function (res) {
@@ -177,9 +175,6 @@ function handleShowListNoted() {
     $.ajax({
         type: 'GET',
         url: urlapi + '/noted/getData',
-        data: {
-            token: JSON.parse(localStorage.getItem('AuthToken')).token
-        },
         success: function (res) {
             res.data.notedlist.forEach((item) => {
                 item.atcreate = formatDate(item.atcreate)

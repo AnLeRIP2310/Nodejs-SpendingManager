@@ -6,17 +6,8 @@ const logger = require('../../configs/logger')
 module.exports = {
     getData: async (req, res) => {
         try {
-            const { token } = req.query;
-
-            if (!token)
-                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
-
-            // Lấy userId
-            const userId = await db.table.users.getId(token);
-
-            let sql = 'select * from noted where usersid = ? and status = ? order by id desc';
-            const result = await db.query(sql, [userId, 1]);
-
+            let sql = 'select * from noted where status = 1 order by id desc';
+            const result = await db.query(sql);
             return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: { notedlist: result } });
         } catch (e) {
             logger.error(e)
@@ -41,16 +32,10 @@ module.exports = {
 
     searchNoted: async (req, res) => {
         try {
-            const { token, searchKey } = req.query;
+            const {searchKey } = req.query;
 
-            if (!token)
-                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
-
-            const userId = await db.table.users.getId(token);
-
-            let sql = 'select * from noted where usersid = ? and namelist like ? and status = ? order by id desc'
+            let sql = 'select * from noted where namelist like ? and status = ? order by id desc'
             const result = await db.query(sql, [userId, `%${searchKey}%`, 1]);
-
             return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: { notedlist: result } });
         } catch (e) {
             logger.error(e)
@@ -60,22 +45,14 @@ module.exports = {
 
     insertNoted: async (req, res) => {
         try {
-            const { Token, NameList } = req.body;
+            const { NameList } = req.body;
 
-            if (!Token)
-                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
-
-            // Lấy ra userId từ token
-            const UserId = await db.table.users.getId(Token);
-
-            const AtCreate = new Date().toISOString();
+            const AtCreate = new Date().toISOString().slice(0, 16);
             const Content = `<span>Chưa có nội dung được thêm vào</span>`;
 
             // Thực hiện truy vấn
-            let sql = 'insert into noted (usersId, namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
-            let params = [UserId, NameList, Content, AtCreate, AtCreate, 1]
-            await db.query(sql, params);
-
+            let sql = 'insert into noted (namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
+            await db.query(sql, [NameList, Content, AtCreate, AtCreate, 1]);
             return res.json({ success: true, status: 201, message: "Thêm ghi chú thành công" });
         } catch (e) {
             logger.error(e)

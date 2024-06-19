@@ -2,8 +2,6 @@ const { ipcMain, dialog, app } = require('electron');
 const db = require('../../configs/db');
 const fs = require('fs');
 const logger = require('../../configs/logger');
-const path = require('path');
-const appIniConfigs = require('../../configs/appIniConfigs');
 
 
 

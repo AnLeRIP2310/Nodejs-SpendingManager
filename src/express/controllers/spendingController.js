@@ -1,23 +1,13 @@
 const db = require('../../configs/db');
 const logger = require('../../configs/logger');
-const myUtils = require("../../configs/myUtils");
 
 
 
 module.exports = {
     getData: async (req, res) => {
         try {
-            const { token } = req.query;
-
-            if (!token)
-                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
-
-            const userId = await db.table.users.getId(token);
-
-            let sql = 'select * from spendinglist where usersId = ? and status = 1';
-            let params = [userId];
-            const spendingList = await db.query(sql, params);
-
+            let sql = 'select * from spendinglist';
+            const spendingList = await db.query(sql);
             return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: { spendingList: spendingList } });
         } catch (err) {
             logger.error(err);
@@ -27,17 +17,10 @@ module.exports = {
 
     insertSpendingList: async (req, res) => {
         try {
-            const { token, namelist, atcreate, status } = req.body;
+            const { namelist, atcreate, status } = req.body;
 
-            if (!token)
-                return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
-
-            const userId = await db.table.users.getId(token);
-
-            let sql = 'insert into spendinglist (usersId, namelist, atcreate, status) values (?, ?, ?, ?)';
-            let params = [userId, namelist, atcreate, status];
-            await db.query(sql, params);
-
+            let sql = 'insert into spendinglist (namelist, atcreate, status) values (?, ?, ?)';
+            await db.query(sql, [namelist, atcreate, status]);
             return res.json({ success: true, status: 201, message: 'Thêm danh sách thành công' });
         } catch (err) {
             logger.error(err);
@@ -123,13 +106,7 @@ module.exports = {
             // Lấy ra dữ liệu vừa insert
             sql = 'select * from spendingitem where id = ?'
             const lastDataResult = await db.query(sql, [lastId]);
-
-            return res.json({
-                success: true,
-                status: 201,
-                data: lastDataResult,
-                message: 'Thêm chi tiêu thành công'
-            });
+            return res.json({ success: true, status: 201, data: lastDataResult, message: 'Thêm chi tiêu thành công' });
         } catch (err) {
             logger.error(err);
             return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
@@ -146,7 +123,6 @@ module.exports = {
             let sql = "update spendingitem set spendlistid = ?, nameitem = ?, price = ?, details = ?, atupdate = ? where id = ?";
             let params = [ListId, Name, Price, Details, AtUpdate, Id];
             await db.query(sql, params);
-
             return res.json({ success: true, status: 200, message: 'Cập nhật chi tiêu thành công' });
         } catch (err) {
             logger.error(err);
@@ -171,17 +147,13 @@ module.exports = {
 
     calculateTotalPrice: async (req, res) => {
         try {
-            var sql = 'SELECT SUM(Price) AS TotalPrice FROM SpendingItem WHERE Status = 1';
-            const result = await db.query(sql);
+            const { listId } = req.query;
 
+            let sql = 'SELECT SUM(Price) AS TotalPrice FROM SpendingItem WHERE SpendListId = ? AND Status = 1';
+            const result = await db.query(sql, [listId]);
             return res.json({
-                success: true,
-                status: 200,
-                message: "Lấy dữ liệu thành công",
-                data: {
-                    totalPrice: result[0].totalprice
-                }
-            })
+                success: true, status: 200, message: "Lấy dữ liệu thành công", data: { totalPrice: result[0].totalprice }
+            });
         } catch (err) {
             logger.error(err);
             return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
@@ -190,22 +162,18 @@ module.exports = {
 
     calculateItemPrice: async (req, res) => {
         try {
-            const { SpendName } = req.query;
+            const { SpendName, listId } = req.query;
 
             if (!SpendName)
                 return res.json({ success: false, status: 400, message: 'Dữ liệu yêu cầu không hợp lệ' });
 
-            let sql = 'select count(*) as count from spendingitem where NameItem = ? and status = 1';
-            const countResult = await db.query(sql, [SpendName]);
+            let sql = 'select count(*) as count from spendingitem where SpendListId = ? and NameItem = ? and status = 1';
+            const countResult = await db.query(sql, [listId, SpendName]);
 
-            sql = 'select sum(Price) as totalprice from spendingitem where NameItem = ? and status = 1';
-            const priceResult = await db.query(sql, [SpendName]);
-
+            sql = 'select sum(Price) as totalprice from spendingitem where SpendListId = ? and NameItem = ? and status = 1';
+            const priceResult = await db.query(sql, [listId, SpendName]);
             return res.json({
-                success: true,
-                status: 200,
-                message: "Lấy dữ liệu thành công",
-                data: {
+                success: true, status: 200, message: "Lấy dữ liệu thành công", data: {
                     count: countResult[0].count,
                     price: priceResult[0].totalprice
                 }

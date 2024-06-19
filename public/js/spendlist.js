@@ -129,7 +129,6 @@ $('#btn-spendlist-open_form').click(function () {
 // Btn thêm danh sách mới
 $('#btn-spendlist-add').click(function () {
     const data = {
-        token: JSON.parse(localStorage.getItem('AuthToken')).token,
         namelist: $('#tbl-spendlist-add').val(),
         atcreate: formatDate(new Date()),
         status: 1
