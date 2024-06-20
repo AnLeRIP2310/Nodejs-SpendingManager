@@ -310,15 +310,18 @@ $('#btn-reset_setting').click(function () {
 
 // Sự kiện xuất file db
 $('#btn-export_db').click(function () {
-    ipcRenderer.send('export-db');
+    ipcRenderer.send('export-data');
 });
+ipcRenderer?.on('export-data-success', () => {
+    showSuccessToast('Xuất dữ liệu thành công');
+})
 
 // Sự kiện nhập file db
 $('#btn-import_db').click(function () {
-    $('#modalConfirmImport').modal('show');
-})
-$('#btnConfirmImport').click(function () {
-    ipcRenderer.send('import-db');
+    ipcRenderer.send('import-data');
+});
+ipcRenderer?.on('import-data-success', (event, data) => {
+    ws.send(data);
 });
 
 // sk mở trang nguồn
@@ -378,19 +381,25 @@ const ws = new WebSocket('ws://localhost:3963');
 
 ws.onmessage = function (event) {
     const data = JSON.parse(event.data)
-    if ($('#syncData-Progress').hasClass('d-none')) {
-        $('#syncData-Progress').removeClass('d-none')
-    }
-
+    // Thanh tiến trình đồng bộ
+    if ($('#syncData-Progress').hasClass('d-none'))
+        $('#syncData-Progress').removeClass('d-none');
     $('#syncData-Progress .progress-bar').css('width', data.successProcess + '%');
     $('#syncData-Progress .progress-bar').text(data.successProcess + '%');
     $('#syncStatus').html(`${langObj.settingPage.formSyncData.status.desc4} ${data.currentProcess}/${data.totalProcess} <i class="fa-solid fa-loader fa-spin"></i>`)
+
+    // Thanh tiến trình nhập liệu
+    if ($('#import-Progress').hasClass('d-none'))
+        $('#import-Progress').removeClass('d-none');
+    $('#import-Progress .progress-bar').css('width', data.successProcess + '%');
+    $('#import-Progress .progress-bar').text(`${data.successProcess}% - ${data.currentProcess}/${data.totalProcess}`);
 
     if (data.successProcess == 100) {
         // Nếu đồng bộ hoàn tất, hiển thị thông báo
         showSuccessToast('Đồng bộ dữ liệu hoàn tất');
         // Ẩn thanh tiến trình
         $('#syncData-Progress').addClass('d-none');
+        $('#import-Progress').addClass('d-none');
         $('#syncStatus').html(`${langObj.settingPage.formSyncData.status.desc3} <i class="fa-sharp fa-regular fa-circle-check"></i>`);
         $('#syncStatus').removeClass('text-warning');
     }

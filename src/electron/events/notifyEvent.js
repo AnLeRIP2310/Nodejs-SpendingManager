@@ -2,6 +2,7 @@ const notifier = require('node-notifier');
 const windowManager = require('../windowManager');
 const schedule = require('node-schedule');
 const axios = require('axios');
+const logger = require("../../configs/logger");
 
 
 // Hàm gửi thông báo
