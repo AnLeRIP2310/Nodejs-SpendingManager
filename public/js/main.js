@@ -138,3 +138,21 @@ Handlebars.registerHelper('formatPercent', function (value) {
         return Math.abs(value).toFixed(0) + '%'
     }
 });
+
+function showHidePassword(classElement) {
+    $(`.${classElement}`).each(function () {
+        const input = $(this).find('input');
+        const button = $(this).find('button');
+
+        button.on('click', function () {
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+                button.html('<i class="fa-solid fa-eye-slash"></i>');
+            } else {
+                input.attr('type', 'password');
+                button.html('<i class="fa-solid fa-eye"></i>');
+            }
+        });
+    });
+}
+showHidePassword('input-group-password');

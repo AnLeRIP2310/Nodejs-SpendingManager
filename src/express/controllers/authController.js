@@ -4,6 +4,7 @@ const { google } = require('googleapis');
 const logger = require('../../configs/logger');
 const appIniConfigs = require('../../configs/appIniConfigs');
 const myUtils = require('../../configs/myUtils');
+const db = require("../../configs/db");
 const path = require("path");
 
 
@@ -25,10 +26,88 @@ const oauth2Client = new google.auth.OAuth2(
 
 
 module.exports = {
+    checkLogin: async (req, res) => {
+        try {
+            const result = await db.query('SELECT * FROM AppLock');
+            let Exists = false; if (result.length > 0) { Exists = true }
+            return res.json({
+                success: true, message: "Lấy thông tin thành công", data: {
+                    AppLockStatus: result[0]?.status || 0,
+                    Exists: Exists
+                }
+            });
+        } catch (e) {
+            logger.error(e);
+            return res.json({ success: false, message: "Lỗi máy chủ nội bộ" });
+        }
+    },
+
+    Login: async (req, res) => {
+        try {
+            const { password } = req.query;
+
+            const result = await db.query("SELECT * FROM AppLock WHERE password = ?", [password]);
+            if (result.length > 0) {
+                return res.json({ success: true, status: 200, message: "Đăng nhập thành công" });
+            } else {
+                return res.json({ success: true, stauts: 400, message: "Sai mật khẩu" });
+            }
+        } catch (e) {
+            logger.error(e);
+            return res.json({ success: false, message: "Lỗi máy chủ nội bộ" });
+        }
+    },
+
+    Register: async (req, res) => {
+        try {
+            const { password } = req.body;
+
+            await db.query("INSERT INTO AppLock (password) VALUES (?)", [password]);
+            return res.json({ success: true, status: 201, message: "Đăng ký thành công" });
+        } catch (e) {
+            logger.error(e);
+            return res.json({ success: false, message: "Lỗi máy chủ nội bộ" });;
+        }
+    },
+
+    ChangePassword: async (req, res) => {
+        try {
+            const { OldPass, NewPass, ConfirmPass } = req.body;
+
+            const checkOldPass = await db.query("SELECT * FROM AppLock WHERE password = ?", [OldPass]);
+            if (checkOldPass.length == 0)
+                return res.json({ success: false, code: 1, message: "Mật khẩu cũ không chính xác" });
+
+            if (NewPass != ConfirmPass)
+                return res.json({ success: false, code: 2, message: "Mật khẩu mới và nhập lại không khớp" });
+
+            await db.query("UPDATE AppLock SET password = ? WHERE password = ?", [NewPass, OldPass]);
+            return res.json({ success: true, message: "Đổi mật khẩu thành công" });
+        } catch (e) {
+            logger.error(e);
+            return res.json({ success: false, message: "Lỗi máy chủ nội bộ" });
+        }
+    },
+
+    toggleLockApp: async (req, res) => {
+        try {
+            const { status } = req.query;
+
+            const getPassId = await db.query("SELECT * FROM AppLock");
+            if (getPassId?.length > 0)
+                await db.query("UPDATE AppLock SET status = ? WHERE id = ?", [status, getPassId[0].id]);
+
+            return res.json({ success: true, message: "Áp dụng cài đặt thành công" });
+        } catch (e) {
+            logger.error(e);
+            return res.json({ success: false, message: "Lỗi máy chủ nội bộ" });
+        }
+    },
+
     urlPage: (req, res) => {
         const { urlpage: newUrlpage } = req.query;
         urlpage = newUrlpage; // Cập nhật giá trị của biến global
-        res.json({success: true, message: "Đặt url mặt định thành công"});
+        res.json({ success: true, message: "Đặt url mặt định thành công" });
     },
 
     loginGGDrive: async (req, res) => {

@@ -81,6 +81,15 @@ async function initDB() {
             });
         }
 
+        await query(`
+            CREATE TABLE IF NOT EXISTS AppLock (
+                Id          INTEGER  PRIMARY KEY,
+                Password    TEXT,
+                AtCreate    DATETIME DEFAULT CURRENT_TIMESTAMP,
+                Status      INTEGER  DEFAULT 1
+            )
+        `);
+
         // Tạo các bảng
         await query(`
             CREATE TABLE IF NOT EXISTS SpendingList (

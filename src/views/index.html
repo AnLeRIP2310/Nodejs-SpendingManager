@@ -84,12 +84,12 @@
                                         Cài Đặt
                                     </div>
                                 </li>
-                                <li id="page-logout" class="sidebar-item-e">
+                                <li id="page-lock" class="sidebar-item-e">
                                     <a href="#" class="link-item">
-                                        <i class="fa-solid fa-right-from-bracket"></i>
+                                        <i class="fa-solid fa-lock-keyhole-open"></i>
                                     </a>
                                     <div class="speech">
-                                        Đăng Xuất
+                                        Khoá App
                                     </div>
                                 </li>
                             </ul>
@@ -180,6 +180,129 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Modal Login -->
+            <div class="modal modal-sm fade" id="modalLogin" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-labelledby="modalLogin" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <p class="text-center mb-2 fw-bold">CHÀO MỪNG BẠN QUAY LẠI</p>
+
+                            <div class="input-group input-group-sm input-group-password">
+                                <input id="appLock_password" class="form-control form-control-sm" type="password"
+                                    placeholder="Nhập mật khẩu để tiếp tục">
+                                <button class="btn btn-sm btn-secondary" tabindex="-1">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                            <span class="appLock_error text-danger"></span>
+
+                            <div class="d-flex justify-content-end mt-3">
+                                <button id="appLock_logout" class="btn btn-sm btn-outline-secondary"
+                                    style="width: 85px;">Thoát</button>
+                                <button id="appLock_login" class="btn btn-sm btn-primary ms-2" style="width: 85px;">Đăng
+                                    nhập</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Register -->
+            <div class="modal modal-sm fade" id="modalRegister" tabindex="-1" aria-labelledby="modalRegister"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <p class="text-center mb-2 fw-bold">TẠO MẬT KHẨU ỨNG DỤNG</p>
+
+                            <div class="input-group input-group-sm input-group-password">
+                                <input id="appLock-register_password" class="form-control form-control-sm"
+                                    type="password" placeholder="Nhập mật khẩu" tabindex="-1">
+                                <button class="btn btn-sm btn-secondary">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <div class="input-group input-group-sm input-group-password mt-3">
+                                <input id="appLock-register_comfirmPass" class="form-control form-control-sm"
+                                    type="password" placeholder="Nhập lại mật khẩu">
+                                <button class="btn btn-sm btn-secondary" tabindex="-1">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <span class="appLock_error text-danger"></span>
+
+                            <div class="d-flex justify-content-end mt-3">
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"
+                                    style="width: 85px;">Thoát</button>
+                                <button id="appLock-register" class="btn btn-sm btn-primary ms-2"
+                                    style="width: 85px;">Tạo</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Change Password -->
+            <div class="modal modal-sm fade" id="modalChangePass" tabindex="-1" aria-labelledby="modalChangePass"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <p class="text-center mb-2 fw-bold">CÀI ĐẶT KHOÁ ỨNG DỤNG</p>
+
+                            <div style="margin-bottom: 12px" class="d-flex align-items-center justify-content-center"
+                                data-bs-trigger="hover" data-bs-toggle="popover"
+                                data-bs-content="Bật cái này sẽ khoá ứng dụng và yêu cầu mật khẩu mỗi lần mở ứng dụng">
+                                <strong class="text-nowrap" style="flex: 2">Khoá ứng dụng:</strong>
+                                <div class="form-check form-switch" style="flex: 1">
+                                    <input id="st_AppLock" type="checkbox" class="form-check-input pointer">
+                                    <label for="st_AppLock" class="form-check-label pointer text-nowrap"></label>
+                                </div>
+                            </div>
+
+                            <p class="text-center mb-2 fw-bold">ĐỔI MẬT KHẨU ỨNG DỤNG</p>
+
+                            <div class="input-group input-group-sm input-group-password">
+                                <input id="appLock-OldPass" class="form-control form-control-sm" type="password"
+                                    placeholder="Nhập mật khẩu cũ">
+                                <button class="btn btn-sm btn-secondary" tabindex="-1">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <div class="input-group input-group-sm input-group-password mt-3">
+                                <input id="appLock-NewPass" class="form-control form-control-sm" type="password"
+                                    placeholder="Nhập mật khẩu mới">
+                                <button class="btn btn-sm btn-secondary" tabindex="-1">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <div class="input-group input-group-sm input-group-password mt-3">
+                                <input id="appLock-ComfirmNewPass" class="form-control form-control-sm" type="password"
+                                    placeholder="Nhập lại mật khẩu mới">
+                                <button class="btn btn-sm btn-secondary" tabindex="-1">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <span class="appLock_error text-danger"></span>
+
+                            <div class="d-flex justify-content-end mt-3">
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"
+                                    style="width: 85px;">Thoát</button>
+                                <button id="appLock-changePass" class="btn btn-sm btn-primary ms-2"
+                                    style="width: 85px;">Đổi</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 

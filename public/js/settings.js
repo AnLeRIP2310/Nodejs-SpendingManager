@@ -1,3 +1,155 @@
+// -------------------Các chức năng đăng nhập------------------
+var AppLockExists;
+// Kiểm tra trạng thái đăng nhập
+function checkLogin() {
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/auth/checkLogin',
+        success: function (res) {
+            if (res.data.AppLockStatus === 1) {
+                $('#modalLogin').modal("show");
+                $('#page-lock').find('a').html('<i class="fa-solid fa-lock-keyhole"></i>');
+                $('#st_AppLock').prop('checked', true);
+                $('label[for="st_AppLock"]').text("Đang bật");
+            } else {
+                $('#page-lock').find('a').html('<i class="fa-solid fa-lock-keyhole-open"></i>');
+                $('#st_AppLock').prop('checked', false);
+                $('label[for="st_AppLock"]').text("Đã tắt");
+                defaultPageSetting();
+            }
+            AppLockExists = res.data.Exists
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    })
+};
+
+// Bật tắt chức năng khoá app
+function toggleLockApp() {
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/auth/toggleLockApp',
+        data: { status: $('#st_AppLock').prop('checked') ? 1 : 0 },
+        success: function (res) {
+
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    });
+}
+
+// Đăng nhập
+function loginApp() {
+    $.ajax({
+        type: 'GET',
+        url: urlapi + '/auth/Login',
+        data: { password: $('#appLock_password').val() },
+        success: function (res) {
+            if (res.success && res.status === 200) {
+                $('#modalLogin').modal("hide");
+                defaultPageSetting();
+                $('#page-lock').find('a').html('<i class="fa-solid fa-lock-keyhole-open"></i>');
+            } else {
+                $('#appLock_password').addClass('is-invalid');
+                $('.appLock_error').text(res.message);
+            }
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    });
+}
+
+// Sự kiện gọi hàm
+$('#appLock_password').on('keypress', function (e) { if (e.keyCode === 13) loginApp(); });
+$('#appLock_login').click(function () { loginApp() });
+$('#appLock_logout').click(function () { $(ipcRenderer?.send('logout')) });
+$('#appLock-register').click(function () { registerApp() });
+$('#appLock-register_password, #appLock-register_comfirmPass').on('keypress', function (e) {
+    $('.appLock_error').text(''); $(this).removeClass('is-invalid'); if (e.keyCode === 13) registerApp();
+});
+$('#appLock-OldPass, #appLock-NewPass, #appLock-ComfirmNewPass').on('keypress', function (e) {
+    $('.appLock_error').text(''); $(this).removeClass('is-invalid'); if (e.keyCode === 13) changePassword();
+})
+$('#st_AppLock').on('change', function () {
+    toggleLockApp();
+    $('label[for="st_AppLock"]').text($(this).prop('checked') ? "Đang bật" : "Đã tắt");
+});
+
+// Nút khoá ứng dụng
+$('#page-lock').click(function () {
+    if (AppLockExists) $('#modalChangePass').modal('show')
+    else $('#modalRegister').modal("show");
+})
+
+// Đăng ký
+function registerApp() {
+    if ($('#appLock-register_password').val() == '') {
+        $('#appLock-register_password').addClass('is-invalid');
+        $('.appLock_error').text('Mật khẩu không được để trống');
+        return;
+    };
+
+    if ($('#appLock-register_password').val() != $('#appLock-register_comfirmPass').val()) {
+        $('#appLock-register_comfirmPass').addClass('is-invalid');
+        $('.appLock_error').text('Nhập lại mật không trùng');
+        return;
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: urlapi + '/auth/Register',
+        data: { password: $('#appLock-register_password').val() },
+        success: function (res) {
+            if (res.success) {
+                $('#modalRegister').modal("hide");
+                showSuccessToast(res.success);
+            } else {
+                showErrorToast(res.message);
+            }
+            AppLockExists = true;
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    });
+}
+
+// Đổi mật khẩu
+$('#appLock-changePass').click(function () {
+    const data = {
+        OldPass: $('#appLock-OldPass').val(),
+        NewPass: $('#appLock-NewPass').val(),
+        ConfirmPass: $('#appLock-ComfirmNewPass').val()
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: urlapi + '/auth/ChangePassword',
+        data: data,
+        success: function (res) {
+            if (res.success) {
+                $('#modalChangePass').modal("hide");
+                showSuccessToast(res.message);
+            } else {
+                $('.appLock_error').text(res.message);
+                if (res?.code == 1) $('#appLock-OldPass').addClass('is-invalid')
+                else if (res?.code == 2) {
+                    $('#appLock-NewPass').addClass('is-invalid');
+                    $('#appLock-ComfirmNewPass').addClass('is-invalid');
+                }
+            }
+        },
+        error: function (err) {
+            console.log(err)
+        }
+    });
+});
+
+// -----------------Các chức năng cấu hình ứng dụng-------------------
+
 var settingsObj;
 // Tải cấu hình ứng dụng và gán vào biến
 function loadSettings() {
@@ -5,12 +157,14 @@ function loadSettings() {
         type: 'GET',
         url: urlapi + '/setting/getData',
         success: async function (res) {
+            checkLogin();
+
             if (res.status) {
                 settingsObj = res.data.iniObject.App;
                 $('.app_version').text('Phiên bản: ' + settingsObj.version);
 
                 darkModeSetting();
-                defaultPageSetting();
+                // defaultPageSetting();
                 defaultActionSetting();
                 await languageSetting();
                 reminderDelete();
