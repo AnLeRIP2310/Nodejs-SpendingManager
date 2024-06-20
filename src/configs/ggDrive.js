@@ -5,6 +5,8 @@ const fs = require('fs');
 const logger = require('./logger');
 const appIniConfigs = require('./appIniConfigs');
 const myUtils = require('./myUtils');
+const { Readable } = require('stream');
+const zlib = require("zlib");
 
 
 
@@ -41,8 +43,6 @@ module.exports = {
 
                 // Tạo phiên làm việc với đối tượng OAuth2Client
                 drive = google.drive({ version: 'v3', auth: oauth2Client });
-            } else {
-                drive = 'Chưa được khởi tạo tham số';
             }
         } catch (e) {
             logger.error(e)
@@ -52,41 +52,20 @@ module.exports = {
     uploadFile: async (nameFile, content, mimeType) => {
         try {
             // Kiểm tra biến drive trước khi thực hiện chức năng
-            if (typeof drive === 'string') {
+            if (!drive) {
                 return { success: false, message: 'Chưa thiết lập quyền truy cập, gọi hàm setAuthen() và thiết lập để khởi tạo!' };
             }
 
-            let isFilePath = false;
-            let response;
-
-            // Kiểm tra xem content có phải là đường dẫn không
-            if (typeof content === 'string') {
-                // kiểm tra xem có phải là đường dẫn tuyệt đối không
-                isFilePath = path.isAbsolute(content);
-            }
-
-            if (mimeType) {
-                response = await drive.files.create({
-                    requestBody: {
-                        name: nameFile,
-                        parents: ['appDataFolder'],
-                    },
-                    media: {
-                        mimeType: mimeType,
-                        body: isFilePath ? fs.readFileSync(content, 'utf8') : content,
-                    }
-                })
-            } else {
-                response = await drive.files.create({
-                    requestBody: {
-                        name: nameFile,
-                        parents: ['appDataFolder'],
-                    },
-                    media: {
-                        body: isFilePath ? fs.readFileSync(content, 'utf8') : content,
-                    }
-                })
-            }
+            const response = await drive.files.create({
+                requestBody: {
+                    name: nameFile,
+                    parents: ['appDataFolder'],
+                },
+                media: {
+                    mimeType: mimeType,
+                    body: content,
+                }
+            })
 
             if (response.status == 200) {
                 return { success: true, message: 'Tải lên thành công', data: response.data };
@@ -94,7 +73,7 @@ module.exports = {
                 return { success: false, message: `Lỗi HTTP: ${response.status}` };
             }
         } catch (e) {
-            logger.error(e, 'Lỗi khi tải lên tệp JSON')
+            logger.error(e, 'Lỗi khi tải lên tệp')
             return { success: false, message: 'Lỗi khi thực hiện yêu cầu' };
         }
     },
@@ -102,7 +81,7 @@ module.exports = {
     downloadFile: async (fileId, pathSave) => {
         try {
             // Kiểm tra biến drive trước khi thực hiện chức năng
-            if (typeof drive === 'string') {
+            if (!drive) {
                 return { success: false, message: 'Chưa thiết lập quyền truy cập, gọi hàm setAuthen() và thiết lập để khởi tạo!' };
             }
 
@@ -112,16 +91,13 @@ module.exports = {
             });
 
             if (response.status === 200) {
-                let fileContent;
+                let content = response.data;
 
-                // Kiểm tra xem response.data có phải là một đối tượng JSON hay không
-                if (typeof response.data === 'object') {
-                    fileContent = JSON.stringify(response.data, null, 2);
-                } else {
-                    fileContent = response.data;
-                }
+                // Chuyển đổi blob thành buffer và giải nén gzip
+                if (content.constructor.name == 'Blob')
+                    content = zlib.gunzipSync(Buffer.from(await content.arrayBuffer()));
 
-                fs.writeFileSync(pathSave || defaultPathSave, fileContent, 'utf8');
+                fs.writeFileSync(pathSave || defaultPathSave, content, 'utf8');
                 return { success: true, message: 'Tải về tệp tin thành công', pathSave: pathSave || defaultPathSave };
             } else if (response.status === 404) {
                 return { success: false, message: `Không tìm thấy tếp tin với Id: ${fileId}` };
@@ -137,7 +113,7 @@ module.exports = {
     deleteFile: async (fileId) => {
         try {
             // Kiểm tra biến drive trước khi thực hiện chức năng
-            if (typeof drive === 'string') {
+            if (!drive) {
                 return { success: false, message: 'Chưa thiết lập quyền truy cập, gọi hàm setAuthen() và thiết lập để khởi tạo!' };
             }
 
@@ -161,7 +137,7 @@ module.exports = {
     getFileById: async (fileId) => {
         try {
             // Kiểm tra biến drive trước khi thực hiện chức năng
-            if (typeof drive === 'string') {
+            if (!drive) {
                 return { success: false, message: 'Chưa thiết lập quyền truy cập, gọi hàm setAuthen() và thiết lập để khởi tạo!' };
             }
 
@@ -186,7 +162,7 @@ module.exports = {
     getListFile: async (appDataFolder = true) => {
         try {
             // Kiểm tra biến drive trước khi thực hiện chức năng
-            if (typeof drive === 'string') {
+            if (!drive) {
                 return { success: false, message: 'Chưa thiết lập quyền truy cập, gọi hàm setAuthen() và thiết lập để khởi tạo!' };
             }
 

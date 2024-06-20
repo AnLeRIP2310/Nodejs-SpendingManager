@@ -28,6 +28,7 @@ module.exports = {
     urlPage: (req, res) => {
         const { urlpage: newUrlpage } = req.query;
         urlpage = newUrlpage; // Cập nhật giá trị của biến global
+        res.json({success: true, message: "Đặt url mặt định thành công"});
     },
 
     loginGGDrive: async (req, res) => {
@@ -66,9 +67,7 @@ module.exports = {
 
             // Lưu Refresh Token vào tệp json
             const data = { encryptedToken };
-            fs.writeFile(pathSettingFolder + 'data/Token.json', JSON.stringify(data), (err) => {
-                if (err) { console.error(err) }
-            });
+            fs.writeFileSync(path.join(pathSettingFolder, 'data', 'Token.json'), JSON.stringify(data));
 
             // Gửi thông điệp đến electron
             ipc.connectTo('electron', () => {

@@ -7,13 +7,13 @@ const logger = require('../../configs/logger');
 const ggDrive = require('../../configs/ggDrive');
 const myUtils = require('../../configs/myUtils');
 const _ = require('lodash');
+const zlib = require('zlib');
 ggDrive.setAuthen();
 
 
 
 // Lấy ra đường dẫn đến thư mục cấu hình của ứng dụng
 var folderAppConfigs = appIniConfigs.getfolderAppConfigs();
-
 
 module.exports = {
     getData: (req, res) => {
@@ -87,42 +87,38 @@ module.exports = {
         try {
             // Xoá các file sao lưu cũ trên ggdrive
             const listFiles = await ggDrive.getListFile()
-
             for (const files of listFiles.files) {
                 await ggDrive.deleteFile(files.id)
                 console.log('Đã xoá tệp có Id: ' + files.id)
             }
 
-            // Mảng các truy vấn
+            // Thực hiện truy vấn lấy dữ liệu cần sao lưu
             const queries = [
                 db.query('SELECT * FROM spendinglist'),
                 db.query('SELECT * FROM spendingitem'),
                 db.query('SELECT * FROM noted'),
                 db.query('SELECT * FROM income')
             ];
-
-            // Chờ tất cả các truy vấn hoàn thành
             const [spendList, spendItem, noted, income] = await Promise.all(queries);
 
-            // Tạo biến obj chứa dữ liệu
             const dataObj = {};
-
             if (spendList.length > 0) dataObj.spendingList = spendList;
             if (spendItem.length > 0) dataObj.spendingItem = spendItem;
             if (noted.length > 0) dataObj.noted = noted;
             if (income.length > 0) dataObj.income = income;
 
-            // Chuyển obj thành chuỗi JSON với định dạng đẹp
-            const jsonData = JSON.stringify(dataObj, null, 2);
+            // Nén dữ liệu JSON và chuyển đổi kiểu buffer thành stream
+            const jsonData = zlib.gzipSync(JSON.stringify(dataObj, null, 2));
+            const jsonDataStream = myUtils.bufferToStream(jsonData);
 
-            // Tải lên dữ liệu với ggdrive
-            const resultUpload = await ggDrive.uploadFile('spendingData.json', jsonData, 'application/json');
+            // Upload tệp lên drive
+            const resultUpload = await ggDrive.uploadFile('spendingData.json.gz', jsonDataStream, 'application/gzip');
 
-            // Lưu id tệp vô settings ini
-            if (resultUpload) appIniConfigs.updateIniConfigs('Data', 'driveFileId', resultUpload.data.id);
-
-            // Lưu ngày sao lưu vào settings ini
-            appIniConfigs.updateIniConfigs('Data', 'backupDate', myUtils.formatDateTime(new Date()));
+            // Lưu id tệp và ngày sao lưu vài cấu hình .ini
+            if (resultUpload) {
+                appIniConfigs.updateIniConfigs('Data', 'driveFileId', resultUpload.data.id);
+                appIniConfigs.updateIniConfigs('Data', 'backupDate', myUtils.formatDateTime(new Date()));
+            }
             return res.json({ success: true, status: 200, message: "Sao lưu dữ liệu thành công" });
         } catch (e) {
             logger.error(e); res.json({ success: false });
@@ -138,18 +134,16 @@ module.exports = {
             var fileId = appIniConfigs.getIniConfigs('driveFileId');
 
             // Nếu fileId không tồn tại thì lấy ra fileId từ ggDrive
-            if (fileId == '' || fileId == null || fileId == undefined) {
+            if (!fileId) {
                 const getFileId = await ggDrive.getListFile()
 
-                // Kiểm tra xem có tệp tin nào không
+                // Kiểm tra và lấy ra id tệp sao lưu
                 if (getFileId.files && getFileId.files.length > 0) {
-                    // Lấy ra giá trị cuối cùng của mảng
                     const lastFileId = getFileId.files.length - 1
                     fileId = getFileId.files[lastFileId].id
 
                     // Lưu fileId vào setting ini để sử dụng sau này
                     appIniConfigs.updateIniConfigs('Data', 'driveFileId', fileId);
-                    appIniConfigs.updateIniConfigs('Data', 'backupDate', myUtils.formatDateTime(new Date()));
                 } else {
                     // Trường hợp chưa có bất kì file nào thì trả về kết quả
                     return res.json({ success: false, status: 404, message: 'Không tìm thấy tệp sao lưu' });
@@ -159,8 +153,9 @@ module.exports = {
             // Sau khi đã có fileId, tiến hành tải về máy
             const downloadResult = await ggDrive.downloadFile(fileId, path.join(folderAppConfigs, 'data', 'SpendingData.json'));
 
-            // Sau khi đã tải về, đọc nội dung của tệp
-            const spendData = JSON.parse(fs.readFileSync(downloadResult.pathSave, 'utf8'))
+            // Đọc và trả về dữ liệu JSON sau đó xoá nó đi
+            const spendData = fs.readFileSync(downloadResult.pathSave, 'utf8');
+            fs.unlinkSync(downloadResult.pathSave);
             return res.json({ success: true, status: 200, message: 'Lấy dữ liệu thành công', data: spendData });
         } catch (e) {
             logger.error(e)
@@ -171,7 +166,7 @@ module.exports = {
 
 function startWSS(port) {
     const wss = new WebSocket.Server({ port: port }, () => {
-        console.log('Websocket server started on port ' + port);
+        console.log('Websocket server bắt đầu trên cổng ' + port);
     });
 
     wss.on('connection', function connection(ws) {
@@ -183,7 +178,7 @@ function startWSS(port) {
         // Nhận sự kiện đồng bộ dữ lệu từ client
         ws.on('message', async function (data) {
             try {
-                const dataObj = JSON.parse(data)
+                const dataObj = JSON.parse(data);
 
                 // Khởi tạo một mảng để lưu các giá trị chưa có trong database
                 const dataNotExist = { spendingList: [], spendingItem: [], noted: [], income: [] };
@@ -221,7 +216,7 @@ function startWSS(port) {
                 // Kiểm tra income
                 if (dataObj?.income?.length)
                     for (const income of dataObj.income) {
-                        let sql = 'select * from noted where id = ? and spendlistid = ? and price = ?';
+                        let sql = 'select * from income where id = ? and spendlistid = ? and price = ?';
                         const checkIncome = await db.query(sql, [income.id, income.spendlistid, income.price])
 
                         // Thêm vào mảng nếu nó chưa tồn tại
@@ -244,7 +239,7 @@ function startWSS(port) {
                 if (dataNotExist.spendingList.length > 0) {
                     // Thêm spendingList
                     for (const spendList of dataNotExist.spendingList) {
-                        let sql = 'insert into spendinglist (namelist, atcreate, atupdate, lastentry, status) values (?, ?, ?, ?, ?, ?)';
+                        let sql = 'insert into spendinglist (namelist, atcreate, atupdate, lastentry, status) values (?, ?, ?, ?, ?)';
                         let params = [spendList.namelist, spendList.atcreate, spendList.atupdate, spendList.lastentry, spendList.status];
                         await db.query(sql, params);
 
@@ -281,7 +276,7 @@ function startWSS(port) {
                 // Thêm noted
                 if (dataNotExist?.noted?.length) {
                     for (const noted of dataNotExist.noted) {
-                        let sql = 'insert into noted (namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
+                        let sql = 'insert into noted (namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?)';
                         await db.query(sql, [noted.namelist, noted.content, noted.atcreate, noted.atupdate, noted.status]);
 
                         // Sau khi thêm dữ liệu, trả về tiến trình hoàn thành

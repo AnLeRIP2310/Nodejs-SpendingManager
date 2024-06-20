@@ -7,7 +7,7 @@ function loadSettings() {
         success: async function (res) {
             if (res.status) {
                 settingsObj = res.data.iniObject.App;
-                $('#app_version').text(settingsObj.version);
+                $('.app_version').text('Phiên bản: ' + settingsObj.version);
 
                 darkModeSetting();
                 defaultPageSetting();
@@ -313,7 +313,6 @@ $('#btn-export_db').click(function () {
     ipcRenderer.send('export-db');
 });
 
-
 // Sự kiện nhập file db
 $('#btn-import_db').click(function () {
     $('#modalConfirmImport').modal('show');
@@ -322,13 +321,28 @@ $('#btnConfirmImport').click(function () {
     ipcRenderer.send('import-db');
 });
 
+// sk mở trang nguồn
+$('.app_authName').click(function () {
+    if (!ipcRenderer)
+        window.open(`https://github.com/ALR2310/SpendingManager/releases/tag/v${settingsObj.version}`)
+    else
+        ipcRenderer.send('openUrl', `https://github.com/ALR2310/SpendingManager/releases/tag/v${settingsObj.version}`)
+})
+
+// sk mở thông tin phiên bản
+$('.app_version').click(function () {
+    if (!ipcRenderer)
+        window.open('https://github.com/ALR2310/SpendingManager', '_blank');
+    else
+        ipcRenderer.send('openUrl', 'https://github.com/ALR2310/SpendingManager')
+})
+
 // btn Đăng nhập vào google drive
 $('#btn-syncData-Login').click(function () {
     $.get('http://localhost:3962/auth/urlPage', { urlpage: window.location.href });
 
-    if (ipcRenderer == null) {
-        const width = 530;
-        const height = 600;
+    if (!ipcRenderer) {
+        const width = 530, height = 600;
 
         const popup = window.open(
             urlapi + '/auth/loginGGDrive',
@@ -336,13 +350,10 @@ $('#btn-syncData-Login').click(function () {
             `width=${width},height=${height}`
         );
 
-        if (window.focus && popup) {
-            popup.focus();
-        }
-
+        if (window.focus && popup) popup.focus();
         return false;
     } else {
-        ipcRenderer.send('loginGGDrive', urlapi + '/auth/loginGGDrive');
+        ipcRenderer.send('openUrl', urlapi + '/auth/loginGGDrive');
     }
 });
 
@@ -399,7 +410,7 @@ $('#btn-syncData').click(function () {
                 // Gọi hàm để sao lưu dữ liệu
                 $('#btn-backupData').click();
             } else if (res.success && res.data != null) {
-                ws.send(JSON.stringify(res.data));
+                ws.send(res.data);
             }
         },
         error: function (err) {

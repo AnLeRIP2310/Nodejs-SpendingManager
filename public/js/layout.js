@@ -205,7 +205,7 @@ $('#page-noted').click(function () {
                 .then(template => {
                     const compiledTemplate = Handlebars.compile(template);
                     const html = compiledTemplate({
-                        notedList: res.notedlist
+                        notedList: res.data.notedlist
                     });
                     $('#page-content').html(html);
                     applyLanguage(settingsObj.language);

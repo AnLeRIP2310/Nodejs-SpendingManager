@@ -35,7 +35,7 @@ module.exports = {
             const {searchKey } = req.query;
 
             let sql = 'select * from noted where namelist like ? and status = ? order by id desc'
-            const result = await db.query(sql, [userId, `%${searchKey}%`, 1]);
+            const result = await db.query(sql, [`%${searchKey}%`, 1]);
             return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: { notedlist: result } });
         } catch (e) {
             logger.error(e)
@@ -51,7 +51,7 @@ module.exports = {
             const Content = `<span>Chưa có nội dung được thêm vào</span>`;
 
             // Thực hiện truy vấn
-            let sql = 'insert into noted (namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?, ?)';
+            let sql = 'insert into noted (namelist, content, atcreate, atupdate, status) values (?, ?, ?, ?, ?)';
             await db.query(sql, [NameList, Content, AtCreate, AtCreate, 1]);
             return res.json({ success: true, status: 201, message: "Thêm ghi chú thành công" });
         } catch (e) {

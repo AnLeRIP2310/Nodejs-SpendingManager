@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const logger = require('./logger');
 const fs = require("fs");
+const { Readable } = require('stream');
 
 
 
@@ -88,6 +89,23 @@ const myUtils = {
             logger.error(err, 'Lỗi khi đọc tệp JSON');
             return null;
         }
+    },
+
+    // Hàm để tạo một stream từ buffer
+    bufferToStream: (buffer) => {
+        const stream = new Readable();
+        stream.push(buffer);
+        stream.push(null);
+        return stream;
+    },
+
+    // Hàm để chuyển đổi stream thành buffer
+    streamToBuffer: async (stream) => {
+        const chunks = [];
+        for await (let chunk of stream) {
+            chunks.push(chunk);
+        }
+        return Buffer.concat(chunks);
     },
 }
 
