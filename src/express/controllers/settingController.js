@@ -13,7 +13,7 @@ ggDrive.setAuthen();
 
 
 // Lấy ra đường dẫn đến thư mục cấu hình của ứng dụng
-var folderAppConfigs = appIniConfigs.getfolderAppConfigs();
+const folderAppConfigs = appIniConfigs.getfolderAppConfigs();
 
 module.exports = {
     getData: (req, res) => {
@@ -86,8 +86,8 @@ module.exports = {
     backupData: async (req, res) => {
         try {
             // Xoá các file sao lưu cũ trên ggdrive
-            const listFiles = await ggDrive.getListFile()
-            for (const files of listFiles.files) {
+            const allFiles = await ggDrive.getAllFiles()
+            for (const files of allFiles.files) {
                 await ggDrive.deleteFile(files.id)
                 console.log('Đã xoá tệp có Id: ' + files.id)
             }
@@ -133,29 +133,44 @@ module.exports = {
             // Lấy ra fileId trong cài dặt
             var fileId = appIniConfigs.getIniConfigs('driveFileId');
 
-            // Nếu fileId không tồn tại thì lấy ra fileId từ ggDrive
+            // Kiểm tra biến fileId
             if (!fileId) {
-                const getFileId = await ggDrive.getListFile()
+                const getAllFiles = await ggDrive.getAllFiles();
 
-                // Kiểm tra và lấy ra id tệp sao lưu
-                if (getFileId.files && getFileId.files.length > 0) {
-                    const lastFileId = getFileId.files.length - 1
-                    fileId = getFileId.files[lastFileId].id
-
-                    // Lưu fileId vào setting ini để sử dụng sau này
-                    appIniConfigs.updateIniConfigs('Data', 'driveFileId', fileId);
+                if (getAllFiles?.files?.length > 0) {
+                    const lastFileId = getAllFiles.files.length - 1
+                    fileId = getAllFiles.files[lastFileId].lastInsertId
                 } else {
                     // Trường hợp chưa có bất kì file nào thì trả về kết quả
                     return res.json({ success: false, status: 404, message: 'Không tìm thấy tệp sao lưu' });
                 }
+            } else {
+                // Kiểm tra xem fileId này có tồn tại trên drive không
+                const file = await ggDrive.getFileById(fileId);
+
+                // Nếu không tồn tại thì lấy ra một cái mới nhất từ drive
+                if (!file.success && file.status == 404) {
+                    const getAllFiles = await ggDrive.getAllFiles();
+
+                    if (getAllFiles?.files?.length > 0) {
+                        const lastFileId = getAllFiles.files.length - 1
+                        fileId = getAllFiles.files[lastFileId].lastInsertId
+                    } else {
+                        // Trường hợp chưa có bất kì file nào thì trả về kết quả
+                        return res.json({ success: false, status: 404, message: 'Không tìm thấy tệp sao lưu' });
+                    }
+                }
             }
 
+            // Lưu fileId vào setting .ini để sử dụng sau này
+            appIniConfigs.updateIniConfigs('Data', 'driveFileId', fileId);
+
             // Sau khi đã có fileId, tiến hành tải về máy
-            const downloadResult = await ggDrive.downloadFile(fileId, path.join(folderAppConfigs, 'data', 'SpendingData.json'));
+            const downResult = await ggDrive.downloadFile(fileId, path.join(folderAppConfigs, 'data', 'SpendingData.json'));
 
             // Đọc và trả về dữ liệu JSON sau đó xoá nó đi
-            const spendData = fs.readFileSync(downloadResult.pathSave, 'utf8');
-            fs.unlinkSync(downloadResult.pathSave);
+            const spendData = fs.readFileSync(downResult.pathSave, 'utf8');
+            fs.unlinkSync(downResult.pathSave);
             return res.json({ success: true, status: 200, message: 'Lấy dữ liệu thành công', data: spendData });
         } catch (e) {
             logger.error(e)

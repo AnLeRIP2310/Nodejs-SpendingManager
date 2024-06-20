@@ -11,7 +11,7 @@ const zlib = require("zlib");
 
 
 // Khai báo các đường dẫn mặt định
-var folderAppConfigs = appIniConfigs.getfolderAppConfigs();
+const folderAppConfigs = appIniConfigs.getfolderAppConfigs();
 const pathToJsonToken = path.join(folderAppConfigs, 'data', 'Token.json');
 var defaultPathSave;
 
@@ -99,14 +99,15 @@ module.exports = {
 
                 fs.writeFileSync(pathSave || defaultPathSave, content, 'utf8');
                 return { success: true, message: 'Tải về tệp tin thành công', pathSave: pathSave || defaultPathSave };
-            } else if (response.status === 404) {
-                return { success: false, message: `Không tìm thấy tếp tin với Id: ${fileId}` };
             } else {
                 return { success: false, message: `Lỗi HTTP: ${response.status}` };
             }
         } catch (e) {
-            logger.error(e, 'Lỗi khi tải về tệp JSON')
-            return { success: false, message: 'Lỗi khi thực hiện yêu cầu' };
+            logger.error(e, 'Lỗi khi tải về tệp tin')
+            if (e.response && e.response.status === 404)
+                return { success: false, status: 404, message: `Không tìm thấy tếp tin với Id: ${fileId}` };
+            else
+                return { success: false, message: 'Lỗi khi thực hiện yêu cầu' };
         }
     },
 
@@ -123,14 +124,15 @@ module.exports = {
 
             if (response.status === 204) {
                 return { success: true, message: `Xoá tệp tin với Id: ${fileId} thành công` };
-            } else if (response.status === 404) {
-                return { success: false, message: 'Tệp tin không tồn tại' };
             } else {
                 return { success: false, message: `Lỗi HTTP: ${response.status}` };
             }
         } catch (e) {
             logger.error(e, 'Lỗi khi xóa tệp tin');
-            return { success: false, message: 'Xóa tệp tin thất bại' };
+            if (e.response && e.response.status === 404)
+                return { success: false, status: 404, message: `Không tìm thấy tếp tin với Id: ${fileId}` };
+            else
+                return { success: false, message: 'Xóa tệp tin thất bại' };
         }
     },
 
@@ -148,18 +150,21 @@ module.exports = {
 
             if (response.status == 200) {
                 const file = response.data;
-                return { success: true, message: 'Lấy thông tin tệp tin thành công', file: file };
+                return { success: true, status: 200, message: 'Lấy thông tin tệp tin thành công', file: file };
             } else {
                 return { success: false, message: `Lỗi yêu cầu HTTP: ${response.status}`, };
             }
 
         } catch (e) {
             logger.error(e, 'Lỗi khi lấy thông tin tệp tin');
-            return { success: false, message: 'Lỗi khi thực hiện yêu cầu lấy thông tin tệp tin' };
+            if (e.response && e.response.status === 404)
+                return { success: false, status: 404, message: `Không tìm thấy tếp tin với Id: ${fileId}` };
+            else
+                return { success: false, message: 'Lỗi khi thực hiện yêu cầu lấy thông tin tệp tin' };
         }
     },
 
-    getListFile: async (appDataFolder = true) => {
+    getAllFiles: async (appDataFolder = true) => {
         try {
             // Kiểm tra biến drive trước khi thực hiện chức năng
             if (!drive) {
@@ -187,7 +192,10 @@ module.exports = {
             }
         } catch (e) {
             logger.error(e, 'Lỗi khi lấy danh sách tệp tin');
-            return { success: false, message: 'Lỗi khi thực hiện yêu cầu lấy danh sách tệp tin', };
+            if (e.response && e.response.status === 404)
+                return { success: false, status: 404, message: 'Không tìm thấy tệp tin được yêu cầu' };
+            else
+                return { success: false, message: 'Lỗi khi thực hiện yêu cầu lấy danh sách tệp tin' };
         }
     },
 }

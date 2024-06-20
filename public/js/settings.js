@@ -324,17 +324,17 @@ $('#btnConfirmImport').click(function () {
 // sk mở trang nguồn
 $('.app_authName').click(function () {
     if (!ipcRenderer)
-        window.open(`https://github.com/ALR2310/SpendingManager/releases/tag/v${settingsObj.version}`)
+        window.open('https://github.com/ALR2310/SpendingManager', '_blank');
     else
-        ipcRenderer.send('openUrl', `https://github.com/ALR2310/SpendingManager/releases/tag/v${settingsObj.version}`)
+        ipcRenderer.send('openUrl', 'https://github.com/ALR2310/SpendingManager')
 })
 
 // sk mở thông tin phiên bản
 $('.app_version').click(function () {
     if (!ipcRenderer)
-        window.open('https://github.com/ALR2310/SpendingManager', '_blank');
+        window.open(`https://github.com/ALR2310/SpendingManager/releases/tag/v${settingsObj.version}`, '_blank');
     else
-        ipcRenderer.send('openUrl', 'https://github.com/ALR2310/SpendingManager')
+        ipcRenderer.send('openUrl', `https://github.com/ALR2310/SpendingManager/releases/tag/v${settingsObj.version}`)
 })
 
 // btn Đăng nhập vào google drive
