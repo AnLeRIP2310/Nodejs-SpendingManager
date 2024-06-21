@@ -154,14 +154,17 @@ module.exports = {
                     // Gửi đến electron
                     ipc.of.electron.emit('GGDriveCallback')
                 })
-            })
+            });
+
+            const loginContent = fs.readFileSync(path.join(__dirname, '../../views/login.html'));
 
             res.send(`
-            <script>
-                window.opener.postMessage({ message: 'syncData'}, '${urlpage}');
-                window.close()
-            </script>
-            <h2>Đã đăng nhập thành công, hãy đóng trang này và quay lại ứng dụng của bạn</h2>`);
+                ${loginContent}
+                <script>
+                    window.opener?.postMessage({ message: 'syncData'}, '${urlpage}');
+                    window.close();
+                </script>
+            `);
 
         } catch (error) {
             logger.error(error, 'Đã xảy ra lỗi khi đăng nhập');

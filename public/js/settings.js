@@ -496,7 +496,7 @@ $('.app_version').click(function () {
 })
 
 // btn Đăng nhập vào google drive
-$('#btn-syncData-Login').click(function () {
+$('#btn-drive-Login').click(function () {
     $.get('http://localhost:3962/auth/urlPage', { urlpage: window.location.href });
 
     if (!ipcRenderer) {
@@ -517,7 +517,7 @@ $('#btn-syncData-Login').click(function () {
 
 
 // Btn đăng xuất khỏi google drive
-$('#btn-syncData-Logout').click(function () {
+$('#btn-drive-Logout').click(function () {
     $.ajax({
         type: 'GET',
         url: urlapi + '/auth/logoutGGDrive',
@@ -587,8 +587,8 @@ $('#btn-backupData').click(function () {
         $('#syncDataContent').removeClass('d-none');
     }
 
-    if (!$('#btn-syncData-Login').hasClass('d-none')) {
-        $('#btn-syncData-Login').addClass('d-none');
+    if (!$('#btn-drive-Login').hasClass('d-none')) {
+        $('#btn-drive-Login').addClass('d-none');
     }
 
     $('#syncStatus').html(`${langObj.settingPage.formSyncData.status.desc2} <i class="fa-solid fa-loader fa-spin"></i>`);
@@ -635,12 +635,12 @@ function checkSyncStatus() {
         url: urlapi + '/setting/checkSyncStatus',
         success: function (res) {
             if (res.success) {
-                $('#btn-syncData-Login').addClass('d-none'); // Ẩn nút đăng nhập GGDrive
+                $('#btn-drive-Login').addClass('d-none'); // Ẩn nút đăng nhập GGDrive
                 $('#syncDataContent').removeClass('d-none'); // Hiển thị nội dung đồng bộ
                 $('#tbl_syncEmail').val(res.data?.email); // Gán email vào thẻ input
                 $('#txt_backupDate').text(res.data?.backupDate); // Gán thời gian sao lưu vào thẻ
             } else {
-                $('#btn-syncData-Login').removeClass('d-none'); // Hiển thị lại nút đăng nhập GGDrive
+                $('#btn-drive-Login').removeClass('d-none'); // Hiển thị lại nút đăng nhập GGDrive
                 $('#syncDataContent').addClass('d-none'); // Ẩn nội dung đồng bộ
             }
         },
