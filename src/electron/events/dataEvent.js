@@ -17,7 +17,7 @@ ipcMain.on('export-data', async () => {
         // Thực hiện truy vấn lấy dữ liệu cần xuất
         const queries = [
             db.query('SELECT * FROM spendinglist'),
-            db.query('SELECT * FROM spendingitem'),
+            db.query('SELECT * FROM spendingitem Order By atupdate'),
             db.query('SELECT * FROM noted'),
             db.query('SELECT * FROM income')
         ];

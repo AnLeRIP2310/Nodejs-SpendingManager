@@ -228,3 +228,39 @@ $('#page-noted').click(function () {
 // $('#page-spendlist').click();
 // var offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasSpendlist'));
 // offcanvas.show()
+
+
+
+async function getGitHubReleaseInfo() {
+    $.ajax({
+        type: 'GET',
+        url: 'https://api.github.com/repos/ALR2310/SpendingManager/releases',
+        success: function (res) {
+            // Loại bỏ phần "Full Changelog" và URL đi kèm nếu có
+            // const cleanedBody = res.body?.replace(/Full Changelog: https:\/\/github\.com\/[^ ]+/, '');
+            // console.log(res)
+
+            const filteredData = res.map(release => ({
+                name: release.name,
+                created_at: formatDateAndTime(release.created_at),
+                body: marked.parse(release.body.replace(/\*\*Full Changelog\*\*: https:\/\/github\.com\/[^ ]+/g, '')), 
+                tag_name: release.tag_name
+            }));
+
+            console.log(filteredData);
+
+
+            const source = $('#changelog_item_template').html();
+            const convertSource = convertPlaceHbs(source);
+            const template = Handlebars.compile(convertSource);
+            const data = template({ changlelogData: filteredData });
+
+            $('#changelog_list').html(data);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    })
+}
+
+getGitHubReleaseInfo()

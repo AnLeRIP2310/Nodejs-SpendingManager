@@ -115,3 +115,7 @@ th {
 label {
     user-select: none;
 }
+
+ul {
+    margin-bottom: 0;
+}

@@ -95,7 +95,7 @@ module.exports = {
             // Thực hiện truy vấn lấy dữ liệu cần sao lưu
             const queries = [
                 db.query('SELECT * FROM spendinglist'),
-                db.query('SELECT * FROM spendingitem'),
+                db.query('SELECT * FROM spendingitem Order By atupdate'),
                 db.query('SELECT * FROM noted'),
                 db.query('SELECT * FROM income')
             ];
