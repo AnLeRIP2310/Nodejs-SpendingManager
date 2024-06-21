@@ -85,16 +85,8 @@ _Lưu ý_: bạn sẽ cần phải tạo một tệp `.env` với các biến m�
 #App
 HOST=localhost
 PORT=3962
-#Session Secret
-SESSION_SECRET=spendingmanager
-#Google Login
-GOOGLE_CLIENT_ID=Client-Id-của-bạn
-GOOGLE_CLIENT_SECRET=Client-Secret-của-bạn
-GOOGLE_CALLBACK_URL=http://localhost:3962/auth/loginGoogle/callback
-#Facebook Login
-FACEBOOK_CLIENT_ID=Client-Id-của-bạn
-FACEBOOK_CLIENT_SECRET=Client-Secret-của-bạn
-FACEBOOK_CALLBACK_URL=http://localhost:3962/auth/loginFacebook/callback
+#Database
+DB_ENCRYP_KEY=Key-của-bạn
 # GG Drive API
 GG_DRIVE_CLIENT_ID=Client-Id-của-bạn
 GG_DRIVE_CLIENT_SECRET=Client-Secret-của-bạn
@@ -103,7 +95,7 @@ KEY_ENCRYPT_REFRESH_TOKEN=01234567890123456789012345678901
 # OpenWeather
 WEATHER_API=fea7580e5581c524e51e4f532e3121d4
 # CoinMarket
-COINMARKET_API=019b37f1-b884-443c-884d-d93e2cbc00ed
+COINMARKET_API=Id-của-bạn
 ```
 
 ## Giấy phép
