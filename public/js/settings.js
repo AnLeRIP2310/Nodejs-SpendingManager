@@ -105,7 +105,7 @@ function registerApp() {
         success: function (res) {
             if (res.success) {
                 $('#modalRegister').modal("hide");
-                showSuccessToast(res.success);
+                showSuccessToast(res.message);
             } else {
                 showErrorToast(res.message);
             }
@@ -475,6 +475,7 @@ $('#btn-import_db').click(function () {
     ipcRenderer.send('import-data');
 });
 ipcRenderer?.on('import-data-success', (event, data) => {
+    $('#import-Progress').removeClass('d-none');
     ws.send(data);
 });
 
@@ -536,15 +537,11 @@ const ws = new WebSocket('ws://localhost:3963');
 ws.onmessage = function (event) {
     const data = JSON.parse(event.data)
     // Thanh tiến trình đồng bộ
-    if ($('#syncData-Progress').hasClass('d-none'))
-        $('#syncData-Progress').removeClass('d-none');
     $('#syncData-Progress .progress-bar').css('width', data.successProcess + '%');
     $('#syncData-Progress .progress-bar').text(data.successProcess + '%');
     $('#syncStatus').html(`${langObj.settingPage.formSyncData.status.desc4} ${data.currentProcess}/${data.totalProcess} <i class="fa-solid fa-loader fa-spin"></i>`)
 
     // Thanh tiến trình nhập liệu
-    if ($('#import-Progress').hasClass('d-none'))
-        $('#import-Progress').removeClass('d-none');
     $('#import-Progress .progress-bar').css('width', data.successProcess + '%');
     $('#import-Progress .progress-bar').text(`${data.successProcess}% - ${data.currentProcess}/${data.totalProcess}`);
 
@@ -573,6 +570,7 @@ $('#btn-syncData').click(function () {
                 // Gọi hàm để sao lưu dữ liệu
                 $('#btn-backupData').click();
             } else if (res.success && res.data != null) {
+                $('#syncData-Progress').removeClass('d-none');
                 ws.send(res.data);
             }
         },

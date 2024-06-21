@@ -240,6 +240,35 @@ const dbPath = {
     getDefault: () => defPathToDb
 }
 
+async function checkVersionsDB() {
+    try {
+        const packageVersion = '4.0.0';
+        const currentVersion = appIniConfigs.getIniConfigs('version');
+
+        // Chuyển đổi phiên bản thành mảng các con số
+        const packageVersionArray = packageVersion.split('.').map(Number);
+        const currentVersionArray = currentVersion.split('.').map(Number);
+
+        // So sánh từng phần tử
+        let isNewerVersion = false;
+        for (let i = 0; i < Math.min(packageVersionArray.length, currentVersionArray.length); i++) {
+            if (packageVersionArray[i] > currentVersionArray[i]) {
+                isNewerVersion = true;
+                break;
+            } else if (packageVersionArray[i] < currentVersionArray[i]) {
+                break;
+            }
+        }
+
+        // Nếu phiên bản gói lớn hơn phiên bản hiện tại thì xoá database
+        if (isNewerVersion) {
+            fs.unlinkSync(path.join(appIniConfigs.getfolderAppConfigs(), 'data', 'SpendingDB.db'));
+        }
+    } catch (e) {
+        logger.error(e)
+    }
+}
+
 
 const db = {
     query,
@@ -247,6 +276,7 @@ const db = {
     closeDB,
     connectDB,
     lastInsertId,
+    checkVersionsDB,
     dbPath
 }
 

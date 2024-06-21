@@ -63,7 +63,7 @@ module.exports = {
             const { password } = req.body;
 
             await db.query("INSERT INTO AppLock (password) VALUES (?)", [password]);
-            return res.json({ success: true, status: 201, message: "Đăng ký thành công" });
+            return res.json({ success: true, status: 201, message: "Tạo mật khẩu thành công" });
         } catch (e) {
             logger.error(e);
             return res.json({ success: false, message: "Lỗi máy chủ nội bộ" });;

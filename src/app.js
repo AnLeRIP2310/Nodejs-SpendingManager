@@ -30,6 +30,7 @@ app.use('/noted', require('./express/routers/notedRouter'))
 
 
 app.listen(port, async () => {
+    await db.checkVersionsDB(); // Kiểm tra phiên bản db
     await db.initDB(); // Khởi tạo database
     console.log(`Server chạy trên http://${host}:${port}`)
 })

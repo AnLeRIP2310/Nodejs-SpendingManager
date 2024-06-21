@@ -26,8 +26,13 @@ app.on('before-quit', async (event) => {
         }
     } catch (e) {
         logger.error(e);
-        app.quit();
+        app.exit();
     }
+});
+
+// Bắt sự kiện thoát ngay lập tức
+ipcMain.on("logout", async () => {
+    app.exit();
 });
 
 // Bắt sự kiện thoát ứng dụng

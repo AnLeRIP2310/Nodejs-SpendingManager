@@ -30,12 +30,11 @@ if (!gotTheLock) {
 
     // Chạy cửa sổ chính
     app.whenReady().then(() => {
-        // Gán phiên bản ứng dụng vào tệp .ini
-        const version = require('../package.json').version;
-        appIniConfigs.updateIniConfigs('App', 'version', version);
-
         // Khởi chạy express server
         expressApp.startServer(() => {
+            // Gán phiên bản ứng dụng vào tệp .ini
+            const version = require('../package.json').version;
+            appIniConfigs.updateIniConfigs('App', 'version', version);
             // Đặt cửa sổ khởi chạy chính
             windowManager.createMainWindow();
             // Kiểm tra phiên bản mới

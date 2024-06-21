@@ -32,7 +32,7 @@ app.use('/noted', require('./express/routers/notedRouter'))
 let serverInstance; // Tạo biến để lưu trữ instance của server
 async function startServer(callback) {
     try {
-        // db.connectDB(); // Kiểm tra trạng thái
+        await db.checkVersionsDB(); // Kiểm tra phiên bản db
         await db.initDB(); // Khởi tạo database nếu chưa có db
         serverInstance = app.listen(port, () => {
             console.log(`Server chạy trên http://${host}:${port}`)
