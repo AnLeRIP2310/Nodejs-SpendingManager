@@ -247,9 +247,6 @@ async function getGitHubReleaseInfo() {
                 tag_name: release.tag_name
             }));
 
-            console.log(filteredData);
-
-
             const source = $('#changelog_item_template').html();
             const convertSource = convertPlaceHbs(source);
             const template = Handlebars.compile(convertSource);

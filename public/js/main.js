@@ -50,7 +50,7 @@ function getDatetimeLocal() {
     var [timeString, dateString] = dateTimeString.split(' ');
     var [hour, minute] = timeString.split(':');
     var [day, month, year] = dateString.split('/').map(item => parseInt(item, 10));
-    return `${year}-${month < 10 ? '0' + month : month}-${day}T${hour}:${minute}`;
+    return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}T${hour}:${minute}`;
 }
 
 // Hàm định dạng ngày giờ và thời gian
