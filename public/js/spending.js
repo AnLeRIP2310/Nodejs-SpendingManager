@@ -307,7 +307,7 @@ function spendingSuggest() {
         // Lắng nghe sự kiện khi người dùng nhấn Tab
         $("#spendName").on("keydown", function (e) {
             if (e.key === "Tab") {
-                var suggestionsList = $(".autocomplete-suggestions");
+                var suggestionsList = $(".autocomplete-suggestions").last();
                 var activeSuggestion = suggestionsList.find(".autocomplete-suggestion.selected");
 
                 if (suggestionsList.css("display") === "block") {

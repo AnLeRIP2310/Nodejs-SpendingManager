@@ -14,7 +14,7 @@
   <a href="#tải-xuống">Tải xuống</a> •
   <a href="#tín-dụng">Tín dụng</a> •
   <a href="https://github.com/ALR2310/SpendingManager/issues/new">Báo lỗi</a> •
-  <a href="#cách-sử-dụng">Cách sử dụng</a> •
+  <a href="#cách-sao-chép">Cách sao chép</a> •
   <a href="#giấy-phép">Giấy phép</a> •
   <a href="#phản-hồi-và-đóng-góp">Phản hồi</a>
 </p>
@@ -55,7 +55,7 @@ Bạn có thể tải xuống phiên bản ứng dụng mới nhất cho window 
 - [![Lodash Badge](https://img.shields.io/badge/Lodash-3492FF?logo=lodash&logoColor=fff&style=for-the-badge)](https://lodash.com)
 - [![Handlebars.js Badge](https://img.shields.io/badge/Handlebars.js-f0772b?logo=handlebarsdotjs&logoColor=fff&style=for-the-badge)](https://handlebarsjs.com)
 
-## Cách sử dụng
+## Cách sao chép
 
 Để sao chép và chạy ứng dụng này, bạn sẽ cần cài đặt [Git](https://git-scm.com) và [Node.js](https://nodejs.org) trên máy tính. 
 
