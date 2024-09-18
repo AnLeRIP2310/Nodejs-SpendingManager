@@ -38,7 +38,7 @@ async function getGitHubReleaseInfo(owner, repo) {
         const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/releases/latest`);
         return response.data;
     } catch (error) {
-        logger.error(error.message, 'Lỗi khi lấy thông tin ghi chú phát hành của github')
+        logger.error(error.message, 'Lỗi khi lấy thông tin ghi chú phát hành của github');
         return null;
     }
 }
@@ -46,12 +46,12 @@ async function getGitHubReleaseInfo(owner, repo) {
 // Bắt sự kiện autoUpdater từ client
 ipcMain.on('check-for-update', () => {
     autoUpdater.checkForUpdates();
-})
+});
 
 // Bắt sự kiện có bản cập nhật
 autoUpdater.on('update-available', async () => {
     try {
-        const gitUrl = packageObj.repository.url
+        const gitUrl = packageObj.repository.url;
         var releaseNote, owner, repo;
 
         // Sử dụng biểu thức chính quy để tìm owner và repo
@@ -68,20 +68,20 @@ autoUpdater.on('update-available', async () => {
         }
 
         // Lấy ra cấu hình về việc có được hiển thị thông báo không
-        const downloadPrompt = appIniConfigs.getIniConfigs('downloadPrompt')
+        const downloadPrompt = appIniConfigs.getIniConfigs('downloadPrompt');
 
         // Gửi về client renderer
         const mainWindow = windowManager.getMainWindow();
         mainWindow.webContents.send('update-available', { downloadPrompt, releaseNote });
     } catch (e) {
-        logger.error(e)
+        logger.error(e);
     }
 });
 
 // Bắt sự kiện cho phép tải về bản cập nhật
 ipcMain.on('allow-download-update', () => {
     autoUpdater.downloadUpdate();
-})
+});
 
 // Bắt sự kiện không có bản cập nhật
 autoUpdater.on('update-not-available', () => {
@@ -130,6 +130,6 @@ autoUpdater.on('update-downloaded', () => {
 });
 
 
-const updateEvent = { checkUpdateSettings }
+const updateEvent = { checkUpdateSettings };
 
 module.exports = updateEvent;

@@ -1,4 +1,4 @@
-const { ipcMain, app, nativeTheme } = require('electron')
+const { ipcMain, app, nativeTheme } = require('electron');
 const windowManager = require('../windowManager');
 const appIniConfigs = require('../../configs/appIniConfigs');
 const logger = require('../../configs/logger');
@@ -8,10 +8,12 @@ const path = require("path");
 
 
 
+// Kiểm tra đăng nhập vào drive
 function checkDriveLogin() {
     return fs.existsSync(path.join(appIniConfigs.getfolderAppConfigs(), 'data', 'Token.json'));
 }
 
+// Sao lưu trước khi thoát
 let appQuit = false;
 app.on('before-quit', async (event) => {
     try {
@@ -21,12 +23,11 @@ app.on('before-quit', async (event) => {
             const mainWindow = windowManager.getMainWindow();
             mainWindow?.isVisible() && mainWindow?.hide();
 
-            const backupResult = await axios.get(`http://${process.env.HOST}:${process.env.PORT}/setting/backupData`);
-            if (backupResult.data.success) { appQuit = true; windowManager.setIsQuitting(true); app.exit(); }
+            await axios.get(`http://${process.env.HOST}:${process.env.PORT}/setting/backupData`, { timeout: 5000 });
+            appQuit = true; windowManager.setIsQuitting(true); app.exit();
         }
     } catch (e) {
-        logger.error(e);
-        app.exit();
+        logger.error(e); app.exit();
     }
 });
 
@@ -42,7 +43,7 @@ ipcMain.on('quit-app', (event, data) => {
     }
     windowManager.setIsQuitting(true);
     app.quit();
-})
+});
 
 // Bắt sự kiện thu xuống khay hệ thống
 ipcMain.on('collapse-tray', (event, data) => {
@@ -61,11 +62,11 @@ ipcMain.on('get-system-theme', (event) => {
 
 // Bắt sự kiện thêm ứng dụng vào khởi động cùng window
 ipcMain.on('startWithWindow', () => {
-    const startWithWindow = appIniConfigs.getIniConfigs('startWithWindow')
+    const startWithWindow = appIniConfigs.getIniConfigs('startWithWindow');
 
     if (startWithWindow || startWithWindow == 'true') {
         app.setLoginItemSettings({ openAtLogin: true });
     } else {
         app.setLoginItemSettings({ openAtLogin: false });
     }
-})
+});

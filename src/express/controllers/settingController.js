@@ -54,7 +54,7 @@ module.exports = {
         try {
             // Lấy ngày hiện tại (yyyy-mm-dd)
             const today = new Date().toISOString().split('T')[0];
-            const result = await db.query('SELECT COUNT(*) as count FROM spendinglist WHERE lastentry >= ?', [today])
+            const result = await db.query('SELECT COUNT(*) as count FROM spendinglist WHERE lastentry >= ?', [today]);
             return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", result: result[0].count });
         } catch (e) {
             logger.error(e);
@@ -70,12 +70,12 @@ module.exports = {
                 const backupDate = appIniConfigs.getIniConfigs('backupDate');
 
                 if (driveEmail != '' && backupDate != '') {
-                    return res.json({ success: true, status: 200, message: 'Đã đăng nhập vào tài khoản', data: { email: driveEmail, backupDate: backupDate } })
+                    return res.json({ success: true, status: 200, message: 'Đã đăng nhập vào tài khoản', data: { email: driveEmail, backupDate: backupDate } });
                 } else {
-                    return res.json({ success: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' })
+                    return res.json({ success: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' });
                 }
             } else {
-                return res.json({ success: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' })
+                return res.json({ success: false, status: 200, message: 'Chưa đăng nhập vào tài khoản' });
             }
         } catch (e) {
             logger.error(e);
@@ -86,10 +86,15 @@ module.exports = {
     backupData: async (req, res) => {
         try {
             // Xoá các file sao lưu cũ trên ggdrive
-            const allFiles = await ggDrive.getAllFiles()
-            for (const files of allFiles.files) {
-                await ggDrive.deleteFile(files.id)
-                console.log('Đã xoá tệp có Id: ' + files.id)
+            const allFiles = await ggDrive.getAllFiles();
+
+            if (allFiles.success) {
+                for (const files of allFiles.files) {
+                    await ggDrive.deleteFile(files.id);
+                    console.log('Đã xoá tệp có Id: ' + files.id);
+                }
+            } else {
+                return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
             }
 
             // Thực hiện truy vấn lấy dữ liệu cần sao lưu
@@ -121,7 +126,7 @@ module.exports = {
             }
             return res.json({ success: true, status: 200, message: "Sao lưu dữ liệu thành công" });
         } catch (e) {
-            logger.error(e); res.json({ success: false });
+            logger.error(e);
             return res.json({ success: false, status: 500, message: "Lỗi máy chủ nội bộ" });
         }
     },
@@ -138,8 +143,8 @@ module.exports = {
                 const getAllFiles = await ggDrive.getAllFiles();
 
                 if (getAllFiles?.files?.length > 0) {
-                    const lastFileId = getAllFiles.files.length - 1
-                    fileId = getAllFiles.files[lastFileId].lastInsertId
+                    const lastFileId = getAllFiles.files.length - 1;
+                    fileId = getAllFiles.files[lastFileId].lastInsertId;
                 } else {
                     // Trường hợp chưa có bất kì file nào thì trả về kết quả
                     return res.json({ success: false, status: 404, message: 'Không tìm thấy tệp sao lưu' });
@@ -153,8 +158,8 @@ module.exports = {
                     const getAllFiles = await ggDrive.getAllFiles();
 
                     if (getAllFiles?.files?.length > 0) {
-                        const lastFileId = getAllFiles.files.length - 1
-                        fileId = getAllFiles.files[lastFileId].lastInsertId
+                        const lastFileId = getAllFiles.files.length - 1;
+                        fileId = getAllFiles.files[lastFileId].lastInsertId;
                     } else {
                         // Trường hợp chưa có bất kì file nào thì trả về kết quả
                         return res.json({ success: false, status: 404, message: 'Không tìm thấy tệp sao lưu' });
@@ -173,11 +178,11 @@ module.exports = {
             fs.unlinkSync(downResult.pathSave);
             return res.json({ success: true, status: 200, message: 'Lấy dữ liệu thành công', data: spendData });
         } catch (e) {
-            logger.error(e)
+            logger.error(e);
             return res.json({ success: false, status: 500, message: 'Lỗi máy chủ nội bộ' });
         }
     },
-}
+};
 
 function startWSS(port) {
     const wss = new WebSocket.Server({ port: port }, () => {
@@ -232,10 +237,10 @@ function startWSS(port) {
                 if (dataObj?.income?.length)
                     for (const income of dataObj.income) {
                         let sql = 'select * from income where id = ? and spendlistid = ? and price = ?';
-                        const checkIncome = await db.query(sql, [income.id, income.spendlistid, income.price])
+                        const checkIncome = await db.query(sql, [income.id, income.spendlistid, income.price]);
 
                         // Thêm vào mảng nếu nó chưa tồn tại
-                        if (checkIncome.length == 0) { dataNotExist.income.push(income) }
+                        if (checkIncome.length == 0) { dataNotExist.income.push(income); }
                     }
 
                 // Lấy tổng số tiến trình dữ liệu
@@ -245,7 +250,7 @@ function startWSS(port) {
 
                 // hàm tính tổng tiến trình hiện tại
                 async function calculateProcess() {
-                    currentProcess++
+                    currentProcess++;
                     successProcess = Math.floor((currentProcess / totalProcess) * 100);
                     ws.send(JSON.stringify({ totalProcess, currentProcess, successProcess }));
                 }

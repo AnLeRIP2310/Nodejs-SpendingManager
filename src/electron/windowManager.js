@@ -15,7 +15,7 @@ function createMainWindow() {
     const windowHeight = 565;
     const screenWidth = mainScreen.width;
     const screenHeight = mainScreen.height;
-    const windowPositionX = parseFloat(appIniConfigs.getIniConfigs('windowPositionX'))
+    const windowPositionX = parseFloat(appIniConfigs.getIniConfigs('windowPositionX'));
     const windowPositionY = parseFloat(appIniConfigs.getIniConfigs('windowPositionY'));
 
     mainWindow = new BrowserWindow({
@@ -79,6 +79,6 @@ const windowManager = {
     getMainWindow: () => mainWindow,
     getIsQuitting: () => isQuitting,
     setIsQuitting: (value) => isQuitting = value
-}
+};
 
 module.exports = windowManager;
