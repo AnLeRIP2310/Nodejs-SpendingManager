@@ -11,12 +11,12 @@ BalloonEditor
 
 // Hàm tạo sự kiện đóng/mở trên thanh tìm kiếm + thêm mới
 function handleCreateAndSearch() {
-    const inputGroupNotedSearch = $('#input-group-notedSearch')
-    const inputGroupNotedAdd = $('#input-group-notedAdd')
-    const txtNotedSearch = $('#txt-notedSearch')
-    const btnNotedSearch = $('#btn-notedSearch')
-    const txtNotedAdd = $('#txt-notedAdd')
-    const btnNotedAdd = $('#btn-notedAdd')
+    const inputGroupNotedSearch = $('#input-group-notedSearch');
+    const inputGroupNotedAdd = $('#input-group-notedAdd');
+    const txtNotedSearch = $('#txt-notedSearch');
+    const btnNotedSearch = $('#btn-notedSearch');
+    const txtNotedAdd = $('#txt-notedAdd');
+    const btnNotedAdd = $('#btn-notedAdd');
     var isFormNotedOpen = 0;
 
 
@@ -28,7 +28,7 @@ function handleCreateAndSearch() {
 
             setTimeout(() => {
                 txtNotedSearch.addClass('d-none');
-                btnNotedSearch.addClass('border-top-bottom-left-radius')
+                btnNotedSearch.addClass('border-top-bottom-left-radius');
             }, 250);
 
 
@@ -36,12 +36,12 @@ function handleCreateAndSearch() {
             inputGroupNotedAdd.css('width', '218.491px');
 
             txtNotedAdd.removeClass('d-none');
-            $(this).removeClass('border-top-bottom-left-radius')
+            $(this).removeClass('border-top-bottom-left-radius');
             isFormNotedOpen = 1;
         } else {
             const data = {
                 NameList: $('#txt-notedAdd').val() || 'Ghi chú của tôi',
-            }
+            };
 
             $.ajax({
                 type: 'POST',
@@ -58,9 +58,9 @@ function handleCreateAndSearch() {
 
                 },
                 error: function (err) {
-                    console.log(err)
+                    console.log(err);
                 }
-            })
+            });
         }
     });
 
@@ -73,9 +73,9 @@ function handleCreateAndSearch() {
             setTimeout(() => {
                 txtNotedAdd.addClass('d-none');
                 txtNotedSearch.removeClass('d-none');
-                btnNotedAdd.addClass('border-top-bottom-left-radius')
-                $(this).removeClass('border-top-bottom-left-radius')
-                inputGroupNotedAdd.addClass('w-auto')
+                btnNotedAdd.addClass('border-top-bottom-left-radius');
+                $(this).removeClass('border-top-bottom-left-radius');
+                inputGroupNotedAdd.addClass('w-auto');
             }, 280);
 
             isFormNotedOpen = 0;
@@ -88,8 +88,8 @@ function handleCreateAndSearch() {
                 },
                 success: function (res) {
                     res.data.notedlist.forEach((item) => {
-                        item.atcreate = formatDate(item.atcreate)
-                        item.atupdate = formatDate(item.atupdate)
+                        item.atcreate = formatDate(item.atcreate);
+                        item.atupdate = formatDate(item.atupdate);
                     });
 
                     const source = $('#template-list-noted').html();
@@ -99,12 +99,12 @@ function handleCreateAndSearch() {
 
                     $('#list-noted').html(data);
                     // Gọi hàm để gán lại các sự kiện cho các nút
-                    handleAssignEvents()
+                    handleAssignEvents();
                 },
                 error: function (err) {
                     console.log(err);
                 }
-            })
+            });
         }
     });
 } handleCreateAndSearch();
@@ -154,20 +154,20 @@ function toggleButtons(dataId, isOpen) {
     });
 }
 function toggleIconButtons(dataId, isOpen) {
-    var notedIconBtn = $('.btn-noted-toggle-action')
+    var notedIconBtn = $('.btn-noted-toggle-action');
     notedIconBtn.each(function () {
         var $element = $(this);
 
         if ($element.data('id') == dataId) {
             if (isOpen) {
-                $element.find('i').removeClass('fa-angle-left').addClass('fa-angle-right')
+                $element.find('i').removeClass('fa-angle-left').addClass('fa-angle-right');
             } else {
-                $element.find('i').addClass('fa-angle-left').removeClass('fa-angle-right')
+                $element.find('i').addClass('fa-angle-left').removeClass('fa-angle-right');
             }
         } else {
-            $element.find('i').addClass('fa-angle-left').removeClass('fa-angle-right')
+            $element.find('i').addClass('fa-angle-left').removeClass('fa-angle-right');
         }
-    })
+    });
 }
 
 // Hàm xử lý việc hiển thị danh sách noted
@@ -177,8 +177,8 @@ function handleShowListNoted() {
         url: urlapi + '/noted/getData',
         success: function (res) {
             res.data.notedlist.forEach((item) => {
-                item.atcreate = formatDate(item.atcreate)
-                item.atupdate = formatDate(item.atupdate)
+                item.atcreate = formatDate(item.atcreate);
+                item.atupdate = formatDate(item.atupdate);
             });
 
             const source = $('#template-list-noted').html();
@@ -188,12 +188,12 @@ function handleShowListNoted() {
 
             $('#list-noted').html(data);
             // Gọi hàm để gán lại các sự kiện cho các nút
-            handleAssignEvents()
+            handleAssignEvents();
         },
         error: function (err) {
             console.log(err);
         }
-    })
+    });
 }
 
 // Hàm mở chế độ edit
@@ -202,15 +202,15 @@ function openEditForm(dataId, isOpen) {
     formData.each(function () {
         if ($(this).data('id') == dataId) {
             if (isOpen) {
-                $(this).find('.txt-notedname').addClass('d-none')
-                $(this).find('.tbl-notedname').removeClass('d-none')
+                $(this).find('.txt-notedname').addClass('d-none');
+                $(this).find('.tbl-notedname').removeClass('d-none');
             } else {
-                $(this).find('.txt-notedname').removeClass('d-none')
-                $(this).find('.tbl-notedname').addClass('d-none')
+                $(this).find('.txt-notedname').removeClass('d-none');
+                $(this).find('.tbl-notedname').addClass('d-none');
             }
         } else {
-            $(this).find('.txt-notedname').removeClass('d-none')
-            $(this).find('.tbl-notedname').addClass('d-none')
+            $(this).find('.txt-notedname').removeClass('d-none');
+            $(this).find('.tbl-notedname').addClass('d-none');
         }
     });
     if (isOpen) {
@@ -230,7 +230,7 @@ function handleAssignEvents() {
     // Nút đóng/mở form sửa-xoá
     $('.btn-noted-toggle-action').click(function (event) {
         var dataId = $(this).data('id');
-        openActionForm(dataId)
+        openActionForm(dataId);
     });
 
     // Nút lấy nội dung trên danh sách
@@ -243,14 +243,14 @@ function handleAssignEvents() {
             },
             success: function (res) {
                 if (res.success) {
-                    $('#noted-content').html(res.data[0].content);
-                    notedEditor.setData(res.data[0].content);
+                    $('#noted-content').html(res.data);
+                    notedEditor.setData(res.data);
                 }
             },
             error: function (err) {
                 console.log(err);
             }
-        })
+        });
     });
 
     // Nút mở form sửa dữ liệu trên danh sách
@@ -271,7 +271,7 @@ function handleAssignEvents() {
         event.stopPropagation();
         btnDelete = event.currentTarget;
         if (settingsObj.reminderDelete || settingsObj.reminderDelete == 'true') {
-            $('#modalConfirmDeleteNoted').modal('show')
+            $('#modalConfirmDeleteNoted').modal('show');
         } else {
             notedDelete(event.currentTarget);
         }
@@ -287,8 +287,8 @@ function handleAssignEvents() {
         }
 
         notedDelete(btnDelete);
-        $('#modalConfirmDeleteNoted').modal('hide')
-    })
+        $('#modalConfirmDeleteNoted').modal('hide');
+    });
 
     // Hàm xoá dữ liệu trên ghi chú
     function notedDelete(element) {
@@ -309,15 +309,15 @@ function handleAssignEvents() {
                 }
             },
             error: function (err) {
-                console.log(err)
+                console.log(err);
             }
-        })
+        });
     }
 
     // Nút huỷ thay đổi
     $('#btn-noted-close').click(function () {
-        openActionForm(currentOpenId) // đóng form sửa/xoá
-        openEditForm(currentOpenId, false) //đóng chế độ sửa
+        openActionForm(currentOpenId); // đóng form sửa/xoá
+        openEditForm(currentOpenId, false); //đóng chế độ sửa
     });
 
     // Nút lưu thay đổi
@@ -326,7 +326,7 @@ function handleAssignEvents() {
             notedId: currentOpenId,
             nameList: $(inputNameList).val(),
             content: notedEditor.getData(),
-        }
+        };
 
         $.ajax({
             type: 'POST',
@@ -340,19 +340,19 @@ function handleAssignEvents() {
                     $('#noted-content').html(notedEditor.getData());
                     // Cập nhật tên mới nếu có
                     if ($(textNamelist).text() != data.nameList) {
-                        $(textNamelist).text(data.nameList)
+                        $(textNamelist).text(data.nameList);
                     }
 
-                    openActionForm(currentOpenId) // đóng form sửa/xoá
-                    openEditForm(currentOpenId, false) //đóng chế độ sửa
+                    openActionForm(currentOpenId); // đóng form sửa/xoá
+                    openEditForm(currentOpenId, false); //đóng chế độ sửa
                 } else {
                     showErrorToast(res.message);
                 }
             },
             error: function (err) {
-                console.log(err)
+                console.log(err);
             }
-        })
+        });
     });
 }
 

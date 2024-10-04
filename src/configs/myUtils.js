@@ -107,6 +107,39 @@ const myUtils = {
         }
         return Buffer.concat(chunks);
     },
-}
+
+    // Hàm mã hoá dữ liệu
+    encrypt(text) {
+        const algorithm = 'aes-256-cbc';
+        const key = process.env.KEY_ENCRYPT_DATA;
+        const iv = crypto.randomBytes(16);
+
+        let cipher = crypto.createCipheriv(algorithm, key, iv);
+        let encrypted = cipher.update(text, 'utf8', 'hex');
+        encrypted += cipher.final('hex');
+
+        // Thêm tiền tố để nhận diện đây là dữ liệu mã hóa
+        return `ENC:${iv.toString('hex')}:${encrypted}`;
+    },
+
+    // Hàm giải mã dữ liệu
+    decrypt(encrypted) {
+        const algorithm = 'aes-256-cbc';
+        const key = process.env.KEY_ENCRYPT_DATA;
+
+        // Kiểm tra nếu dữ liệu có tiền tố 'ENC:' thì mới giải mã
+        if (!encrypted.startsWith('ENC:')) return encrypted;
+
+        // Tách IV và chuỗi mã hóa
+        const parts = encrypted.split(':');
+        const iv = Buffer.from(parts[1], 'hex');
+        const encryptedText = parts[2];
+
+        let decipher = crypto.createDecipheriv(algorithm, key, iv);
+        let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+        decrypted += decipher.final('utf8');
+        return decrypted;
+    }
+};
 
 module.exports = myUtils;
