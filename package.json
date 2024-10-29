@@ -55,7 +55,7 @@
         "dotenv": "^16.3.2",
         "electron-updater": "^6.3.9",
         "express": "^4.21.1",
-        "express-session": "^1.17.3",
+        "express-session": "^1.18.1",
         "googleapis": "^144.0.0",
         "ini": "^5.0.0",
         "lodash": "^4.17.21",
