@@ -1,6 +1,6 @@
 {
     "name": "spendingmanager",
-    "version": "4.1.0",
+    "version": "4.1.1",
     "description": "Ứng dụng ghi chú và quản lý chi tiêu cá nhân",
     "main": "./src/electronApp.js",
     "scripts": {
