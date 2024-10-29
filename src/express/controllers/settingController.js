@@ -106,6 +106,8 @@ module.exports = {
             ];
             const [spendList, spendItem, noted, income] = await Promise.all(queries);
 
+            noted.forEach((item) => { item.content = myUtils.decrypt(item.content); });
+
             const dataObj = {};
             if (spendList.length > 0) dataObj.spendingList = spendList;
             if (spendItem.length > 0) dataObj.spendingItem = spendItem;

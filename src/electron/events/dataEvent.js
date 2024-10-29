@@ -5,6 +5,7 @@ const logger = require('../../configs/logger');
 const zlib = require("zlib");
 const path = require('path');
 const windowManager = require('../windowManager');
+const myUtils = require('../../configs/myUtils');
 
 
 
@@ -22,6 +23,8 @@ ipcMain.on('export-data', async () => {
             db.query('SELECT * FROM income')
         ];
         const [spendList, spendItem, noted, income] = await Promise.all(queries);
+
+        noted.forEach((item) => { item.content = myUtils.decrypt(item.content); });
 
         const dataObj = {};
         if (spendList.length > 0) dataObj.spendingList = spendList;
@@ -50,4 +53,4 @@ ipcMain.on('import-data', async () => {
     // Trả dữ liệu về renderer
     const mainWindow = windowManager.getMainWindow();
     mainWindow.webContents.send('import-data-success', content);
-})
+});

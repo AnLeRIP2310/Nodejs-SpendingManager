@@ -25,8 +25,6 @@ module.exports = {
             if (result.length > 0) {
                 const decryptedContent = myUtils.decrypt(result[0].content);
 
-                console.log(decryptedContent);
-
                 return res.json({ success: true, status: 200, message: "Lấy dữ liệu thành công", data: decryptedContent });
             } else
                 return res.json({ success: false, status: 404, message: "Không tìm thấy ghi chú" });
