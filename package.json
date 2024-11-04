@@ -67,7 +67,7 @@
         "passport-facebook": "^3.0.0",
         "passport-google-oauth20": "^2.0.0",
         "pretty-bytes": "^5.6.0",
-        "uuid": "^10.0.0",
+        "uuid": "^11.0.2",
         "ws": "^8.17.1"
     },
     "devDependencies": {
