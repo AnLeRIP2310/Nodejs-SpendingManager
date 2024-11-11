@@ -78,7 +78,7 @@
         "@types/node-schedule": "^2.1.7",
         "@types/uuid": "^10.0.0",
         "@types/ws": "^8.5.10",
-        "electron": "^27.1.2",
+        "electron": "^33.2.0",
         "electron-builder": "^24.13.3",
         "nodemon": "^3.1.7"
     }
