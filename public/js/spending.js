@@ -10,7 +10,7 @@ $('#newSpendingList').on('keyup', function (event) {
 });
 $('#btnSaveSpendingList').on('click', function () {
     addSpendingList();
-})
+});
 
 // Hàm thêm một danh sách mới
 function addSpendingList() {
@@ -18,7 +18,7 @@ function addSpendingList() {
         namelist: $('#newSpendingList').val(),
         atcreate: formatDate(new Date()),
         status: 1
-    }
+    };
 
     $.ajax({
         type: 'POST',
@@ -38,7 +38,7 @@ function addSpendingList() {
         error: function (err) {
             console.log(err);
         }
-    })
+    });
 }
 
 //#endregion
@@ -65,7 +65,7 @@ function displaySpendingItems() {
         SearchKey: $('#txtSearch').val(),
         SearchDate: $('#txtSearchDate').val(),
         TypeSearchDate: $('#typeDateSearch').val()
-    }
+    };
 
     $.ajax({
         type: 'GET',
@@ -79,7 +79,7 @@ function displaySpendingItems() {
                 // Chỉnh sửa dữ liệu nhận được
                 SpendingData.forEach((item) => {
                     // Thêm loại thời gian phù hợp với thẻ input
-                    item.datetime = item.atupdate || item.atcreate
+                    item.datetime = item.atupdate || item.atcreate;
                     // Chuyển định dạng ngày
                     item.atcreate = formatDate(item.atcreate);
                     item.atupdate = formatDate(item.atupdate);
@@ -102,7 +102,7 @@ function displaySpendingItems() {
 
                 handleRowClickEvent(); // Thêm sự kiện click cho các row
                 calculateTotalPrice(); //Gọi hàm tính tổng
-                spendingSuggest() // Tạo danh sách gợi ý từ
+                spendingSuggest(); // Tạo danh sách gợi ý từ
             }
         },
         error: function (err) {
@@ -119,7 +119,7 @@ function resetAndDisplayItems() {
 }
 // gọi sự kiện hàm hiển thị
 $('#SpendingList').on('change', function () {
-    resetAndDisplayItems()
+    resetAndDisplayItems();
 });
 
 var isSearching = false;
@@ -134,9 +134,9 @@ $('#txtSearch').on('keyup', function (event) {
 });
 // Gọi sự kiện khi có tuỳ chọn thời gian
 $('#txtSearchDate').on('change', function () {
-    resetAndDisplayItems()
+    resetAndDisplayItems();
     setTimeout(() => {
-        resetAndDisplayItems()
+        resetAndDisplayItems();
     }, 100);
 });
 // Mở tuỳ chọn tìm kiếm theo thời gian
@@ -154,7 +154,7 @@ $('.searchDate').click(function (event) {
     event.stopPropagation();
 });
 $('#typeDateSearch').on('change', function () {
-    console.log('đã gọi sk')
+    console.log('đã gọi sk');
     if ($(this).val() == 'date') {
         $('#txtSearchDate').prop('type', 'date');
     } else {
@@ -226,12 +226,12 @@ function handleRowClickEvent() {
 function calculateTotalPrice() {
     $.ajax({
         type: "GET",
-        data: {listId: $('#SpendingList').val()},
+        data: { listId: $('#SpendingList').val() },
         url: urlapi + "/spending/calculateTotalPrice",
         success: function (res) {
             $('#spendListTotal').text(formatCurrency(res.data.totalPrice));
         }
-    })
+    });
 }
 // Hàm tính tổng tiền của 1 mục
 function calculateItemPrice(SpendName) {
@@ -246,7 +246,7 @@ function calculateItemPrice(SpendName) {
             $('#spendItemCount').text(res.data.count);
             $('#spendItemTotal').text(formatCurrency(res.data.price));
         }
-    })
+    });
 }
 
 
@@ -267,7 +267,7 @@ function getListNameSpending(callback) {
         error: function (err) {
             console.log(err);
         }
-    })
+    });
 }
 
 // hàm gợi ý từ trên thẻ input
@@ -335,7 +335,7 @@ function spendingSuggest() {
 //#endregion
 
 function spendViews(element) {
-    var id = $(element).closest('tr.pointer').find('th').text()
+    var id = $(element).closest('tr.pointer').find('th').text();
 
     $.ajax({
         type: 'GET',
@@ -344,7 +344,7 @@ function spendViews(element) {
         success: function (res) {
             if (res.success) {
                 const content = $('#modalSpendViews');
-                content.modal('show') // Mở modal
+                content.modal('show'); // Mở modal
 
                 // Gán giá trị
                 content.find('.SpendViews_list-title').text(res.data.namelist);
@@ -359,7 +359,7 @@ function spendViews(element) {
         error: function (err) {
             console.log(err);
         }
-    })
+    });
 }
 
 
@@ -377,7 +377,7 @@ function CheckCalc() {
     // Kiểm tra cài đặt xem có được phép thực hiện tính toán hay không
     if (settingsObj.allowCalc) {
         // Nếu được phép, thực hiện tính toán
-        const spendPrice = $('#spendPrice')
+        const spendPrice = $('#spendPrice');
 
         if (isOperation(spendPrice.val())) {
             try {
@@ -407,8 +407,8 @@ $('#btnCreate').on('click', function () {
         Name: $('#spendName').val(),
         Price: $('#spendPrice').val() + checkAddNumber(),
         Details: $('#spendDetails').val() || "Không có thông tin",
-        AtCreate: $('#spendDate').val(),
-        AtUpdate: $('#spendDate').val(),
+        AtCreate: $('#spendDate').val() + `T${getCurrentTime()}`,
+        AtUpdate: $('#spendDate').val() + `T${getCurrentTime()}`,
         Status: 1,
     };
 
@@ -446,9 +446,9 @@ $('#btnCreate').on('click', function () {
 
                 scrollTableToBottom(); // cuộn xuống cuối
                 handleRowClickEvent(); // gắn sự kiện click cho row
-                calculateTotalPrice() // Tính tổng tiền trên danh sách
-                $('#btnClearData').click() // Xoá dữ liệu trên field
-                $('#spendName').focus() // Nhắm vào thẻ input tên
+                calculateTotalPrice(); // Tính tổng tiền trên danh sách
+                $('#btnClearData').click(); // Xoá dữ liệu trên field
+                $('#spendName').focus(); // Nhắm vào thẻ input tên
             }
         },
         error: function (err) {
@@ -465,8 +465,8 @@ $('#btnUpdate').on('click', function () {
         Name: $('#spendName').val(),
         Price: $('#spendPrice').val(),
         Details: $('#spendDetails').val() || "Không có thông tin",
-        AtUpdate: $('#spendDate').val(),
-    }
+        AtUpdate: $('#spendDate').val() + `T${getCurrentTime()}`,
+    };
 
     if (!data.Id) {
         showWarningToast('Vui lòng chọn dữ liệu muốn sửa');
@@ -491,7 +491,7 @@ $('#btnUpdate').on('click', function () {
                         foundRow = row;
                         return false; // dừng vòng lặp
                     }
-                })
+                });
 
                 // Cập nhật lại trên table
                 foundRow.find('td').eq(0).text(formatDate(data.AtUpdate));
@@ -499,15 +499,15 @@ $('#btnUpdate').on('click', function () {
                 foundRow.find('td').eq(2).text(formatCurrency(data.Price));
                 foundRow.find('td').eq(3).text(data.Details);
 
-                calculateTotalPrice() // Tính tổng tiền trên danh sách
-                $('#btnClearData').click() // Xoá dữ liệu trên field
+                calculateTotalPrice(); // Tính tổng tiền trên danh sách
+                $('#btnClearData').click(); // Xoá dữ liệu trên field
             }
         },
         error: function (err) {
             console.log(err);
         }
-    })
-})
+    });
+});
 
 // nút xoá dữ liệu trong bảng
 $('#btnDelete').on('click', function () {
@@ -519,7 +519,7 @@ $('#btnDelete').on('click', function () {
     if (settingsObj.reminderDelete || settingsObj.reminderDelete == 'true') {
         $('#modalConfirmDeleteItem').modal('show');
     } else {
-        deleteSpendingItem()
+        deleteSpendingItem();
     }
 });
 
@@ -532,9 +532,9 @@ $('#btnConfirmDelete').click(function () {
         $('#reminderDelete').prop('checked', false);
     }
 
-    deleteSpendingItem()
+    deleteSpendingItem();
     $('#modalConfirmDeleteItem').modal('hide');
-})
+});
 
 // hàm xoá dữ liệu trong bảng
 function deleteSpendingItem() {
@@ -568,20 +568,20 @@ function deleteSpendingItem() {
                 // xoá row khỏi table
                 foundRow.remove();
 
-                calculateTotalPrice() // Tính tổng tiền trên danh sách
-                $('#btnClearData').click() // Xoá dữ liệu trên field
+                calculateTotalPrice(); // Tính tổng tiền trên danh sách
+                $('#btnClearData').click(); // Xoá dữ liệu trên field
             }
         },
         error: function (err) {
             console.log(err);
         }
-    })
+    });
 }
 
 // nút clear data
 $('#btnClearData').on('click', function () {
     $('#spendId').val('');
-    $('#spendDate').val(getDatetimeLocal());
+    $('#spendDate').val(new Date().toISOString().split('T')[0]);
     $('#spendName').val('');
     $('#spendPrice').val('');
     $('#spendDetails').val('');
@@ -603,31 +603,31 @@ $('#spendName, #spendPrice, #spendDetails').on('keyup', function (event) {
 });
 
 // Bật/Tắt tuỳ chọn trên ô giá tiền
-function autoAdd000() { $('#checkAutoAddNumber').prop('checked', settingsObj.autoAdd000) }
-function allowCalc() { $('#checkAllowCalc').prop('checked', settingsObj.allowCalc) }
+function autoAdd000() { $('#checkAutoAddNumber').prop('checked', settingsObj.autoAdd000); }
+function allowCalc() { $('#checkAllowCalc').prop('checked', settingsObj.allowCalc); }
 
 $('#checkAutoAddNumber').on('change', function () {
     settingsObj.autoAdd000 = this.checked;
     editSettings('autoAdd000', this.checked, 'App', autoAdd000);
-})
+});
 
 $('#checkAllowCalc').on('change', function () {
     settingsObj.allowCalc = this.checked;
     editSettings('allowCalc', this.checked, 'App', allowCalc);
-})
+});
 
 // Đóng/mở nội dung của tuỳ chọn
-$(".spendPrice_tooltip").on('click', () => $('.spendPrice_tooltip-content').css("display", "block"))
-$('.spendPrice_tooltip').on('mouseleave', () => $('.spendPrice_tooltip-content').css("display", "none"))
+$(".spendPrice_tooltip").on('click', () => $('.spendPrice_tooltip-content').css("display", "block"));
+$('.spendPrice_tooltip').on('mouseleave', () => $('.spendPrice_tooltip-content').css("display", "none"));
 
 //#endregion
 
 // Nút Xuất file Excel
 $('#btn-excel_export').click(function () {
     const table = document.getElementById('tbdata');
-    var wb = XLSX.utils.table_to_book(table)
+    var wb = XLSX.utils.table_to_book(table);
     XLSX.writeFile(wb, 'SpendingData.xlsx');
-})
+});
 
 // Nút xuất file PDF
 $('#btn-pdf_export').click(function () {
@@ -645,12 +645,12 @@ $('#btn-pdf_export').click(function () {
 
     // Tải tệp PDF
     doc.save('SpendingData.pdf');
-})
+});
 
 
 function onPageLoad() {
     // Đặt thời gian mặt định cho thẻ input
-    $('#spendDate').val(getDatetimeLocal());
+    $('#spendDate').val(new Date().toISOString().split('T')[0]);
 
     // Hiển thị danh sách chi tiêu
     displaySpendingItems();

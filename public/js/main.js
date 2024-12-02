@@ -43,14 +43,9 @@ function formatDateTime(value) {
     return `${day}/${month}/${year} - ${timeString}`;
 }
 
-// Hàm lấy thời gian địa phương
-function getDatetimeLocal() {
-    var dateTimeString = new Date().toLocaleString();
-    // Tách ngày, tháng, năm và giờ, phút từ chuỗi
-    var [timeString, dateString] = dateTimeString.split(' ');
-    var [hour, minute] = timeString.split(':');
-    var [day, month, year] = dateString.split('/').map(item => parseInt(item, 10));
-    return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}T${hour}:${minute}`;
+function getCurrentTime() {
+    const dateTime = new Date().toISOString();
+    return dateTime.split('T')[1];
 }
 
 // Hàm định dạng ngày giờ và thời gian
@@ -74,12 +69,12 @@ function formatCurrency(value) {
 function inputCurrency(element) {
     var value = element.value.replace(/[^0-9]/g, '');
     let Currency = parseInt(value, 10);
-    if (isNaN(Currency)) { element.value = '' }
-    else { element.value = Currency.toLocaleString('vi-VN') }
+    if (isNaN(Currency)) { element.value = ''; }
+    else { element.value = Currency.toLocaleString('vi-VN'); }
 }
 
 // Hàm định dạng số phần trăm
-function formatPercent(value) { return value.toFixed(2) + '%' }
+function formatPercent(value) { return value.toFixed(2) + '%'; }
 
 // Hàm chuyển đổi biến handlebars từ %variable% thành {{variable}}
 function convertPlaceHbs(template, options = { from: { start: "%", end: "%" }, to: { start: "{{", end: "}}" } }) {
@@ -120,7 +115,7 @@ Handlebars.registerHelper('addClassForPercent', function (value) {
     } else {
         return '';
     }
-})
+});
 Handlebars.registerHelper('formatMonthInput', function (value) {
     return new Date(value).toISOString().slice(0, 7);
 });
@@ -147,7 +142,7 @@ Handlebars.registerHelper('formatPercent', function (value) {
     } else if (value > 0) {
         return `Tăng ${Math.abs(value).toFixed(0) + '%'}`;
     } else {
-        return Math.abs(value).toFixed(0) + '%'
+        return Math.abs(value).toFixed(0) + '%';
     }
 });
 
